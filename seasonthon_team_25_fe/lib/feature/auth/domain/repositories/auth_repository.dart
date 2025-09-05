@@ -11,4 +11,5 @@ abstract class AuthRepository {
   });
 
   Future<LoginEntity> login({required String email, required String password});
+  Future<LoginEntity> refresh({required String refreshToken});
 }

@@ -17,4 +17,7 @@ class AuthUsecase {
   Future<LoginEntity> login({required String email, required String password}) {
     return _repo.login(email: email, password: password);
   }
+
+  Future<LoginEntity> refresh({required String refreshToken}) =>
+      _repo.refresh(refreshToken: refreshToken);
 }

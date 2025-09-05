@@ -4,15 +4,16 @@ import 'package:go_router/go_router.dart';
 import 'package:seasonthon_team_25_fe/core/theme/colors.dart';
 import 'package:seasonthon_team_25_fe/core/theme/typography.dart';
 import 'package:seasonthon_team_25_fe/feature/auth/presentation/providers/auth_controller.dart';
+import 'package:seasonthon_team_25_fe/ui/utils/primary_action_dtn.dart';
 
-class SignUpPage extends ConsumerStatefulWidget {
-  const SignUpPage({super.key});
+class LoginPage extends ConsumerStatefulWidget {
+  const LoginPage({super.key});
 
   @override
-  ConsumerState<SignUpPage> createState() => _SignUpPageState();
+  ConsumerState<LoginPage> createState() => _LoginPageState();
 }
 
-class _SignUpPageState extends ConsumerState<SignUpPage> {
+class _LoginPageState extends ConsumerState<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final _emailFieldKey = GlobalKey<FormFieldState<String>>();
   final _passwordFieldKey = GlobalKey<FormFieldState<String>>();
@@ -33,17 +34,16 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(authControllerProvider);
-    final isLoading = state.signUp.isLoading;
+    final isLoading = state.login.isLoading;
 
-    // 성공/실패 리스닝 (build 안)
     ref.listen(authControllerProvider, (prev, next) {
-      next.signUp.when(
+      next.login.when(
         data: (entity) {
           if (entity == null) return;
           ScaffoldMessenger.of(
             context,
-          ).showSnackBar(const SnackBar(content: Text('회원가입 성공! 🎉')));
-          context.go('/login');
+          ).showSnackBar(const SnackBar(content: Text('로그인 성공! 👋')));
+          context.go('/nickname');
         },
         error: (e, _) {
           ScaffoldMessenger.of(
@@ -66,7 +66,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  "회원 가입",
+                  "로그인",
                   style: AppTypography.h1.copyWith(color: AppColors.bk),
                 ),
                 const SizedBox(height: 6),
@@ -100,11 +100,6 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                               }
                             },
                             decoration: InputDecoration(
-                              // constraints: const BoxConstraints(
-                              //   minHeight: 44,
-                              //   //maxHeight: 44,
-                              // ),
-                              //isCollapsed: true,
                               contentPadding: const EdgeInsets.symmetric(
                                 horizontal: 10,
                                 vertical: 20,
@@ -130,12 +125,12 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                                 borderRadius: BorderRadius.circular(12),
                                 borderSide: BorderSide.none,
                               ),
-                              // errorStyle: const TextStyle(
-                              //   height: 0,
-                              //   fontSize: 0,
-                              // ),
                               helperText: '',
                               helperStyle: const TextStyle(
+                                height: 0,
+                                fontSize: 0,
+                              ),
+                              errorStyle: const TextStyle(
                                 height: 0,
                                 fontSize: 0,
                               ),
@@ -144,12 +139,10 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                               final v = (value ?? '').trim();
                               if (v.isEmpty) {
                                 return "이메일을 입력해 주세요";
-                                // return "";
                               }
                               final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
                               if (!emailRegex.hasMatch(v)) {
                                 return "name@example.com 형태로 입력해 주세요";
-                                // return "";
                               }
                               return null;
                             },
@@ -167,18 +160,12 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                             key: _passwordFieldKey,
                             controller: _passwordController,
                             obscureText: true,
-                            //maxLines: 1,
                             onChanged: (_) {
                               if (isPasswordError) {
                                 setState(() => isPasswordError = false);
                               }
                             },
                             decoration: InputDecoration(
-                              // constraints: const BoxConstraints(
-                              //   minHeight: 44,
-                              //   //maxHeight: 44,
-                              // ),
-                              //isCollapsed: true,
                               contentPadding: const EdgeInsets.symmetric(
                                 horizontal: 10,
                                 vertical: 20,
@@ -215,11 +202,9 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                               final v = value ?? '';
                               if (v.isEmpty) {
                                 return "비밀번호를 입력해 주세요";
-                                // return "";
                               }
                               if (v.length < 8 || v.length > 20) {
                                 return "비밀번호는 8자-20자여야 합니다";
-                                // return "";
                               }
                               final hasLetter = RegExp(r'[A-Za-z]').hasMatch(v);
                               final hasNumber = RegExp(r'[0-9]').hasMatch(v);
@@ -228,7 +213,6 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                               ).hasMatch(v);
                               if (!hasLetter || !hasNumber || !hasSpecialChar) {
                                 return "영어와 숫자와 특수문자를 모두 포함해야 합니다";
-                                // return "";
                               }
                               return null;
                             },
@@ -241,100 +225,29 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
 
                 const SizedBox(height: 139),
 
-                SizedBox(
-                  width: double.infinity,
-                  height: 44,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.primary.withValues(alpha: .5),
-                          blurRadius: 12,
-                          spreadRadius: 2,
-                          offset: const Offset(0, 0),
-                        ),
-                      ],
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: ElevatedButton(
-                      onPressed:
-                          isLoading
-                              ? null
-                              : () async {
-                                final emailOk =
-                                    _emailFieldKey.currentState?.validate() ??
-                                    false;
-                                final pwOk =
-                                    _passwordFieldKey.currentState
-                                        ?.validate() ??
-                                    false;
+                PrimaryActionButton(
+                  isLoading: isLoading,
+                  label: '로그인',
+                  onPressed: () async {
+                    final emailOk =
+                        _emailFieldKey.currentState?.validate() ?? false;
+                    final pwOk =
+                        _passwordFieldKey.currentState?.validate() ?? false;
 
-                                setState(() {
-                                  isEmailError = !emailOk;
-                                  isPasswordError = !pwOk;
-                                });
+                    setState(() {
+                      isEmailError = !emailOk;
+                      isPasswordError = !pwOk;
+                    });
 
-                                if (!(emailOk && pwOk)) return;
+                    if (!(emailOk && pwOk)) return;
 
-                                final email = _emailController.text;
-                                final password = _passwordController.text;
-                                await ref
-                                    .read(authControllerProvider.notifier)
-                                    .signUp(email, password);
-                              },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child:
-                          isLoading
-                              ? const SizedBox(
-                                height: 20,
-                                width: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                ),
-                              )
-                              : Text(
-                                '가입하기',
-                                style: AppTypography.xl500.copyWith(
-                                  color: AppColors.wt,
-                                ),
-                              ),
-                    ),
-                  ),
-                ),
-                // 로그인으로 바로 가는 버튼
-                const SizedBox(height: 12),
+                    final email = _emailController.text.trim();
+                    final password = _passwordController.text;
 
-                SizedBox(
-                  width: double.infinity,
-                  height: 44,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(color: AppColors.primary),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        context.go('/login');
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child: Text(
-                        '로그인하기',
-                        style: AppTypography.xl500.copyWith(
-                          color: AppColors.primary,
-                        ),
-                      ),
-                    ),
-                  ),
+                    await ref
+                        .read(authControllerProvider.notifier)
+                        .login(email, password);
+                  },
                 ),
               ],
             ),

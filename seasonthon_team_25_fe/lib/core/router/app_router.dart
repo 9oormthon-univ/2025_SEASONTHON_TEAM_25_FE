@@ -10,7 +10,7 @@ import 'package:seasonthon_team_25_fe/feature/scrap/routes/scrap_routes.dart';
 import 'package:seasonthon_team_25_fe/gen/assets.gen.dart';
 
 final appRouter = GoRouter(
-  initialLocation: '/sign-up',
+  initialLocation: '/nickname',
   routes: [
     ...authRoutes,
     ShellRoute(

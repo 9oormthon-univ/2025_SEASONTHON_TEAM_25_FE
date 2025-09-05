@@ -4,15 +4,16 @@ import 'package:go_router/go_router.dart';
 import 'package:seasonthon_team_25_fe/core/theme/colors.dart';
 import 'package:seasonthon_team_25_fe/core/theme/typography.dart';
 import 'package:seasonthon_team_25_fe/feature/auth/presentation/providers/auth_controller.dart';
+import 'package:seasonthon_team_25_fe/ui/utils/primary_action_dtn.dart';
 
-class LoginPage extends ConsumerStatefulWidget {
-  const LoginPage({super.key});
+class SignUpPage extends ConsumerStatefulWidget {
+  const SignUpPage({super.key});
 
   @override
-  ConsumerState<LoginPage> createState() => _LoginPageState();
+  ConsumerState<SignUpPage> createState() => _SignUpPageState();
 }
 
-class _LoginPageState extends ConsumerState<LoginPage> {
+class _SignUpPageState extends ConsumerState<SignUpPage> {
   final _formKey = GlobalKey<FormState>();
   final _emailFieldKey = GlobalKey<FormFieldState<String>>();
   final _passwordFieldKey = GlobalKey<FormFieldState<String>>();
@@ -22,6 +23,12 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _bootstrap();
+  }
 
   @override
   void dispose() {
@@ -130,10 +137,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                 borderRadius: BorderRadius.circular(12),
                                 borderSide: BorderSide.none,
                               ),
-                              // errorStyle: const TextStyle(
-                              //   height: 0,
-                              //   fontSize: 0,
-                              // ),
+                              errorStyle: const TextStyle(
+                                height: 0,
+                                fontSize: 0,
+                              ),
                               helperText: '',
                               helperStyle: const TextStyle(
                                 height: 0,
@@ -241,68 +248,57 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
                 const SizedBox(height: 139),
 
+                PrimaryActionButton(
+                  isLoading: isLoading,
+                  label: '가입하기',
+                  onPressed: () async {
+                    final emailOk =
+                        _emailFieldKey.currentState?.validate() ?? false;
+                    final pwOk =
+                        _passwordFieldKey.currentState?.validate() ?? false;
+
+                    setState(() {
+                      isEmailError = !emailOk;
+                      isPasswordError = !pwOk;
+                    });
+
+                    if (!(emailOk && pwOk)) return;
+
+                    final email = _emailController.text.trim();
+                    final password = _passwordController.text;
+
+                    await ref
+                        .read(authControllerProvider.notifier)
+                        .signUp(email, password);
+                  },
+                ),
+                // 로그인으로 바로 가는 버튼
+                const SizedBox(height: 12),
+
                 SizedBox(
                   width: double.infinity,
                   height: 44,
                   child: Container(
                     decoration: BoxDecoration(
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.primary.withValues(alpha: .5),
-                          blurRadius: 12,
-                          spreadRadius: 2,
-                          offset: const Offset(0, 0),
-                        ),
-                      ],
+                      border: Border.all(color: AppColors.primary),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: ElevatedButton(
-                      onPressed:
-                          isLoading
-                              ? null
-                              : () async {
-                                final emailOk =
-                                    _emailFieldKey.currentState?.validate() ??
-                                    false;
-                                final pwOk =
-                                    _passwordFieldKey.currentState
-                                        ?.validate() ??
-                                    false;
-
-                                setState(() {
-                                  isEmailError = !emailOk;
-                                  isPasswordError = !pwOk;
-                                });
-
-                                if (!(emailOk && pwOk)) return;
-
-                                final email = _emailController.text;
-                                final password = _passwordController.text;
-                                await ref
-                                    .read(authControllerProvider.notifier)
-                                    .signUp(email, password);
-                              },
+                      onPressed: () {
+                        context.go('/login');
+                      },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
+                        backgroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      child:
-                          isLoading
-                              ? const SizedBox(
-                                height: 20,
-                                width: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                ),
-                              )
-                              : Text(
-                                '회원 가입',
-                                style: AppTypography.xl500.copyWith(
-                                  color: AppColors.wt,
-                                ),
-                              ),
+                      child: Text(
+                        '로그인하기',
+                        style: AppTypography.xl500.copyWith(
+                          color: AppColors.primary,
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -312,5 +308,24 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         ),
       ),
     );
+  }
+
+  Future<void> _bootstrap() async {
+    // 1) 토큰 존재만 빠르게 확인
+    final hasRT =
+        await ref.read(authControllerProvider.notifier).hasRefreshToken();
+    debugPrint('[SignUpPage] hasRT: $hasRT');
+    if (!hasRT) return; // 저장소에 토큰 없으면 자동로그인 시도도 안 함
+
+    // 2) 자동 로그인 시도
+    final ok = await ref.read(authControllerProvider.notifier).tryAutoLogin();
+    if (!mounted || !ok) return;
+
+    // 3) 분기: 캐릭터 생성 여부 //characterCreated == true
+    if (ok) {
+      context.go('/home'); // GoRouter 사용시
+    } else {
+      context.go('/home'); //임시 // 캐릭터 미생성 시 온보딩으로
+    }
   }
 }

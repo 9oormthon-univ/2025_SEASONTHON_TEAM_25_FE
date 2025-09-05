@@ -26,6 +26,18 @@ class AppTypography {
     color: AppColors.wt,
   );
 
+  static final TextStyle h2 = base.copyWith(
+    fontSize: 20,
+    fontWeight: FontWeight.w600,
+    color: AppColors.bk,
+  );
+
+  static final TextStyle h3 = base.copyWith(
+    fontSize: 16,
+    fontWeight: FontWeight.w600,
+    color: AppColors.bk,
+  );
+
   static final TextStyle xl500 = base.copyWith(
     fontSize: 16,
     fontWeight: FontWeight.w500,
@@ -36,6 +48,12 @@ class AppTypography {
     fontSize: 14,
     fontWeight: FontWeight.w500,
     color: AppColors.gr600,
+  );
+
+  static final TextStyle m600 = base.copyWith(
+    fontSize: 12,
+    fontWeight: FontWeight.w600,
+    color: AppColors.bl,
   );
 
   static final TextStyle m500 = base.copyWith(
