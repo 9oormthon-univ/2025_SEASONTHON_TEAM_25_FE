@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:seasonthon_team_25_fe/core/theme/colors.dart';
 import 'package:seasonthon_team_25_fe/core/theme/typography.dart';
 import 'package:seasonthon_team_25_fe/feature/auth/presentation/providers/auth_controller.dart';
-import 'package:seasonthon_team_25_fe/ui/utils/primary_action_dtn.dart';
+import 'package:seasonthon_team_25_fe/ui/components/primary_action_dtn.dart';
 
 class SignUpPage extends ConsumerStatefulWidget {
   const SignUpPage({super.key});

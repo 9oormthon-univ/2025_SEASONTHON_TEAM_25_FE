@@ -6,7 +6,7 @@ import 'package:seasonthon_team_25_fe/core/theme/typography.dart';
 import 'package:seasonthon_team_25_fe/feature/onboarding/data/models/onboarding_models.dart';
 import 'package:seasonthon_team_25_fe/feature/onboarding/data/repositoryImpl/onboarding_repositoryImpl.dart';
 import 'package:seasonthon_team_25_fe/gen/assets.gen.dart';
-import 'package:seasonthon_team_25_fe/ui/utils/primary_action_dtn.dart';
+import 'package:seasonthon_team_25_fe/ui/components/primary_action_dtn.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class NicknamePage extends ConsumerStatefulWidget {
@@ -37,7 +37,7 @@ class _NicknamePageState extends ConsumerState<NicknamePage> {
         actions: <Widget>[
           IconButton(
             icon: SvgPicture.asset(
-              Assets.images.utils.xIcon.path,
+              Assets.images.components.xIcon.path,
               height: 24,
               width: 24,
             ),
@@ -56,17 +56,11 @@ class _NicknamePageState extends ConsumerState<NicknamePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // SvgPicture.asset(
-                //   Assets.images.onboarding.welcomText.path,
-                //   // height: 56,
-                //   // width: 90,
-                // ),
-                // SvgPicture.asset(
-                //   Assets.images.onboarding.FAFF.path,
-                //   // height: 20,
-                //   // width: 120,
-                // ),
-                Assets.images.onboarding.faffNocircle.image(),
+                Assets.images.onboarding.faffNocircle.image(
+                  width: 120,
+                  height: 175,
+                  fit: BoxFit.contain,
+                ),
                 const SizedBox(height: 54.7),
                 Align(
                   alignment: Alignment.centerLeft,
