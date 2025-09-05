@@ -43,3 +43,37 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# ---------------------- Added (Flutter app best-practice) ----------------------
+
+# Android – local/gradle caches & secrets
+/android/.gradle/
+/android/local.properties
+/android/key.properties
+/android/app/*.keystore
+/android/**/build/
+
+# iOS/macOS – CocoaPods & Flutter ephemeral artifacts
+**/Pods/
+**/.symlinks/
+**/Flutter/App.framework
+**/Flutter/Flutter.framework
+**/Flutter/Flutter.podspec
+**/Flutter/Generated.xcconfig
+**/Flutter/ephemeral/
+**/xcuserdata/
+
+# Windows/Linux desktop – ephemeral
+**/flutter/ephemeral/
+
+# Web – generated registrant
+/lib/generated_plugin_registrant.dart
+
+# Any auto-generated plugin registrant files (do not commit)
+/**/GeneratedPluginRegistrant.*
+
+# FlutterGen output (auto-generated)
+/lib/gen/
+
+# Coverage
+coverage/
