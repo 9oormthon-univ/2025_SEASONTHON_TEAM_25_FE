@@ -14,8 +14,6 @@ import 'package:seasonthon_team_25_fe/ui/components/custom_app_bar.dart';
 import 'package:seasonthon_team_25_fe/ui/components/primary_action_dtn.dart';
 import 'package:seasonthon_team_25_fe/ui/components/rounded_text_box.dart';
 
-// 새 설계 컨트롤러/모델
-
 class QuizQuestionPage extends ConsumerStatefulWidget {
   const QuizQuestionPage({super.key});
   @override
@@ -23,8 +21,8 @@ class QuizQuestionPage extends ConsumerStatefulWidget {
 }
 
 class _QuizQuestionPageState extends ConsumerState<QuizQuestionPage> {
-  bool? selectedO;
-  int? selectedIndex;
+  bool? selectedO; // OX 선택값
+  int? selectedIndex; // MCQ 0-based 선택값
   int? _lastPrintedUserQuizId;
 
   void _resetLocalSelection() {
@@ -65,14 +63,17 @@ class _QuizQuestionPageState extends ConsumerState<QuizQuestionPage> {
     final bool isRevealed = (state.phase == QuizPhase.revealed);
     final bool isCorrect = state.verdicts[q.userQuizId] == true;
 
+    // 카드 높이는 여유 있게 (MCQ가 길면 스크롤로 모두 볼 수 있음)
     final double cardHeight =
-        isRevealed ? (isOX ? 430 : 560) : (isOX ? 360 : 500);
+        isRevealed ? (isOX ? 430 : 650) : (isOX ? 360 : 650);
 
     if (_lastPrintedUserQuizId != q.userQuizId) {
       debugPrint(
         '[QUIZ] show Q id=${q.userQuizId} correct=${q.normalizedCorrect} type=${q.type}',
       );
       _lastPrintedUserQuizId = q.userQuizId;
+      // 새 문항 진입 시 로컬 선택 초기화(화면 잔상 방지)
+      _resetLocalSelection();
     }
 
     return Scaffold(
@@ -81,7 +82,7 @@ class _QuizQuestionPageState extends ConsumerState<QuizQuestionPage> {
         title: "퀴즈",
         showLeft: true,
         showRight: false,
-        onTapLeft: () => context.go('/quiz'),
+        onTapLeft: () => context.go('/home'),
       ),
       body: Container(
         width: double.infinity,
@@ -162,7 +163,7 @@ class _QuizQuestionPageState extends ConsumerState<QuizQuestionPage> {
             ),
             const SizedBox(height: 24),
 
-            // QuizQuestionPage build 하단 버튼 부분
+            // 하단 행동 버튼
             if (!isRevealed) ...[
               PrimaryActionButton(
                 label: "선택했어요",
@@ -171,26 +172,38 @@ class _QuizQuestionPageState extends ConsumerState<QuizQuestionPage> {
                   if (isOX && selectedO == null) return;
                   if (!isOX && selectedIndex == null) return;
 
-                  final userAnswer =
-                      isOX
-                          ? (selectedO! ? 'true' : 'false')
-                          : '${selectedIndex! + 1}';
+                  // 1) 로컬 정오판정 계산 (문자열 정규화 없이 타입 기반)
+                  late final bool nowCorrect;
+                  if (isOX) {
+                    nowCorrect = (selectedO!.toString() == q.normalizedCorrect);
+                  } else {
+                    final one = (selectedIndex! + 1).toString();
+                    nowCorrect = (one == q.normalizedCorrect);
+                  }
 
-                  await ctrl.submitCurrent(userAnswer);
+                  // 2) 서버 제출 (타입 분기)
+                  try {
+                    if (isOX) {
+                      await ctrl.submitCurrent(oxValue: selectedO);
+                    } else {
+                      await ctrl.submitCurrent(mcqIndex0: selectedIndex);
+                    }
+                  } catch (_) {
+                    // 컨트롤러에서 에러 상태 세팅함
+                  }
 
-                  final nowCorrect = (userAnswer == q.normalizedCorrect);
-
+                  // 3) UI 분기
                   if (nowCorrect) {
-                    // 정답 → 해설 노출 단계
+                    // 정답 → 해설 노출 단계(컨트롤러가 revealed=true로 변경)
                     setState(() {});
                   } else {
-                    // 오답 → 안내 후 바로 next
+                    // 오답 → 안내 후 다음
                     ScaffoldMessenger.of(
                       context,
                     ).showSnackBar(const SnackBar(content: Text("오답입니다")));
                     if (state.isLast) {
                       ctrl.next();
-                      context.go('/quiz');
+                      if (mounted) context.go('/quiz');
                     } else {
                       ctrl.next();
                       _resetLocalSelection();
@@ -201,7 +214,7 @@ class _QuizQuestionPageState extends ConsumerState<QuizQuestionPage> {
                 isLoading: false,
               ),
             ] else if (isCorrect) ...[
-              // ✅ 정답일 때만 해설 단계
+              // ✅ 정답일 때만 해설 단계 버튼 노출
               PrimaryActionButton(
                 label: state.isLast ? "완료" : "다음 문제",
                 onPressed: () {
@@ -224,7 +237,7 @@ class _QuizQuestionPageState extends ConsumerState<QuizQuestionPage> {
   }
 }
 
-/// OX/MCQ 영역과 _RevealBlock 은 이전과 동일하되, onSelect가 null이면 잠금만 추가
+/// OX 선택 위젯
 class _OxArea extends StatelessWidget {
   const _OxArea({required this.selectedO, required this.onSelect});
   final bool? selectedO;
@@ -288,6 +301,7 @@ class _OxArea extends StatelessWidget {
   }
 }
 
+/// MCQ 선택 위젯
 class _McqArea extends StatelessWidget {
   const _McqArea({
     required this.options,
@@ -300,6 +314,7 @@ class _McqArea extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // ListView는 상위 Expanded 안에서 스크롤됨
     return ListView.separated(
       padding: const EdgeInsets.symmetric(vertical: 8),
       itemCount: options.length,
@@ -309,7 +324,7 @@ class _McqArea extends StatelessWidget {
         return InkWell(
           onTap: onSelect == null ? null : () => onSelect!(i),
           child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 12),
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
             decoration: BoxDecoration(
               border: Border.all(
                 color:
@@ -323,10 +338,20 @@ class _McqArea extends StatelessWidget {
                       ? AppColors.primary.withValues(alpha: 0.08)
                       : Colors.transparent,
             ),
-            child: Text(
-              options[i],
-              style: AppTypography.l500.copyWith(color: AppColors.bk),
-              textAlign: TextAlign.center,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '${i + 1}. ',
+                  style: AppTypography.l500.copyWith(color: AppColors.primary),
+                ),
+                Expanded(
+                  child: Text(
+                    options[i],
+                    style: AppTypography.l500.copyWith(color: AppColors.bk),
+                  ),
+                ),
+              ],
             ),
           ),
         );
@@ -376,7 +401,7 @@ class _RevealBlock extends StatelessWidget {
             const SizedBox(height: 8),
             GestureDetector(
               onTap: () {
-                // 필요 시 웹뷰/외부 브라우저로 연결
+                // TODO: 웹뷰/외부 브라우저 연결
               },
               child: Text(
                 '관련 기사 보러가기',

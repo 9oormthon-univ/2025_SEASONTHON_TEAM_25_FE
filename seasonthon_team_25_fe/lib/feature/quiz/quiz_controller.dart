@@ -1,8 +1,6 @@
-// lib/feature/quiz/application/quiz_controller.dart
 import 'dart:developer';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:seasonthon_team_25_fe/core/network/dio_provider.dart';
 import 'package:seasonthon_team_25_fe/feature/quiz/quiz_api.dart';
 import 'package:seasonthon_team_25_fe/feature/quiz/quiz_models.dart';
 
@@ -15,10 +13,10 @@ class QuizRunState {
   final bool isCompleted; // 서버 플래그(오늘 이미 끝)
   final List<QuizQuestion> questions;
   final int index; // 현재 문항 인덱스 (0-based)
-  final Map<int, String> answers; // userQuizId -> userAnswer
+  final Map<int, String> answers; // userQuizId -> userAnswer(normalized)
   final Map<int, bool> verdicts; // userQuizId -> 정오
   final bool revealed; // 현재 문항 해설/정답 노출중?
-  final bool retryMode; // ✅ 오답 재도전 라운드 여부
+  final bool retryMode; // 오답 재도전 라운드 여부
   final String? error;
 
   const QuizRunState({
@@ -121,7 +119,7 @@ class QuizController extends StateNotifier<QuizRunState> {
         answers: {},
         verdicts: {},
         revealed: false,
-        retryMode: false, // ✅ 첫 라운드는 false
+        retryMode: false,
         error: null,
       );
     } catch (e) {
@@ -129,11 +127,28 @@ class QuizController extends StateNotifier<QuizRunState> {
     }
   }
 
-  Future<void> submitCurrent(String userAnswer) async {
+  /// 제출(타입 분기)
+  /// - OX: [oxValue]만 전달
+  /// - MCQ: [mcqIndex0]만 전달 (0-based)
+  Future<void> submitCurrent({bool? oxValue, int? mcqIndex0}) async {
     final q = state.current;
     if (q == null) return;
 
-    final norm = _normalizeAnswer(userAnswer);
+    // 1) 로컬 정오판정용 normalized 문자열 생성
+    late final String norm;
+    if (q.type == QuizType.ox) {
+      // 화면에서 받은 bool 그대로 toString()
+      if (oxValue == null) return;
+      norm = oxValue.toString(); // "true"/"false"
+    } else {
+      if (mcqIndex0 == null) return;
+      final one = mcqIndex0 + 1;
+      final max = q.mcqOptions?.length ?? 0;
+      final safeOne = (max > 0) ? one.clamp(1, max) : one;
+      norm = safeOne.toString(); // "1".."n"
+    }
+
+    // 2) 로컬 정오판정
     final isCorrect = (norm == q.normalizedCorrect);
 
     final newAnswers = Map<int, String>.from(state.answers)..[q.userQuizId] = norm;
@@ -147,15 +162,30 @@ class QuizController extends StateNotifier<QuizRunState> {
       error: null,
     );
 
+    // 3) 서버 제출: **OX=bool, MCQ=int(1-based)**
     try {
-      await _api.submitAnswer(userQuizId: q.userQuizId, userAnswer: norm);
+      dynamic userAnswer;
+      if (q.type == QuizType.ox) {
+        userAnswer = oxValue; // bool
+      } else {
+        final one = (mcqIndex0! + 1);
+        final max = q.mcqOptions?.length ?? 0;
+        userAnswer = (max > 0) ? one.clamp(1, max) : one; // int
+      }
+
+      if (kDebugMode) {
+        log('[QUIZ] submit payload => {userQuizId: ${q.userQuizId}, '
+            'type: ${q.type}, userAnswer: $userAnswer (${userAnswer.runtimeType})}');
+      }
+
+      await _api.submitAnswer(userQuizId: q.userQuizId, userAnswer: userAnswer);
     } catch (e) {
       log('[QUIZ] submit failed: $e');
       state = state.copyWith(error: '제출 실패: $e');
     }
   }
 
-  /// ✅ 오답이면 같은 문항을 다시 풀기 위해 호출
+  /// 오답이면 같은 문항을 다시 풀기 위해 호출
   void retryCurrent() {
     final q = state.current;
     if (q == null) return;
@@ -175,13 +205,11 @@ class QuizController extends StateNotifier<QuizRunState> {
   void next() {
     if (state.isLast) {
       // 마지막 문항 처리
-      // 오답 모으기
       final wrongIds = state.verdicts.entries
           .where((e) => e.value == false)
           .map((e) => e.key)
           .toSet();
 
-      // 아직 재도전 라운드가 아니고, 오답이 있다면 → 오답 라운드로 '준비' 상태 전환
       if (!state.retryMode && wrongIds.isNotEmpty) {
         final wrongQuestions = state.questions
             .where((qq) => wrongIds.contains(qq.userQuizId))
@@ -192,18 +220,15 @@ class QuizController extends StateNotifier<QuizRunState> {
           questions: wrongQuestions,
           index: 0,
           revealed: false,
-          retryMode: true,        // ✅ 재도전 라운드
-          // 기존 기록 중 오답들만 남겨도 되고, 깔끔하게 비워도 됨
-          answers: {},            // 다시 풀게 하므로 리셋
+          retryMode: true,
+          answers: {}, // 다시 풀게 하므로 리셋
           verdicts: {},
           error: null,
         );
       } else {
-        // 재도전 라운드까지 완료 → 끝
         state = state.copyWith(phase: QuizPhase.finished, revealed: false);
       }
     } else {
-      // 다음 문항으로
       state = state.copyWith(
         index: state.index + 1,
         phase: QuizPhase.asking,
@@ -214,20 +239,7 @@ class QuizController extends StateNotifier<QuizRunState> {
   }
 }
 
-// ===== Helpers & Providers =====
-String _normalizeAnswer(String v) {
-  final s = v.trim().toLowerCase();
-  if (s == 'o' || s == 'true' || s == '1') return 'true';
-  if (s == 'x' || s == 'false' || s == '0') return 'false';
-  return s; // MCQ "1".."4"
-}
-
-// 주입부는 기존과 동일 (dioProvider는 프로젝트 전역 것을 사용)
-final quizApiProvider = Provider<QuizApi>((ref) {
-  final dio = ref.watch(dioProvider);
-  return QuizApi(dio);
-});
-
+// ===== Provider =====
 final quizControllerProvider =
     StateNotifierProvider<QuizController, QuizRunState>((ref) {
   final api = ref.watch(quizApiProvider);
