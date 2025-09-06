@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -16,6 +17,7 @@ class TokenStorage {
     required String tokenType,
     required int expiresIn,
   }) async {
+    debugPrint("[TokenStorage] saveTokens: $accessToken, $refreshToken");
     await _s.write(key: _kAccess, value: accessToken);
     await _s.write(key: _kRefresh, value: refreshToken);
     await _s.write(key: _kType, value: tokenType);

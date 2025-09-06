@@ -6,6 +6,7 @@ import 'package:seasonthon_team_25_fe/core/theme/typography.dart';
 import 'package:seasonthon_team_25_fe/gen/assets.gen.dart';
 import 'package:seasonthon_team_25_fe/ui/components/blur_card.dart';
 import 'package:seasonthon_team_25_fe/ui/components/reward_box.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -16,13 +17,21 @@ class HomePage extends ConsumerStatefulWidget {
 
 class _HomePageState extends ConsumerState<HomePage> {
   final String reward = "1,234원";
-  final String userName = "Username";
+  late SharedPreferences prefs;
+  String? userName;
 
   @override
-  void initState() {
-    super.initState();
-    // 초기화 로직 필요 시 작성
-  }
+void initState() {
+  super.initState();
+  _loadUserName(); // 비동기 함수 호출
+}
+
+Future<void> _loadUserName() async {
+  final prefs = await SharedPreferences.getInstance();
+  setState(() {
+    userName = prefs.getString('characterName') ?? '사용자'; // 기본값 설정
+  });
+}
 
   @override
   Widget build(BuildContext context) {

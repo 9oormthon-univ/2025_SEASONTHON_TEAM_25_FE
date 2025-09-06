@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:seasonthon_team_25_fe/core/theme/colors.dart';
 import 'package:seasonthon_team_25_fe/core/theme/typography.dart';
 import 'package:seasonthon_team_25_fe/feature/onboarding/data/models/onboarding_models.dart';
@@ -43,7 +44,7 @@ class _NicknamePageState extends ConsumerState<NicknamePage> {
             ),
             onPressed: () {
               //Navigator.pop(context);
-              Navigator.pushReplacementNamed(context, '/login');
+              context.go("/login");
             },
           ),
         ],
@@ -125,19 +126,23 @@ class _NicknamePageState extends ConsumerState<NicknamePage> {
                         '[Onboarding] will send json: ${body.toJson()}',
                       );
                       try {
+                        debugPrint('1. createCharacter 호출 전');
                         await ref
                             .read(onboardingRepositoryProvider)
                             .createCharacter(characterName: characterName);
+                        debugPrint('2. createCharacter 호출 후');
 
-                        // SharedPreferences에 저장
                         final prefs = await SharedPreferences.getInstance();
+                        debugPrint('3. SharedPreferences 인스턴스 획득');
                         await prefs.setString('characterName', characterName);
+                        debugPrint('4. characterName 저장 완료');
 
-                        // 홈으로 이동
                         if (context.mounted) {
-                          Navigator.pushReplacementNamed(context, '/home');
+                          debugPrint('5. 홈으로 이동');
+                          context.go("/home");
                         }
-                      } catch (e) {
+                      } catch (e, stack) {
+                        debugPrint('에러 발생: $e\n$stack');
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text('닉네임 설정에 실패했습니다. 다시 시도해 주세요.'),
