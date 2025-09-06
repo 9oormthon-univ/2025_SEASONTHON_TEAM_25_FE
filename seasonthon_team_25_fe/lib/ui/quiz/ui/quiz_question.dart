@@ -1,14 +1,20 @@
+// lib/feature/quiz/ui/quiz_question_page.dart
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
 import 'package:seasonthon_team_25_fe/core/theme/colors.dart';
 import 'package:seasonthon_team_25_fe/core/theme/typography.dart';
-import 'package:seasonthon_team_25_fe/feature/quiz/repository/quiz.dart';
+import 'package:seasonthon_team_25_fe/feature/quiz/quiz_controller.dart';
+import 'package:seasonthon_team_25_fe/feature/quiz/quiz_models.dart';
 import 'package:seasonthon_team_25_fe/gen/assets.gen.dart';
 import 'package:seasonthon_team_25_fe/ui/components/blur_card.dart';
 import 'package:seasonthon_team_25_fe/ui/components/custom_app_bar.dart';
 import 'package:seasonthon_team_25_fe/ui/components/primary_action_dtn.dart';
 import 'package:seasonthon_team_25_fe/ui/components/rounded_text_box.dart';
+
+// 새 설계 컨트롤러/모델
 
 class QuizQuestionPage extends ConsumerStatefulWidget {
   const QuizQuestionPage({super.key});
@@ -18,8 +24,10 @@ class QuizQuestionPage extends ConsumerStatefulWidget {
 }
 
 class _QuizQuestionPageState extends ConsumerState<QuizQuestionPage> {
-  bool? selectedO;       // OX 선택값
-  int? selectedIndex;    // MCQ 선택 인덱스
+  bool? selectedO;    // OX 선택값
+  int? selectedIndex; // MCQ 선택 인덱스 (0-based)
+
+  int? _lastPrintedUserQuizId; // 중복 로그 방지
 
   void _resetLocalSelection() {
     selectedO = null;
@@ -28,32 +36,45 @@ class _QuizQuestionPageState extends ConsumerState<QuizQuestionPage> {
 
   @override
   Widget build(BuildContext context) {
-    final session = ref.watch(quizSessionProvider);
-    final notifier = ref.read(quizSessionProvider.notifier);
+    final state = ref.watch(quizControllerProvider);
+    final ctrl  = ref.read(quizControllerProvider.notifier);
 
-    if (session.loading) {
+    // 로딩
+    if (state.phase == QuizPhase.loading) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
-    if (session.error != null) {
+
+    // 에러
+    if (state.phase == QuizPhase.error) {
       return Scaffold(
         appBar: const CustomAppBar(title: "퀴즈", showLeft: true, showRight: false),
-        body: Center(child: Text('불러오기 실패: ${session.error}')),
+        body: Center(child: Text('불러오기 실패: ${state.error ?? '알 수 없는 오류'}')),
       );
     }
-    if (!session.hasData || session.completed) {
+
+    // 데이터 없거나 완료되면 리스트 페이지로
+    if (!state.hasData || state.phase == QuizPhase.finished) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) context.go('/quiz');
       });
       return const Scaffold(body: SizedBox.shrink());
     }
 
-    final total = session.quizzes.length;
-    final idx = session.currentIndex;
-    final q = session.quizzes[idx];
+    final q = state.current!;
+    final total = state.questions.length;
+    final idx   = state.index;
+    final isOX  = (q.type == QuizType.ox);
 
-    final bool isOX = q.type == 'OX';
-    // ✅ 타입별 카드 높이 분기 (적당히 여유 줌)
-    final double cardHeight = isOX ? 360.0 : 500.0;
+    // 카드 높이
+    final double cardHeight =
+        state.phase == QuizPhase.revealed ? (isOX ? 430 : 560) : (isOX ? 360 : 500);
+
+    // 문제 진입 시 정답 로그 (중복 방지)
+    if (_lastPrintedUserQuizId != q.userQuizId) {
+      debugPrint('[QUIZ] show Q id=${q.userQuizId} correct=${q.normalizedCorrect} '
+          'type=${q.type == QuizType.ox ? 'OX' : 'MCQ'}');
+      _lastPrintedUserQuizId = q.userQuizId;
+    }
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -69,7 +90,6 @@ class _QuizQuestionPageState extends ConsumerState<QuizQuestionPage> {
         color: AppColors.sk,
         child: Column(
           children: [
-            // ✅ 카드 화면 '정중앙' 배치를 위해 Expanded+Center
             Expanded(
               child: Center(
                 child: BlurredCard(
@@ -87,52 +107,107 @@ class _QuizQuestionPageState extends ConsumerState<QuizQuestionPage> {
                       ),
                       const SizedBox(height: 12),
 
-                      // ✅ 내용 영역은 남은 공간에 맞춰 확장 + 스크롤 가능
+                      // 본문(선택영역 또는 선택영역 + 해설)
                       Expanded(
-                        child: isOX
-                            ? _OxArea(
-                                selectedO: selectedO,
-                                onSelect: (v) => setState(() => selectedO = v),
-                              )
-                            : _McqArea(
-                                options: q.mcqOptions ?? const [],
-                                selectedIndex: selectedIndex,
-                                onSelect: (i) => setState(() => selectedIndex = i),
+                        child: Column(
+                          children: [
+                            // 선택 영역
+                            Expanded(
+                              child: isOX
+                                  ? _OxArea(
+                                      selectedO: selectedO,
+                                      onSelect: state.phase == QuizPhase.revealed
+                                          ? null // 해설 노출 중에는 선택 잠금
+                                          : (v) => setState(() => selectedO = v),
+                                    )
+                                  : _McqArea(
+                                      options: q.mcqOptions ?? const [],
+                                      selectedIndex: selectedIndex,
+                                      onSelect: state.phase == QuizPhase.revealed
+                                          ? null // 해설 노출 중에는 선택 잠금
+                                          : (i) => setState(() => selectedIndex = i),
+                                    ),
+                            ),
+
+                            // 해설/정답 노출
+                            if (state.phase == QuizPhase.revealed) ...[
+                              const SizedBox(height: 12),
+                              _RevealBlock(
+                                isCorrect: state.verdicts[q.userQuizId] == true,
+                                explanation: q.explanation,
+                                newsUrl: q.newsUrl,
+                                correctLabel: q.type == QuizType.ox
+                                    ? (q.normalizedCorrect == 'true' ? 'O(맞아요)' : 'X(틀려요)')
+                                    : '정답: ${q.normalizedCorrect}번',
                               ),
+                            ],
+                          ],
+                        ),
                       ),
                     ],
                   ),
                 ),
               ),
             ),
-
             const SizedBox(height: 24),
 
-            PrimaryActionButton(
-              isLoading: false,
-              label: "선택했어요",
-              onPressed: () {
-                // 선택 검증
-                if (q.type == 'OX' && selectedO == null) return;
-                if (q.type == 'MCQ' && selectedIndex == null) return;
+            // 하단 버튼
+            if (state.phase == QuizPhase.asking) ...[
+              PrimaryActionButton(
+                isLoading: false,
+                label: "선택했어요",
+                onPressed: () async {
+                  // 선택 검증
+                  if (isOX && selectedO == null) return;
+                  if (!isOX && selectedIndex == null) return;
 
-                // 서버 제출은 notifier 안에서 처리한다고 가정
-                if (q.type == 'OX') {
-                  notifier.answerOx(selectedO!);
-                } else {
-                  notifier.answerMcq(selectedIndex!);
-                }
+                  // 서버 규격으로 변환
+                  final userAnswer = isOX
+                      ? (selectedO! ? 'true' : 'false')
+                      : '${selectedIndex! + 1}';
 
-                if (session.isLast) {
-                  notifier.next(); // completed = true
-                  if (mounted) context.go('/quiz');
-                } else {
-                  notifier.next();
-                  _resetLocalSelection();
-                  setState(() {}); // 다음 문제 반영
-                }
-              },
-            ),
+                  await ctrl.submitCurrent(userAnswer);
+
+                  // 간단 피드백
+                  final isCorrect = state.current != null
+                      ? (userAnswer == state.current!.normalizedCorrect)
+                      : null;
+                  if (kDebugMode && isCorrect != null) {
+                    debugPrint('[QUIZ] answered id=${q.userQuizId} '
+                        'user=$userAnswer correct=${q.normalizedCorrect} '
+                        '=> ${isCorrect ? 'CORRECT' : 'WRONG'}');
+                  }
+
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          (state.verdicts[q.userQuizId] == true)
+                              ? '정답이에요!'
+                              : '오답이에요!',
+                        ),
+                        duration: const Duration(milliseconds: 700),
+                      ),
+                    );
+                  }
+                },
+              ),
+            ] else if (state.phase == QuizPhase.revealed) ...[
+              PrimaryActionButton(
+                isLoading: false,
+                label: state.isLast ? "완료" : "다음 문제",
+                onPressed: () {
+                  if (state.isLast) {
+                    ctrl.next(); // finished
+                    context.go('/quiz');
+                  } else {
+                    ctrl.next();
+                    _resetLocalSelection();
+                    setState(() {}); // 다음 반영
+                  }
+                },
+              ),
+            ],
           ],
         ),
       ),
@@ -140,7 +215,7 @@ class _QuizQuestionPageState extends ConsumerState<QuizQuestionPage> {
   }
 }
 
-/// OX 전용 영역 (Row 높이/정렬 안정화)
+/// OX 전용 영역 (선택 잠금 지원)
 class _OxArea extends StatelessWidget {
   const _OxArea({
     required this.selectedO,
@@ -148,7 +223,7 @@ class _OxArea extends StatelessWidget {
   });
 
   final bool? selectedO;
-  final ValueChanged<bool> onSelect;
+  final ValueChanged<bool>? onSelect;
 
   @override
   Widget build(BuildContext context) {
@@ -162,13 +237,13 @@ class _OxArea extends StatelessWidget {
               label: "맞아요",
               image: Assets.images.quiz.answerO,
               selected: selectedO == true,
-              onTap: () => onSelect(true),
+              onTap: onSelect == null ? null : () => onSelect!(true),
             ),
             _oxChoiceBox(
               label: "틀려요",
               image: Assets.images.quiz.answerX,
               selected: selectedO == false,
-              onTap: () => onSelect(false),
+              onTap: onSelect == null ? null : () => onSelect!(false),
             ),
           ],
         ),
@@ -180,7 +255,7 @@ class _OxArea extends StatelessWidget {
     required String label,
     required AssetGenImage image,
     required bool selected,
-    required VoidCallback onTap,
+    required VoidCallback? onTap,
   }) {
     return GestureDetector(
       onTap: onTap,
@@ -198,7 +273,7 @@ class _OxArea extends StatelessWidget {
           children: [
             image.image(width: 100, height: 100, fit: BoxFit.contain),
             const SizedBox(height: 4),
-            const Text(" ", style: TextStyle(color: Colors.white)), // 라벨 감성 유지
+            const Text(" ", style: TextStyle(color: Colors.white)),
             Text(label, style: const TextStyle(color: Colors.white)),
           ],
         ),
@@ -207,7 +282,7 @@ class _OxArea extends StatelessWidget {
   }
 }
 
-/// MCQ 전용 영역 (스크롤 가능)
+/// MCQ 전용 영역 (선택 잠금 지원)
 class _McqArea extends StatelessWidget {
   const _McqArea({
     required this.options,
@@ -217,11 +292,10 @@ class _McqArea extends StatelessWidget {
 
   final List<String> options;
   final int? selectedIndex;
-  final ValueChanged<int> onSelect;
+  final ValueChanged<int>? onSelect;
 
   @override
   Widget build(BuildContext context) {
-    // 카드 내부 남은 공간에서 자연스럽게 스크롤되도록 ListView
     return ListView.separated(
       padding: const EdgeInsets.symmetric(vertical: 8),
       itemCount: options.length,
@@ -229,13 +303,14 @@ class _McqArea extends StatelessWidget {
       itemBuilder: (context, i) {
         final isSel = selectedIndex == i;
         return InkWell(
-          onTap: () => onSelect(i),
+          onTap: onSelect == null ? null : () => onSelect!(i),
           child: Container(
             padding: const EdgeInsets.symmetric(vertical: 12),
             decoration: BoxDecoration(
               border: Border.all(
-                color:
-                    isSel ? AppColors.primary : AppColors.primary.withValues(alpha: .25),
+                color: isSel
+                    ? AppColors.primary
+                    : AppColors.primary.withValues(alpha: .25),
               ),
               borderRadius: BorderRadius.circular(24),
               color: isSel
@@ -250,6 +325,71 @@ class _McqArea extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+/// 정답/해설 블록
+class _RevealBlock extends StatelessWidget {
+  const _RevealBlock({
+    required this.isCorrect,
+    required this.correctLabel,
+    this.explanation,
+    this.newsUrl,
+  });
+
+  final bool isCorrect;
+  final String correctLabel;
+  final String? explanation;
+  final String? newsUrl;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(12, 12, 12, 8),
+      decoration: BoxDecoration(
+        color: isCorrect
+            ? AppColors.primary.withValues(alpha: .10)
+            : Colors.black.withOpacity(.05),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: isCorrect
+              ? AppColors.primary
+              : Colors.black.withOpacity(.15),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(isCorrect ? '정답입니다! ✅' : '아쉬워요! ❌',
+              style: AppTypography.h3.copyWith(color: AppColors.bk)),
+          const SizedBox(height: 6),
+          Text(correctLabel, style: AppTypography.l500.copyWith(color: AppColors.bk)),
+          if (explanation != null) ...[
+            const SizedBox(height: 6),
+            Text(
+              explanation!,
+              style: AppTypography.l500.copyWith(color: AppColors.bk),
+            ),
+          ],
+          if (newsUrl != null && newsUrl!.isNotEmpty) ...[
+            const SizedBox(height: 8),
+            GestureDetector(
+              onTap: () {
+                // 라우터/웹뷰 정책에 맞게 구현하세요.
+                // 예: context.push('/web?url=${Uri.encodeComponent(newsUrl!)}');
+              },
+              child: Text(
+                '관련 기사 보러가기',
+                style: AppTypography.l500.copyWith(
+                  color: AppColors.primary,
+                  decoration: TextDecoration.underline,
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
     );
   }
 }
