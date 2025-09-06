@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:seasonthon_team_25_fe/core/network/dio_provider.dart';
 import 'package:seasonthon_team_25_fe/core/theme/colors.dart';
 import 'package:seasonthon_team_25_fe/core/theme/typography.dart';
 import 'package:seasonthon_team_25_fe/gen/assets.gen.dart';
@@ -16,14 +17,17 @@ class HomePage extends ConsumerStatefulWidget {
 }
 
 class _HomePageState extends ConsumerState<HomePage> {
-  final String reward = "1,234원";
-  late SharedPreferences prefs;
+  //final String reward = "1,234원";
+  int? balance;
+  SharedPreferences? prefs;
   String? userName;
+  bool isLoadingBalance = true;
 
   @override
 void initState() {
   super.initState();
   _loadUserName(); // 비동기 함수 호출
+  _loadBalance();
 }
 
 Future<void> _loadUserName() async {
@@ -31,6 +35,21 @@ Future<void> _loadUserName() async {
   setState(() {
     userName = prefs.getString('characterName') ?? '사용자'; // 기본값 설정
   });
+}
+
+Future<void> _loadBalance() async {
+  try {
+    final dio = ref.read(dioProvider);
+    final res = await dio.get('/api/wallet/balance');
+    setState(() {
+      balance = res.data['balance'] as int;
+      debugPrint('잔액 조회 성공: $balance');
+      isLoadingBalance = false;
+    });
+  } catch (e) {
+    debugPrint('잔액 조회 실패: $e');
+    setState(() => isLoadingBalance = false);
+  }
 }
 
   @override
@@ -54,7 +73,7 @@ Future<void> _loadUserName() async {
               Align(
                 alignment: Alignment.topLeft,
                 child: RewardBox(
-                  text: reward,
+                  text: balance?.toString() ?? '-원',
                   backgroundColor: AppColors.gr100,
                 ),
               ),
