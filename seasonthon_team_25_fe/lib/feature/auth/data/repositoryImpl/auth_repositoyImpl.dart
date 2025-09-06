@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seasonthon_team_25_fe/core/network/error_mapper.dart';
 import 'package:seasonthon_team_25_fe/core/storage/token_storage.dart';
@@ -53,6 +54,8 @@ class AuthRepositoryImpl implements AuthRepository {
         tokenType: res.tokenType,
         expiresIn: res.expiresIn,
       );
+
+      debugPrint("[AuthRepositoryImpl] login success: ${res.accessToken}, ${res.refreshToken}");
 
       return LoginEntity(
         accessToken: res.accessToken,

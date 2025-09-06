@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seasonthon_team_25_fe/core/network/error_mapper.dart';
 import 'package:seasonthon_team_25_fe/feature/onboarding/data/datasources/remote/onboarding_api.dart';
@@ -17,6 +18,7 @@ class OnboardingRepositoryImpl implements OnboardingRepository {
       ); // 2xx면 들어옴
     } catch (e) {
       // 4xx/5xx → DioException → 사람이 읽을 메시지로 변환 후 throw
+      debugPrint('createCharacter error: $e');
       throw Exception(mapDioError(e));
     }
   }

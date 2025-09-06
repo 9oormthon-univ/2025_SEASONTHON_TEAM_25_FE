@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:go_router/go_router.dart';
 import 'package:seasonthon_team_25_fe/core/theme/colors.dart';
 import 'package:seasonthon_team_25_fe/core/theme/typography.dart';
@@ -24,10 +25,15 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
+  // 자동 로그인
+  final storage = const FlutterSecureStorage();
+  late bool? hasToken;
+
   @override
   void initState() {
     super.initState();
-    _bootstrap();
+    //_bootstrap();
+    _checkToken();
   }
 
   @override
@@ -310,22 +316,34 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
     );
   }
 
-  Future<void> _bootstrap() async {
-    // 1) 토큰 존재만 빠르게 확인
-    final hasRT =
-        await ref.read(authControllerProvider.notifier).hasRefreshToken();
-    debugPrint('[SignUpPage] hasRT: $hasRT');
-    if (!hasRT) return; // 저장소에 토큰 없으면 자동로그인 시도도 안 함
+  // Future<void> _bootstrap() async {
+  //   // 1) 토큰 존재만 빠르게 확인
+  //   final hasRT =
+  //       await ref.read(authControllerProvider.notifier).hasRefreshToken();
+  //   debugPrint('[SignUpPage] hasRT: $hasRT');
+  //   if (!hasRT) return; // 저장소에 토큰 없으면 자동로그인 시도도 안 함
 
-    // 2) 자동 로그인 시도
-    final ok = await ref.read(authControllerProvider.notifier).tryAutoLogin();
-    if (!mounted || !ok) return;
+  //   // 2) 자동 로그인 시도
+  //   final ok = await ref.read(authControllerProvider.notifier).tryAutoLogin();
+  //   if (!mounted || !ok) return;
 
-    // 3) 분기: 캐릭터 생성 여부 //characterCreated == true
-    if (ok) {
-      context.go('/home'); // GoRouter 사용시
+  //   // 3) 분기: 캐릭터 생성 여부 //characterCreated == true
+  //   if (ok) {
+  //     context.go('/home'); // GoRouter 사용시
+  //   } else {
+  //     context.go('/home'); //임시 // 캐릭터 미생성 시 온보딩으로
+  //   }
+  // }
+
+  Future<void> _checkToken() async {
+    final token = await storage.read(key: 'refreshToken') != null;
+    setState(() {
+      hasToken = token;
+    });
+    if (hasToken! && mounted == true) {
+      debugPrint("회원 가입한 유저");
     } else {
-      context.go('/home'); //임시 // 캐릭터 미생성 시 온보딩으로
+      debugPrint("회원 가입 안 한 유저");
     }
   }
 }

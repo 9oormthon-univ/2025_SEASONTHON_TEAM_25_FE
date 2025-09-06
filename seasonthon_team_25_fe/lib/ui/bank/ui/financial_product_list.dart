@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:seasonthon_team_25_fe/core/network/dio_provider.dart';
 import 'package:seasonthon_team_25_fe/core/theme/colors.dart';
 import 'package:seasonthon_team_25_fe/ui/bank/widget/financial_list_item.dart';
 import 'package:seasonthon_team_25_fe/ui/components/custom_app_bar.dart';
@@ -17,13 +18,30 @@ class FinancialProductListPage extends ConsumerStatefulWidget {
 
 class _FinancialProductListPageState
     extends ConsumerState<FinancialProductListPage> {
-  final String reward = "1,234원";
+  //final String reward = "1,234원";
+  int? balance;
 
   @override
   void initState() {
     super.initState();
     // 초기화 로직 필요 시 작성
+    _loadBalance();
   }
+
+  Future<void> _loadBalance() async {
+  try {
+    final dio = ref.read(dioProvider);
+    final res = await dio.get('/api/wallet/balance');
+    setState(() {
+      balance = res.data['balance'] as int;
+      debugPrint('잔액 조회 성공: $balance');
+      //isLoadingBalance = false;
+    });
+  } catch (e) {
+    debugPrint('잔액 조회 실패: $e');
+    //setState(() => isLoadingBalance = false);
+  }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +61,7 @@ class _FinancialProductListPageState
           Align(
             alignment: Alignment.topLeft,
             child: RewardBox(
-              text: reward,
+              text: balance?.toString() ?? '-원',
               textColor: AppColors.primary,
               backgroundColor: AppColors.sk.withValues(alpha: .25),
             ),
