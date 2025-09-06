@@ -8,22 +8,26 @@ class PrimaryActionButton extends StatelessWidget {
     required this.isLoading,
     required this.label,
     required this.onPressed,
+    this.width,
+    this.height,
   });
 
   final bool isLoading;
   final String label;
   final VoidCallback? onPressed;
+  final double? width;
+  final double? height;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: double.infinity,
-      height: 44,
+      width: width ?? double.infinity,
+      height: height ?? 44,
       child: Container(
         decoration: BoxDecoration(
           boxShadow: [
             BoxShadow(
-              color: AppColors.primary.withValues(alpha: .5),
+              color: AppColors.primary.withOpacity(0.5),
               blurRadius: 12,
               spreadRadius: 2,
               offset: const Offset(0, 0),

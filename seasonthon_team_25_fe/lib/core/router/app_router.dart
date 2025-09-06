@@ -10,13 +10,13 @@ import 'package:seasonthon_team_25_fe/feature/scrap/routes/scrap_routes.dart';
 import 'package:seasonthon_team_25_fe/gen/assets.gen.dart';
 
 final appRouter = GoRouter(
-  initialLocation: '/nickname',
+  initialLocation: '/news/detail',
   routes: [
     ...authRoutes,
+    ...quizRoutes, // /quiz 및 하위
     ShellRoute(
       routes: [
         ...newsRoutes, // /news 및 하위
-        ...quizRoutes, // /quiz 및 하위
         ...homeRoutes, // /home 및 하위
         ...scrapRoutes, // /scrap 및 하위
         ...bankRoutes, // /bank 및 하위
