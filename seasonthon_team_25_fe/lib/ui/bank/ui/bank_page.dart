@@ -29,7 +29,9 @@ class _BankPageState extends ConsumerState<BankPage> {
       showModalBottomSheet(
         context: context,
         isScrollControlled: false,
+        isDismissible: false,
         enableDrag: false, // 사용자가 바텀시트를 드래그로 내릴 수 없게 설정
+        barrierColor: Colors.transparent,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
         ),
@@ -68,8 +70,8 @@ class _BankPageState extends ConsumerState<BankPage> {
           spacing: 16,
           children: [
             Assets.images.onboarding.faffNocircle.image(
-              width: 225,
-              height: 275.6,
+              width: 191.25,
+height: 234.26,
               fit: BoxFit.contain,
             ),
             Text(
@@ -94,42 +96,58 @@ class _BottomSheetContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(20,40,20,0),
+    return Container(
+      decoration: const BoxDecoration(
+        color: AppColors.wt,
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(24),
+          bottom: Radius.circular(24),
+        ),
+      ),
+      padding: const EdgeInsets.fromLTRB(20, 40, 20, 0),
       child: Column(
-        spacing: 16,
-        mainAxisSize: MainAxisSize.min, // 내용만큼만 높이 차지
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text("뱅크 모드 선택"),
-          GestureDetector(
-            onTap: () {
-              context.go('/bank/list');
-            },
-            child: BlurredCard(
-              height: 44,
-              child: Text("진행 중인 금융 상품 보러가기"),
+          Align(
+            alignment: Alignment.topLeft,
+            child: Text(
+              "뱅크 모드 선택",
+              style: AppTypography.h3.copyWith(color: AppColors.bk),
             ),
           ),
+          const SizedBox(height: 16),
           GestureDetector(
             onTap: () {
               context.go('/bank/in-progress');
             },
             child: BlurredCard(
               height: 44,
-              child: Text("만기된 금융 상품 보러가기"),
+              child: Center(child: Text("진행 중인 금융 상품 보러가기"),),
             ),
           ),
+          const SizedBox(height: 16),
           GestureDetector(
             onTap: () {
-              Navigator.of(context).pop(); // 바텀 시트 닫기
+              context.go('/bank/in-progress');
             },
             child: BlurredCard(
               height: 44,
-              child: Text("새로운 금융 상품 보러가기"),
+              child: Center(child: Text("만기된 금융 상품 보러가기")),
             ),
           ),
+          const SizedBox(height: 16),
+          GestureDetector(
+            onTap: () {
+              context.go('/bank/list');
+            },
+            child: BlurredCard(
+              height: 44,
+              child: Center(child: Text("새로운 금융 상품 보러가기")),
+            ),
+          ),
+          const SizedBox(height: 32),
         ],
       ),
     );

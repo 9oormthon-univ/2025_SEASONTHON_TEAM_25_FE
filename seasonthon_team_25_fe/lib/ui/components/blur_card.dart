@@ -13,9 +13,9 @@ BlurredCard(
 class BlurredCard extends StatelessWidget {
   const BlurredCard({
     super.key,
+    required this.height,
     required this.child,
     this.width = double.infinity,
-    required this.height,
     this.borderRadius = 12,
     this.blurRadius = 12,
     this.spreadRadius = 2,

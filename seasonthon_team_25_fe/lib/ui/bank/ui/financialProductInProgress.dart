@@ -1,6 +1,7 @@
 // 진행 중인 금융 상품
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:seasonthon_team_25_fe/core/theme/colors.dart';
 import 'package:seasonthon_team_25_fe/ui/components/custom_app_bar.dart';
 
 class FinancialProductInProgressPage extends ConsumerStatefulWidget {
@@ -20,6 +21,7 @@ class _FinancialProductInProgressPageState extends ConsumerState<FinancialProduc
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.wt,
       appBar: CustomAppBar(title: '진행 중인 금융 상품', showLeft: true, showRight: false),
       body: const Center(child: Text('구현 예정')),
     );
