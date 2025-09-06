@@ -80,7 +80,7 @@ class _FinancialProductDetailPageState
                 Align(
                   alignment: Alignment.topLeft,
                   child: RewardBox(
-                    text: balance?.toString() ?? '-원',
+                    text: "${balance?.toString() ?? '-'}원",
                     textColor: AppColors.primary,
                     backgroundColor: AppColors.sk.withValues(alpha: .25),
                   ),
