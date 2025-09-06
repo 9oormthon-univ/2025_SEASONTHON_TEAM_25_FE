@@ -5,13 +5,35 @@ import 'package:go_router/go_router.dart';
 import 'package:seasonthon_team_25_fe/core/network/dio_provider.dart';
 import 'package:seasonthon_team_25_fe/core/theme/colors.dart';
 import 'package:seasonthon_team_25_fe/core/theme/typography.dart';
+import 'package:seasonthon_team_25_fe/feature/bank/repository/product_register.dart';
+import 'package:seasonthon_team_25_fe/ui/bank/ui/financial_product_sign_up_complete.dart';
 import 'package:seasonthon_team_25_fe/ui/components/blur_card.dart';
 import 'package:seasonthon_team_25_fe/ui/components/custom_app_bar.dart';
 import 'package:seasonthon_team_25_fe/ui/components/primary_action_dtn.dart';
 import 'package:seasonthon_team_25_fe/ui/components/reward_box.dart';
 
+// class FinancialProductSignUpPage extends ConsumerStatefulWidget {
+//   final String productId;
+//   const FinancialProductSignUpPage({super.key, required this.productId});
+
+//   @override
+//   ConsumerState<FinancialProductSignUpPage> createState() =>
+//       _FinancialProductSignUpPageState();
+// }
+
 class FinancialProductSignUpPage extends ConsumerStatefulWidget {
-  const FinancialProductSignUpPage({super.key});
+  final int productId;
+  final int? termMonths;
+  final int? maxLimit;
+  final String? productName;
+
+  const FinancialProductSignUpPage({
+    super.key,
+    required this.productId,
+    this.termMonths,
+    this.maxLimit,
+    this.productName,
+  });
 
   @override
   ConsumerState<FinancialProductSignUpPage> createState() =>
@@ -22,9 +44,9 @@ class _FinancialProductSignUpPageState
     extends ConsumerState<FinancialProductSignUpPage> {
   //final String reward = "1,234원";
   int? balance;
-  final String productName = "청년 희망 적금";
-  final int count = 5;
-  final String max = "100,000";
+  //final String productName = "청년 희망 적금";
+  //final int count = 5;
+  //final String max = "100,000";
 
   final _formKey = GlobalKey<FormState>();
   final _textController = TextEditingController();
@@ -37,19 +59,21 @@ class _FinancialProductSignUpPageState
   }
 
   Future<void> _loadBalance() async {
-  try {
-    final dio = ref.read(dioProvider);
-    final res = await dio.get('/api/wallet/balance');
-    setState(() {
-      balance = res.data['balance'] as int;
-      debugPrint('잔액 조회 성공: $balance');
-      //isLoadingBalance = false;
-    });
-  } catch (e) {
-    debugPrint('잔액 조회 실패: $e');
-    //setState(() => isLoadingBalance = false);
+    try {
+      final dio = ref.read(dioProvider);
+      final res = await dio.get('/api/wallet/balance');
+      setState(() {
+        balance = res.data['balance'] as int;
+        debugPrint('잔액 조회 성공: $balance');
+        //isLoadingBalance = false;
+      });
+    } catch (e) {
+      debugPrint('잔액 조회 실패: $e');
+      //setState(() => isLoadingBalance = false);
+    }
   }
-}
+
+  //가입하기
 
   @override
   void dispose() {
@@ -87,7 +111,7 @@ class _FinancialProductSignUpPageState
                 child: Row(
                   children: [
                     Text(
-                      productName,
+                      widget.productName!,
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -95,7 +119,7 @@ class _FinancialProductSignUpPageState
                     ),
                     Spacer(),
                     Text(
-                      "총 $count회자",
+                      "총 ${widget.termMonths}회자",
                       style: TextStyle(fontSize: 14, color: Colors.grey),
                     ),
                   ],
@@ -114,7 +138,7 @@ class _FinancialProductSignUpPageState
                   children: [
                     Text('회당 얼마를 입금할까요?', style: AppTypography.h2),
                     Text(
-                      '해당 상품의 1회 최대 납입 금액은 $max원이에요',
+                      '해당 상품의 1회 최대 납입 금액은 ${widget.maxLimit}원이에요',
                       style: AppTypography.l500,
                     ),
                     const SizedBox(height: 16),
@@ -156,8 +180,51 @@ class _FinancialProductSignUpPageState
               PrimaryActionButton(
                 isLoading: false,
                 label: "가입하기",
-                onPressed: () {
-                  context.go("/bank/sign-up-complete");
+                onPressed: () async {
+                  if (!_formKey.currentState!.validate()) return;
+
+                  final amount = int.tryParse(_textController.text) ?? 0;
+                  if (amount <= 0) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('1회 납입 금액을 올바르게 입력해 주세요')),
+                    );
+                    return;
+                  }
+                  if (widget.termMonths == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('기간 선택 정보가 없습니다')),
+                    );
+                    return;
+                  }
+
+                  try {
+                    final repo = ref.read(productRegisterRepositoryProvider);
+                    // TODO: reserveType은 실제 UI 선택값과 매핑하세요. 임시로 정액식 "S"
+                    final result = await repo.registerSaving(
+                      productSnapshotId: widget.productId,
+                      termMonths: widget.termMonths!, // 상세 옵션과 동일해야 함
+                      reserveType: "", // 또는 "F"/"FREE"/"FIXED"
+                      autoDebitAmount: amount,
+                    );
+
+                    if (!mounted) return;
+
+                    context.go(
+                      "/bank/sign-up-complete",
+                      extra: SignUpCompleteArgs(
+                        maturityDate: result.maturityDate,
+                        autoDebitAmount: amount,
+                        termMonths: widget.termMonths!,
+                      ),
+                    );
+                  } catch (e) {
+                    debugPrint("가입 실패: $e");
+                    if (mounted) {
+                      ScaffoldMessenger.of(
+                        context,
+                      ).showSnackBar(SnackBar(content: Text("가입에 실패했습니다: $e")));
+                    }
+                  }
                 },
               ),
             ],

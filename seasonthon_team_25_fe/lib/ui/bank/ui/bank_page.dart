@@ -46,20 +46,20 @@ class _BankPageState extends ConsumerState<BankPage> {
   }
 
   Future<void> _loadBalance() async {
-  try {
-    final dio = ref.read(dioProvider);
-    final res = await dio.get('/api/wallet/balance');
-    setState(() {
-      balance = res.data['balance'] as int;
-      debugPrint('잔액 조회 성공: $balance');
-      //isLoadingBalance = false;
-    });
-  } catch (e) {
-    debugPrint('잔액 조회 실패: $e');
-    //setState(() => isLoadingBalance = false);
+    try {
+      final dio = ref.read(dioProvider);
+      final res = await dio.get('/api/wallet/balance');
+      setState(() {
+        balance = res.data['balance'] as int;
+        debugPrint('잔액 조회 성공: $balance');
+        //isLoadingBalance = false;
+      });
+    } catch (e) {
+      debugPrint('잔액 조회 실패: $e');
+      //setState(() => isLoadingBalance = false);
+    }
   }
-}
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -89,7 +89,7 @@ class _BankPageState extends ConsumerState<BankPage> {
           children: [
             Assets.images.onboarding.faffNocircle.image(
               width: 191.25,
-height: 234.26,
+              height: 234.26,
               fit: BoxFit.contain,
             ),
             Text(
@@ -142,7 +142,7 @@ class _BottomSheetContent extends StatelessWidget {
             },
             child: BlurredCard(
               height: 44,
-              child: Center(child: Text("진행 중인 금융 상품 보러가기"),),
+              child: Center(child: Text("진행 중인 금융 상품 보러가기")),
             ),
           ),
           const SizedBox(height: 16),

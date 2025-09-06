@@ -11,7 +11,8 @@ import 'package:seasonthon_team_25_fe/ui/components/primary_action_dtn.dart';
 import 'package:seasonthon_team_25_fe/ui/components/reward_box.dart';
 
 class NewsDetail extends ConsumerStatefulWidget {
-  const NewsDetail({super.key});
+  final String newsId;
+  const NewsDetail({super.key, required this.newsId});
 
   @override
   ConsumerState<NewsDetail> createState() => _NewsDetailState();
