@@ -57,6 +57,9 @@ class _FinancialProductDetailPageState
         onTapLeft: () {
           context.go('/bank/list');
         },
+        onTapRight: () {
+          context.go('/bank/list');
+        },
       ),
       body: FutureBuilder<ProductDetail>(
         future: _future,

@@ -1,6 +1,7 @@
 // lib/feature/bank/ui/financial_product_in_progress_page.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:seasonthon_team_25_fe/core/network/dio_provider.dart';
 import 'package:seasonthon_team_25_fe/core/theme/colors.dart';
 import 'package:seasonthon_team_25_fe/core/theme/typography.dart';
@@ -122,10 +123,13 @@ class _FinancialProductInProgressPageState
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.wt,
-      appBar: const CustomAppBar(
+      appBar: CustomAppBar(
         title: '진행 중인 금융 상품',
         showLeft: true,
         showRight: false,
+        onTapLeft:() {
+          context.go("/home");
+        },
       ),
       body: Column(
         children: [

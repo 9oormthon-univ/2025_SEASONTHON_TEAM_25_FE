@@ -33,6 +33,8 @@ class _NewsDetailState extends ConsumerState<NewsDetail> {
       backgroundColor: AppColors.wt,
       appBar: CustomAppBar(title: '뉴스', showLeft: true, showRight: true, onTapLeft: () {
         context.go("/news");
+      }, onTapRight: () {
+        context.go("/news");
       },),
       body: FutureBuilder<NewsDetailModel>(
         future: _future,

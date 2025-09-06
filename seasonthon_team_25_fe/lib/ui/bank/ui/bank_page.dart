@@ -66,13 +66,11 @@ class _BankPageState extends ConsumerState<BankPage> {
       extendBodyBehindAppBar: true,
       appBar: CustomAppBar(
         title: "나만의 뱅크",
-        showLeft: true,
+        showLeft: false,
         showRight: false,
-        onTapLeft: () {
-          // 왼쪽 버튼 눌렀을 때
-          debugPrint("뒤로가기 눌림");
-          context.go('/home');
-        },
+        // onTapLeft: () {
+        //   context.go("/home");
+        // },
       ),
       body: Container(
         width: double.infinity,

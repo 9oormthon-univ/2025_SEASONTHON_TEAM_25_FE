@@ -89,6 +89,9 @@ class _FinancialProductSignUpPageState
         title: '금융 상품 가입하기',
         showLeft: true,
         showRight: false,
+        onTapLeft: () {
+          context.go("/bank/list");
+        },
       ),
       body: Container(
         alignment: Alignment.center,
@@ -119,7 +122,7 @@ class _FinancialProductSignUpPageState
                     ),
                     Spacer(),
                     Text(
-                      "총 ${widget.termMonths}회자",
+                      "총 ${widget.termMonths}회차",
                       style: TextStyle(fontSize: 14, color: Colors.grey),
                     ),
                   ],

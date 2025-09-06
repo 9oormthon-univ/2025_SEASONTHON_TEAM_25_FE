@@ -18,16 +18,14 @@ import 'package:seasonthon_team_25_fe/ui/components/rounded_text_box.dart';
 
 class QuizQuestionPage extends ConsumerStatefulWidget {
   const QuizQuestionPage({super.key});
-
   @override
   ConsumerState<QuizQuestionPage> createState() => _QuizQuestionPageState();
 }
 
 class _QuizQuestionPageState extends ConsumerState<QuizQuestionPage> {
-  bool? selectedO;    // OX 선택값
-  int? selectedIndex; // MCQ 선택 인덱스 (0-based)
-
-  int? _lastPrintedUserQuizId; // 중복 로그 방지
+  bool? selectedO;
+  int? selectedIndex;
+  int? _lastPrintedUserQuizId;
 
   void _resetLocalSelection() {
     selectedO = null;
@@ -37,22 +35,21 @@ class _QuizQuestionPageState extends ConsumerState<QuizQuestionPage> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(quizControllerProvider);
-    final ctrl  = ref.read(quizControllerProvider.notifier);
+    final ctrl = ref.read(quizControllerProvider.notifier);
 
-    // 로딩
     if (state.phase == QuizPhase.loading) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
-
-    // 에러
     if (state.phase == QuizPhase.error) {
       return Scaffold(
-        appBar: const CustomAppBar(title: "퀴즈", showLeft: true, showRight: false),
+        appBar: const CustomAppBar(
+          title: "퀴즈",
+          showLeft: true,
+          showRight: false,
+        ),
         body: Center(child: Text('불러오기 실패: ${state.error ?? '알 수 없는 오류'}')),
       );
     }
-
-    // 데이터 없거나 완료되면 리스트 페이지로
     if (!state.hasData || state.phase == QuizPhase.finished) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) context.go('/quiz');
@@ -62,17 +59,19 @@ class _QuizQuestionPageState extends ConsumerState<QuizQuestionPage> {
 
     final q = state.current!;
     final total = state.questions.length;
-    final idx   = state.index;
-    final isOX  = (q.type == QuizType.ox);
+    final idx = state.index;
+    final isOX = (q.type == QuizType.ox);
 
-    // 카드 높이
+    final bool isRevealed = (state.phase == QuizPhase.revealed);
+    final bool isCorrect = state.verdicts[q.userQuizId] == true;
+
     final double cardHeight =
-        state.phase == QuizPhase.revealed ? (isOX ? 430 : 560) : (isOX ? 360 : 500);
+        isRevealed ? (isOX ? 430 : 560) : (isOX ? 360 : 500);
 
-    // 문제 진입 시 정답 로그 (중복 방지)
     if (_lastPrintedUserQuizId != q.userQuizId) {
-      debugPrint('[QUIZ] show Q id=${q.userQuizId} correct=${q.normalizedCorrect} '
-          'type=${q.type == QuizType.ox ? 'OX' : 'MCQ'}');
+      debugPrint(
+        '[QUIZ] show Q id=${q.userQuizId} correct=${q.normalizedCorrect} type=${q.type}',
+      );
       _lastPrintedUserQuizId = q.userQuizId;
     }
 
@@ -98,7 +97,11 @@ class _QuizQuestionPageState extends ConsumerState<QuizQuestionPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      RoundedTextBox(text: "$total개 중 ${idx + 1}번째 퀴즈"),
+                      RoundedTextBox(
+                        text:
+                            "${total}개 중 ${idx + 1}번째 퀴즈"
+                            "${state.retryMode ? ' (오답 재도전)' : ''}",
+                      ),
                       const SizedBox(height: 8),
                       Text(
                         q.question,
@@ -107,38 +110,46 @@ class _QuizQuestionPageState extends ConsumerState<QuizQuestionPage> {
                       ),
                       const SizedBox(height: 12),
 
-                      // 본문(선택영역 또는 선택영역 + 해설)
                       Expanded(
                         child: Column(
                           children: [
-                            // 선택 영역
+                            // 선택 영역 (해설 단계에서는 잠금)
                             Expanded(
-                              child: isOX
-                                  ? _OxArea(
-                                      selectedO: selectedO,
-                                      onSelect: state.phase == QuizPhase.revealed
-                                          ? null // 해설 노출 중에는 선택 잠금
-                                          : (v) => setState(() => selectedO = v),
-                                    )
-                                  : _McqArea(
-                                      options: q.mcqOptions ?? const [],
-                                      selectedIndex: selectedIndex,
-                                      onSelect: state.phase == QuizPhase.revealed
-                                          ? null // 해설 노출 중에는 선택 잠금
-                                          : (i) => setState(() => selectedIndex = i),
-                                    ),
+                              child:
+                                  isOX
+                                      ? _OxArea(
+                                        selectedO: selectedO,
+                                        onSelect:
+                                            isRevealed
+                                                ? null
+                                                : (v) => setState(
+                                                  () => selectedO = v,
+                                                ),
+                                      )
+                                      : _McqArea(
+                                        options: q.mcqOptions ?? const [],
+                                        selectedIndex: selectedIndex,
+                                        onSelect:
+                                            isRevealed
+                                                ? null
+                                                : (i) => setState(
+                                                  () => selectedIndex = i,
+                                                ),
+                                      ),
                             ),
 
-                            // 해설/정답 노출
-                            if (state.phase == QuizPhase.revealed) ...[
+                            // ✅ 해설: "정답일 때만" 노출
+                            if (isRevealed && isCorrect) ...[
                               const SizedBox(height: 12),
                               _RevealBlock(
-                                isCorrect: state.verdicts[q.userQuizId] == true,
                                 explanation: q.explanation,
                                 newsUrl: q.newsUrl,
-                                correctLabel: q.type == QuizType.ox
-                                    ? (q.normalizedCorrect == 'true' ? 'O(맞아요)' : 'X(틀려요)')
-                                    : '정답: ${q.normalizedCorrect}번',
+                                correctLabel:
+                                    q.type == QuizType.ox
+                                        ? (q.normalizedCorrect == 'true'
+                                            ? '정답: O(맞아요)'
+                                            : '정답: X(틀려요)')
+                                        : '정답: ${q.normalizedCorrect}번',
                               ),
                             ],
                           ],
@@ -151,61 +162,59 @@ class _QuizQuestionPageState extends ConsumerState<QuizQuestionPage> {
             ),
             const SizedBox(height: 24),
 
-            // 하단 버튼
-            if (state.phase == QuizPhase.asking) ...[
+            // QuizQuestionPage build 하단 버튼 부분
+            if (!isRevealed) ...[
               PrimaryActionButton(
-                isLoading: false,
                 label: "선택했어요",
                 onPressed: () async {
-                  // 선택 검증
+                  // 선택값 검증
                   if (isOX && selectedO == null) return;
                   if (!isOX && selectedIndex == null) return;
 
-                  // 서버 규격으로 변환
-                  final userAnswer = isOX
-                      ? (selectedO! ? 'true' : 'false')
-                      : '${selectedIndex! + 1}';
+                  final userAnswer =
+                      isOX
+                          ? (selectedO! ? 'true' : 'false')
+                          : '${selectedIndex! + 1}';
 
                   await ctrl.submitCurrent(userAnswer);
 
-                  // 간단 피드백
-                  final isCorrect = state.current != null
-                      ? (userAnswer == state.current!.normalizedCorrect)
-                      : null;
-                  if (kDebugMode && isCorrect != null) {
-                    debugPrint('[QUIZ] answered id=${q.userQuizId} '
-                        'user=$userAnswer correct=${q.normalizedCorrect} '
-                        '=> ${isCorrect ? 'CORRECT' : 'WRONG'}');
-                  }
+                  final nowCorrect = (userAnswer == q.normalizedCorrect);
 
-                  if (mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          (state.verdicts[q.userQuizId] == true)
-                              ? '정답이에요!'
-                              : '오답이에요!',
-                        ),
-                        duration: const Duration(milliseconds: 700),
-                      ),
-                    );
+                  if (nowCorrect) {
+                    // 정답 → 해설 노출 단계
+                    setState(() {});
+                  } else {
+                    // 오답 → 안내 후 바로 next
+                    ScaffoldMessenger.of(
+                      context,
+                    ).showSnackBar(const SnackBar(content: Text("오답입니다")));
+                    if (state.isLast) {
+                      ctrl.next();
+                      context.go('/quiz');
+                    } else {
+                      ctrl.next();
+                      _resetLocalSelection();
+                      setState(() {});
+                    }
                   }
                 },
-              ),
-            ] else if (state.phase == QuizPhase.revealed) ...[
-              PrimaryActionButton(
                 isLoading: false,
+              ),
+            ] else if (isCorrect) ...[
+              // ✅ 정답일 때만 해설 단계
+              PrimaryActionButton(
                 label: state.isLast ? "완료" : "다음 문제",
                 onPressed: () {
                   if (state.isLast) {
-                    ctrl.next(); // finished
+                    ctrl.next();
                     context.go('/quiz');
                   } else {
                     ctrl.next();
                     _resetLocalSelection();
-                    setState(() {}); // 다음 반영
+                    setState(() {});
                   }
                 },
+                isLoading: false,
               ),
             ],
           ],
@@ -215,13 +224,9 @@ class _QuizQuestionPageState extends ConsumerState<QuizQuestionPage> {
   }
 }
 
-/// OX 전용 영역 (선택 잠금 지원)
+/// OX/MCQ 영역과 _RevealBlock 은 이전과 동일하되, onSelect가 null이면 잠금만 추가
 class _OxArea extends StatelessWidget {
-  const _OxArea({
-    required this.selectedO,
-    required this.onSelect,
-  });
-
+  const _OxArea({required this.selectedO, required this.onSelect});
   final bool? selectedO;
   final ValueChanged<bool>? onSelect;
 
@@ -264,9 +269,10 @@ class _OxArea extends StatelessWidget {
         width: 130,
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
         decoration: BoxDecoration(
-          color: selected
-              ? AppColors.primary.withValues(alpha: 0.5)
-              : AppColors.sk.withValues(alpha: 0.5),
+          color:
+              selected
+                  ? AppColors.primary.withValues(alpha: 0.5)
+                  : AppColors.sk.withValues(alpha: 0.5),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Column(
@@ -282,14 +288,12 @@ class _OxArea extends StatelessWidget {
   }
 }
 
-/// MCQ 전용 영역 (선택 잠금 지원)
 class _McqArea extends StatelessWidget {
   const _McqArea({
     required this.options,
     required this.selectedIndex,
     required this.onSelect,
   });
-
   final List<String> options;
   final int? selectedIndex;
   final ValueChanged<int>? onSelect;
@@ -308,14 +312,16 @@ class _McqArea extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 12),
             decoration: BoxDecoration(
               border: Border.all(
-                color: isSel
-                    ? AppColors.primary
-                    : AppColors.primary.withValues(alpha: .25),
+                color:
+                    isSel
+                        ? AppColors.primary
+                        : AppColors.primary.withValues(alpha: .25),
               ),
               borderRadius: BorderRadius.circular(24),
-              color: isSel
-                  ? AppColors.primary.withValues(alpha: 0.08)
-                  : Colors.transparent,
+              color:
+                  isSel
+                      ? AppColors.primary.withValues(alpha: 0.08)
+                      : Colors.transparent,
             ),
             child: Text(
               options[i],
@@ -329,16 +335,14 @@ class _McqArea extends StatelessWidget {
   }
 }
 
-/// 정답/해설 블록
+/// 정답일 때만 쓰는 해설 블록
 class _RevealBlock extends StatelessWidget {
   const _RevealBlock({
-    required this.isCorrect,
     required this.correctLabel,
     this.explanation,
     this.newsUrl,
   });
 
-  final bool isCorrect;
   final String correctLabel;
   final String? explanation;
   final String? newsUrl;
@@ -348,23 +352,19 @@ class _RevealBlock extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.fromLTRB(12, 12, 12, 8),
       decoration: BoxDecoration(
-        color: isCorrect
-            ? AppColors.primary.withValues(alpha: .10)
-            : Colors.black.withOpacity(.05),
+        color: AppColors.primary.withValues(alpha: .10),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: isCorrect
-              ? AppColors.primary
-              : Colors.black.withOpacity(.15),
-        ),
+        border: Border.all(color: AppColors.primary),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(isCorrect ? '정답입니다! ✅' : '아쉬워요! ❌',
-              style: AppTypography.h3.copyWith(color: AppColors.bk)),
+          Text('정답입니다!', style: AppTypography.h3.copyWith(color: AppColors.bk)),
           const SizedBox(height: 6),
-          Text(correctLabel, style: AppTypography.l500.copyWith(color: AppColors.bk)),
+          Text(
+            correctLabel,
+            style: AppTypography.l500.copyWith(color: AppColors.bk),
+          ),
           if (explanation != null) ...[
             const SizedBox(height: 6),
             Text(
@@ -376,8 +376,7 @@ class _RevealBlock extends StatelessWidget {
             const SizedBox(height: 8),
             GestureDetector(
               onTap: () {
-                // 라우터/웹뷰 정책에 맞게 구현하세요.
-                // 예: context.push('/web?url=${Uri.encodeComponent(newsUrl!)}');
+                // 필요 시 웹뷰/외부 브라우저로 연결
               },
               child: Text(
                 '관련 기사 보러가기',

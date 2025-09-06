@@ -14,7 +14,6 @@ import 'package:seasonthon_team_25_fe/ui/components/primary_action_dtn.dart';
 
 class QuizPage extends ConsumerStatefulWidget {
   const QuizPage({super.key});
-
   @override
   ConsumerState<QuizPage> createState() => _QuizPageState();
 }
@@ -23,7 +22,6 @@ class _QuizPageState extends ConsumerState<QuizPage> {
   @override
   void initState() {
     super.initState();
-    // 오늘의 퀴즈 로드
     Future.microtask(() {
       ref.read(quizControllerProvider.notifier).loadDaily();
     });
@@ -33,24 +31,15 @@ class _QuizPageState extends ConsumerState<QuizPage> {
   Widget build(BuildContext context) {
     final state = ref.watch(quizControllerProvider);
 
-    // 로딩
     if (state.phase == QuizPhase.loading) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
-
-    // 에러
     if (state.phase == QuizPhase.error) {
       return Scaffold(
-        appBar: const CustomAppBar(
-          title: "퀴즈",
-          showLeft: true,
-          showRight: false,
-        ),
+        appBar: const CustomAppBar(title: "퀴즈", showLeft: true, showRight: false),
         body: Center(child: Text('불러오기 실패: ${state.error ?? '알 수 없는 오류'}')),
       );
     }
-
-    // 완료(이미 오늘 끝)
     if (state.phase == QuizPhase.finished || (state.isCompleted && !state.hasData)) {
       return Scaffold(
         extendBodyBehindAppBar: true,
@@ -71,19 +60,9 @@ class _QuizPageState extends ConsumerState<QuizPage> {
             child: Column(
               spacing: 16,
               children: [
-                Assets.images.quiz.correct.image(
-                  width: 145,
-                  height: 145,
-                  fit: BoxFit.contain,
-                ),
-                const Text(
-                  "오늘 퀴즈를 다 풀었어요!",
-                  textAlign: TextAlign.center,
-                ),
-                const Text(
-                  "하루에 도전할 수 있는 문제는 최대 5개예요\n내일 또 만나요!",
-                  textAlign: TextAlign.center,
-                ),
+                Assets.images.quiz.correct.image(width: 145, height: 145, fit: BoxFit.contain),
+                const Text("오늘 퀴즈를 다 풀었어요!", textAlign: TextAlign.center),
+                const Text("하루에 도전할 수 있는 문제는 최대 5개예요\n내일 또 만나요!", textAlign: TextAlign.center),
                 PrimaryActionButton(
                   onPressed: () => context.go('/home'),
                   label: "홈으로 가기",
@@ -96,32 +75,13 @@ class _QuizPageState extends ConsumerState<QuizPage> {
       );
     }
 
-    // 오늘 퀴즈 없음(미완료지만 배열 비었을 때)
-    if (!state.hasData) {
-      return Scaffold(
-        appBar: const CustomAppBar(
-          title: "퀴즈",
-          showLeft: true,
-          showRight: false,
-        ),
-        body: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text('오늘은 퀴즈가 없어요'),
-              const SizedBox(height: 12),
-              PrimaryActionButton(
-                isLoading: false,
-                label: '홈으로',
-                onPressed: () => context.go('/home'),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
+    // ✅ 시작/재시작 화면
+    final titleText = state.retryMode ? "오답만 다시 풀어볼까요?" : "오늘의 퀴즈를 풀어볼까요?";
+    final subtitleText = state.retryMode
+        ? "방금 틀린 문제들만 모았어요\n이번엔 맞출 수 있어요!"
+        : "하루에 도전할 수 있는 문제는 최대 5개예요\n오늘도 함께 달려요";
+    final ctaLabel = state.retryMode ? "다시 풀기" : "시작하기";
 
-    // 시작/재시작 화면
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: CustomAppBar(
@@ -141,22 +101,12 @@ class _QuizPageState extends ConsumerState<QuizPage> {
           child: Column(
             spacing: 16,
             children: [
-              Assets.images.quiz.correct.image(
-                width: 145,
-                height: 145,
-                fit: BoxFit.contain,
-              ),
-              const Text(
-                "오늘의 퀴즈를 풀어볼까요?",
-                textAlign: TextAlign.center,
-              ),
-              const Text(
-                "하루에 도전할 수 있는 문제는 최대 5개예요\n오늘도 함께 달려요",
-                textAlign: TextAlign.center,
-              ),
+              Assets.images.quiz.correct.image(width: 145, height: 145, fit: BoxFit.contain),
+              Text(titleText, textAlign: TextAlign.center),
+              Text(subtitleText, textAlign: TextAlign.center),
               PrimaryActionButton(
                 onPressed: () => context.go('/quiz-question'),
-                label: "시작하기",
+                label: ctaLabel,
                 isLoading: false,
               ),
             ],

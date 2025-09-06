@@ -27,7 +27,10 @@ class _NewsPageState extends ConsumerState<NewsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.wt,
-      appBar: CustomAppBar(title: '뉴스', showLeft: true, showRight: false),
+      appBar: CustomAppBar(title: '뉴스', showLeft: true, showRight: false,
+      onTapLeft: () {
+        context.go("/home");
+      },),
       body: Column(
         children: [
           Expanded(

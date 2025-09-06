@@ -43,7 +43,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           ScaffoldMessenger.of(
             context,
           ).showSnackBar(const SnackBar(content: Text('로그인 성공! 👋')));
-          context.go('/nickname');
+          //context.go('/nickname');
+          context.go('/home');  //시연을 위함
         },
         error: (e, _) {
           ScaffoldMessenger.of(
