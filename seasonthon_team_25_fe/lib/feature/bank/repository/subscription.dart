@@ -53,4 +53,9 @@ class SubscriptionRepository {
         .map((e) => ActiveSubscription.fromJson(e as Map<String, dynamic>))
         .toList();
   }
+
+  Future<void> depositToSubscription(int subscriptionId) async {
+    await _dio.post('/api/savings/subscriptions/$subscriptionId/deposit');
+    // 200 OK / 204 No Content 가정
+  }
 }
