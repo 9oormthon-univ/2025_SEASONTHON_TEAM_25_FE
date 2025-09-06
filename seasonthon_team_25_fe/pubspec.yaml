@@ -88,6 +88,7 @@ flutter:
     - assets/images/components/
     - assets/images/onboarding/
     - assets/images/home/
+    - assets/images/quiz/
 
   # To add assets to your application, add an assets section, like this:
   # assets:
