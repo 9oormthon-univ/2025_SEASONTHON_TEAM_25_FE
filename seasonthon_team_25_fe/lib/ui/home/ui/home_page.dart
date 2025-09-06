@@ -73,7 +73,7 @@ Future<void> _loadBalance() async {
               Align(
                 alignment: Alignment.topLeft,
                 child: RewardBox(
-                  text: balance?.toString() ?? '-원',
+                  text: "${balance?.toString() ?? '-'}원",
                   backgroundColor: AppColors.gr100,
                 ),
               ),

@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:seasonthon_team_25_fe/core/theme/colors.dart';
-import 'package:seasonthon_team_25_fe/ui/bank/widget/financial_list_item.dart';
+import 'package:seasonthon_team_25_fe/feature/news/repository/list.dart';
 import 'package:seasonthon_team_25_fe/ui/components/custom_app_bar.dart';
-import 'package:seasonthon_team_25_fe/ui/components/reward_box.dart';
 import 'package:seasonthon_team_25_fe/ui/news/widgets/news_list_item.dart';
 
 class NewsPage extends ConsumerStatefulWidget {
@@ -15,57 +14,23 @@ class NewsPage extends ConsumerStatefulWidget {
 }
 
 class _NewsPageState extends ConsumerState<NewsPage> {
-  final String reward = "1,234원";
+  late Future<List<NewsItem>> _future;
 
   @override
   void initState() {
     super.initState();
-    // 초기화 로직 필요 시 작성
+    // 뉴스 리스트 최초 로드
+    _future = ref.read(newsRepositoryProvider).fetchNewsList(size: 10);
   }
 
   @override
   Widget build(BuildContext context) {
-    final List<Map<String, String>> mockNews = [
-      {
-        "title": "청년 희망 적금",
-        "subtitle": "연 5% 금리, 2년 만기",
-        "date": "2025-09-05",
-        "url":
-            "https://cdn.ceomagazine.co.kr/news/photo/202112/30595_21552_318.jpg",
-      },
-      {
-        "title": "주택 청약 저축",
-        "subtitle": "내 집 마련 필수",
-        "date": "2025-09-05",
-        "url":
-            "https://cdn.ceomagazine.co.kr/news/photo/202112/30595_21552_318.jpg",
-      },
-      {
-        "title": "단기 채권 펀드",
-        "subtitle": "안정적인 단기 수익",
-        "date": "2025-09-05",
-        "url":
-            "https://cdn.ceomagazine.co.kr/news/photo/202112/30595_21552_318.jpg",
-      },
-      {
-        "title": "연금 저축 보험",
-        "subtitle": "노후 대비 장기 저축",
-        "date": "2025-09-05",
-        "url":
-            "https://cdn.ceomagazine.co.kr/news/photo/202112/30595_21552_318.jpg",
-      },
-      {
-        "title": "고배당 주식 펀드",
-        "subtitle": "분기별 배당 지급",
-        "date": "2025-09-05",
-        "url":
-            "https://cdn.ceomagazine.co.kr/news/photo/202112/30595_21552_318.jpg",
-      },
-    ];
-
     return Scaffold(
       backgroundColor: AppColors.wt,
-      appBar: CustomAppBar(title: '뉴스', showLeft: true, showRight: false),
+      appBar: CustomAppBar(title: '뉴스', showLeft: true, showRight: false,
+      onTapLeft: () {
+        context.go("/home");
+      },),
       body: Column(
         children: [
           Expanded(
@@ -77,23 +42,49 @@ class _NewsPageState extends ConsumerState<NewsPage> {
                     labelColor: AppColors.primary,
                     unselectedLabelColor: Colors.grey,
                     indicatorColor: AppColors.primary,
-                    tabs: const [Tab(text: '넘겨보기'), Tab(text: '골라보기')],
+                    tabs: const [Tab(text: '골라보기'), Tab(text: '넘겨보기')],
                   ),
                   Expanded(
                     child: TabBarView(
                       children: [
-                        Center(child: Text('넘겨보기')),
-                        ListView.builder(
-                          itemCount: mockNews.length,
-                          itemBuilder: (context, i) {
-                            return NewsListItem(
-                              item: mockNews[i],
-                              onTap: () {
-                                context.go('/news/detail', extra: mockNews[i]);
+                        // ✅ 골라보기 탭
+                        FutureBuilder<List<NewsItem>>(
+                          future: _future,
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState !=
+                                ConnectionState.done) {
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            }
+                            if (snapshot.hasError) {
+                              return Center(
+                                  child: Text('불러오기 실패: ${snapshot.error}'));
+                            }
+
+                            final items = snapshot.data ?? [];
+                            if (items.isEmpty) {
+                              return const Center(child: Text('뉴스가 없어요'));
+                            }
+
+                            return ListView.builder(
+                              itemCount: items.length,
+                              itemBuilder: (context, i) {
+                                final item = items[i];
+                                return NewsListItem(
+                                  item: item,
+                                  onTap: () {
+                                    // 상세페이지 이동 (id 전달)
+                                    context.go('/news/${item.id}');
+                                  },
+                                );
                               },
                             );
                           },
                         ),
+
+                        // ✅ 넘겨보기 탭
+                        const Center(child: Text('넘겨보기')),
                       ],
                     ),
                   ),

@@ -8,6 +8,7 @@ class PrimaryActionButton extends StatelessWidget {
     required this.isLoading,
     required this.label,
     required this.onPressed,
+    this.fontColor,
     this.width,
     this.height,
   });
@@ -17,6 +18,7 @@ class PrimaryActionButton extends StatelessWidget {
   final VoidCallback? onPressed;
   final double? width;
   final double? height;
+  final Color? fontColor;
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +54,7 @@ class PrimaryActionButton extends StatelessWidget {
                   )
                   : Text(
                     label,
-                    style: AppTypography.xl500.copyWith(color: AppColors.wt),
+                    style: AppTypography.xl500.copyWith(color: fontColor ?? AppColors.wt),
                   ),
         ),
       ),

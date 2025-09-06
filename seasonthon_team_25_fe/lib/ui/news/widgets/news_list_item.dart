@@ -1,22 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:seasonthon_team_25_fe/feature/news/repository/list.dart' show NewsItem;
 
 class NewsListItem extends StatelessWidget {
-  const NewsListItem({super.key, required this.item, this.onTap});
 
-  final Map<String, String> item;
+  const NewsListItem({
+    super.key,
+    required this.item,
+    this.onTap,
+  });
+
+  final NewsItem item;
   final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    final title = item['title'] ?? '';
-    final subtitle = item['subtitle'] ?? '';
-    final date = item['date'] ?? '';
-    final url = item['url'] ?? '';
+    // 날짜는 "YYYY-MM-DD"만 보여주기
+    final dateText = (item.approveDate.isNotEmpty && item.approveDate.contains('T'))
+        ? item.approveDate.split('T').first
+        : item.approveDate;
 
     return Container(
       decoration: const BoxDecoration(
         border: Border(
-          bottom: BorderSide(color: Color(0xFFE5E7EB), width: 1), // 아래만 테두리
+          bottom: BorderSide(color: Color(0xFFE5E7EB), width: 1),
         ),
       ),
       child: InkWell(
@@ -33,7 +39,7 @@ class NewsListItem extends StatelessWidget {
                   width: 72,
                   height: 72,
                   child: Image.network(
-                    url,
+                    item.thumbnailUrl,
                     fit: BoxFit.cover,
                     loadingBuilder: (context, child, progress) {
                       if (progress == null) return child;
@@ -50,28 +56,31 @@ class NewsListItem extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 12),
+
               // 오른쪽 텍스트
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // title
+                    // 제목
                     Text(
-                      title,
+                      item.title,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 4),
-                    // date
+
+                    // 날짜
                     Text(
-                      date,
+                      dateText,
                       style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Colors.grey[600]),
                     ),
                     const SizedBox(height: 6),
-                    // subtitle
+
+                    // 요약
                     Text(
-                      subtitle,
+                      item.aiSummary,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey[800]),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
