@@ -17,7 +17,7 @@ class AppColors {
   static const gr400 = Color(0xFFC2C3C8);
   static const gr200 = Color(0xFFECEDEF);
   static const gr100 = Color(0xFFF6F7F8);
-  static final wt = Color(0xFFFAFAFA);
+  static const wt = Color(0xFFFAFAFA);
 
   // TRANSPARENCY COLORS
   static final sk_25 = primarySky.withValues(alpha: .25);

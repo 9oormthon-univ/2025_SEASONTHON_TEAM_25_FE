@@ -83,4 +83,9 @@ class AppTypography {
     fontSize: 10,
     fontWeight: FontWeight.w400,
   );
+
+  static final TextStyle s500 = base.copyWith(
+    fontSize: 10,
+    fontWeight: FontWeight.w500,
+  );
 }
