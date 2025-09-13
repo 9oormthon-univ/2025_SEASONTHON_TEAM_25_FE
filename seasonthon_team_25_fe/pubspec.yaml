@@ -40,12 +40,12 @@ dependencies:
   flutter_gen: ^5.11.0  # 에셋 관리
   flutter_svg: ^2.2.0    # SVG 이미지
   lottie: ^3.3.1
+  fluttertoast: ^8.2.12
 
   #상태/모델
   freezed_annotation: ^3.1.0
   json_annotation: ^4.9.0
   flutter_riverpod: ^2.6.1
-
   shared_preferences: ^2.5.3
   
   #보안/네트워크
@@ -53,6 +53,7 @@ dependencies:
   dio: ^5.9.0
   retrofit: ^4.7.2
   retrofit_generator: ^10.0.4
+  universal_html: ^2.2.4
 
 dev_dependencies:
   flutter_test:
@@ -90,6 +91,8 @@ flutter:
     - assets/images/home/
     - assets/images/quiz/
     - assets/images/bank/
+    - assets/images/app_logo/
+   
 
   # To add assets to your application, add an assets section, like this:
   # assets:

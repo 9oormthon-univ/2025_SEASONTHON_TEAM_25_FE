@@ -6,14 +6,16 @@ import 'package:seasonthon_team_25_fe/feature/home/routes/home_routes.dart';
 import 'package:seasonthon_team_25_fe/feature/news/routes/news_routes.dart';
 import 'package:seasonthon_team_25_fe/feature/quiz/routes/quiz_routes.dart';
 import 'package:seasonthon_team_25_fe/feature/scrap/routes/scrap_routes.dart';
+import 'package:seasonthon_team_25_fe/feature/splash/routes/splah_routes.dart';
 import 'package:seasonthon_team_25_fe/gen/assets.gen.dart';
 import 'package:seasonthon_team_25_fe/ui/components/navigation/custom_bottom_nav_bar.dart';
 import 'package:seasonthon_team_25_fe/ui/components/navigation/nav_item_data.dart';
 
 final appRouter = GoRouter(
   debugLogDiagnostics: true,
-  initialLocation: '/sign-up',
+  initialLocation: '/splash',
   routes: [
+    ...splashRoutes,
     ...authRoutes,
     ...quizRoutes, // /quiz 및 하위
     StatefulShellRoute.indexedStack(

@@ -8,7 +8,7 @@ class AppColors {
   static const secondaryIv = Color(0xFFFEF8E0);
   static const secondaryRd = Color(0xFFF75547);
   static const secondaryBl = Color(0xFF005396);
-  static final secondarySk = Color(0xFF89C2F0);
+  static const secondarySk = Color(0xFF89C2F0);
 
   // GRAY SCALE COLORS
   static const bk = Color(0xFF141416);
