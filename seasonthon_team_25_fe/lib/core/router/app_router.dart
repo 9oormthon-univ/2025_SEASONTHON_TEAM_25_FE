@@ -16,7 +16,8 @@ import 'package:seasonthon_team_25_fe/ui/components/navigation/nav_item_data.dar
 final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     debugLogDiagnostics: true,
-    initialLocation: '/splash',
+    // /splash
+    initialLocation: '/onboarding',
     routes: [
       ...splashRoutes,
       ...authRoutes,

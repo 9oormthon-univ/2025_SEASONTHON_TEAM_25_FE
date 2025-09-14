@@ -11,6 +11,7 @@ class PrimaryFilledButton extends StatelessWidget {
   final bool isLoading;
   final ButtonWidth widthType;
   final double? customWidth;
+  final double? width;
   const PrimaryFilledButton({
     super.key,
     required this.label,
@@ -18,6 +19,7 @@ class PrimaryFilledButton extends StatelessWidget {
     this.isLoading = false,
     this.widthType = ButtonWidth.large,
     this.customWidth,
+    this.width,
   });
 
   double _resolveWidth() {
@@ -44,20 +46,19 @@ class PrimaryFilledButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(AppRadius.button),
             boxShadow: AppShadows.dsDefault,
           ),
-          child:
-              isLoading
-                  ? SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(
-                      color: AppColors.wt,
-                      strokeWidth: 2.0,
-                    ),
-                  )
-                  : Text(
-                    label,
-                    style: AppTypography.h3.copyWith(color: AppColors.wt),
+          child: isLoading
+              ? SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    color: AppColors.wt,
+                    strokeWidth: 2.0,
                   ),
+                )
+              : Text(
+                  label,
+                  style: AppTypography.h3.copyWith(color: AppColors.wt),
+                ),
         ),
       ),
     );

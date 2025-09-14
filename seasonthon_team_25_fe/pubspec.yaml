@@ -39,7 +39,7 @@ dependencies:
   # UI 위젯
   flutter_gen: ^5.11.0  # 에셋 관리
   flutter_svg: ^2.2.0    # SVG 이미지
-  lottie: ^3.3.1
+  lottie: ^3.3.2
 
   #상태/모델
   freezed_annotation: ^3.1.0
@@ -83,6 +83,7 @@ flutter:
   uses-material-design: true
 
   assets:
+    - assets/lottie/
     - assets/images/
     - assets/images/bottomNavigationBarItem/
     - assets/images/components/
