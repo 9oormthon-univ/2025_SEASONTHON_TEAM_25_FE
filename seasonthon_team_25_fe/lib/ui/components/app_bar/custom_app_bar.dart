@@ -37,6 +37,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       backgroundColor: backgroundColor,
       elevation: 0,
+      scrolledUnderElevation: 0,
+      surfaceTintColor: Colors.transparent,
+      shadowColor: Colors.transparent,
       centerTitle: true,
       automaticallyImplyLeading: false, // 기본 leading 제거
       toolbarHeight: toolbarHeight,
