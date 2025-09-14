@@ -5,8 +5,8 @@ import 'package:seasonthon_team_25_fe/core/theme/colors.dart';
 import 'package:seasonthon_team_25_fe/feature/news/presentation/provider/news_controller.dart';
 import 'package:seasonthon_team_25_fe/ui/components/app_bar/custom_app_bar.dart';
 import 'package:seasonthon_team_25_fe/ui/components/tab_bar/custom_tab_bar.dart';
-import 'package:seasonthon_team_25_fe/feature/news/domain/entities/news_item_entity.dart';
-import 'package:seasonthon_team_25_fe/ui/news/widgets/news_list_item.dart';
+import 'package:seasonthon_team_25_fe/ui/news/ui/news_list_view.dart';
+import 'package:seasonthon_team_25_fe/ui/news/ui/news_swipe_view.dart';
 
 class NewsPage extends ConsumerStatefulWidget {
   const NewsPage({super.key});
@@ -55,8 +55,14 @@ class _NewsPageState extends ConsumerState<NewsPage> {
             child: IndexedStack(
               index: _tabIndex,
               children: [
-                // --- [탭 1] 넘겨보기 (placeholder) ---
-                const Center(child: Text('넘겨보기')),
+                // --- [탭 1] 넘겨보기 (카드 스와이프) ---
+                Center(
+                  child: NewsSwipeView(
+                    items: state.items,
+                    isLoading: state.page.isLoading,
+                    onTapItem: (item) => context.go('/news/${item.id}'),
+                  ),
+                ),
 
                 // --- [탭 2] 골라보기 (리스트) ---
                 Column(
@@ -98,7 +104,7 @@ class _NewsPageState extends ConsumerState<NewsPage> {
                               }
                               return false;
                             },
-                            child: _NewsListView(
+                            child: NewsListView(
                               items: state.items,
                               isLoadingMore: state.isLoadingMore,
                               onTapItem: (item) =>
@@ -115,48 +121,6 @@ class _NewsPageState extends ConsumerState<NewsPage> {
           ),
         ],
       ),
-    );
-  }
-}
-
-class _NewsListView extends StatelessWidget {
-  const _NewsListView({
-    required this.items,
-    required this.isLoadingMore,
-    required this.onTapItem,
-  });
-
-  final List<NewsItemEntity> items;
-  final bool isLoadingMore;
-  final void Function(NewsItemEntity) onTapItem;
-
-  @override
-  Widget build(BuildContext context) {
-    if (items.isEmpty) {
-      return const Center(child: Text('뉴스 불러오는 중'));
-    }
-
-    final itemCount = isLoadingMore ? items.length + 1 : items.length;
-
-    return ListView.builder(
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-      itemCount: itemCount,
-      itemBuilder: (context, i) {
-        if (i >= items.length) {
-          // 바닥 로딩 셀
-          return const Padding(
-            padding: EdgeInsets.symmetric(vertical: 12),
-            child: Center(
-              child: CircularProgressIndicator(
-                color: AppColors.primarySky,
-                strokeWidth: 2.0,
-              ),
-            ),
-          );
-        }
-        final item = items[i];
-        return NewsListItem(item: item, onTap: () => onTapItem(item));
-      },
     );
   }
 }

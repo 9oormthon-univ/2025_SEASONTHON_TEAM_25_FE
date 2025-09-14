@@ -40,6 +40,7 @@ dependencies:
   flutter_gen: ^5.11.0  # 에셋 관리
   flutter_svg: ^2.2.0    # SVG 이미지
   lottie: ^3.3.2
+  card_swiper: ^3.0.1
   
   intl: ^0.20.2
 
