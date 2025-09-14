@@ -206,8 +206,8 @@ return $default(_that.characterName);case _:
 }
 
 /// @nodoc
-@JsonSerializable()
 
+@JsonSerializable(explicitToJson: true)
 class _NickNameRequest implements NickNameRequest {
   const _NickNameRequest({required this.characterName});
   factory _NickNameRequest.fromJson(Map<String, dynamic> json) => _$NickNameRequestFromJson(json);
@@ -471,8 +471,8 @@ return $default(_that.characterName,_that.characterCreated,_that.message);case _
 }
 
 /// @nodoc
-@JsonSerializable()
 
+@JsonSerializable(explicitToJson: true)
 class _NickNameResponse implements NickNameResponse {
   const _NickNameResponse({required this.characterName, required this.characterCreated, this.message});
   factory _NickNameResponse.fromJson(Map<String, dynamic> json) => _$NickNameResponseFromJson(json);

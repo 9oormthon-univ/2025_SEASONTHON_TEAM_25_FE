@@ -4,6 +4,7 @@ part 'onboarding_models.g.dart';
 
 @freezed
 abstract class NickNameRequest with _$NickNameRequest {
+  @JsonSerializable(explicitToJson: true)
   const factory NickNameRequest({required String characterName}) =
       _NickNameRequest;
 
@@ -13,6 +14,7 @@ abstract class NickNameRequest with _$NickNameRequest {
 
 @freezed
 abstract class NickNameResponse with _$NickNameResponse {
+  @JsonSerializable(explicitToJson: true)
   const factory NickNameResponse({
     required String characterName,
     required bool characterCreated,
