@@ -7,12 +7,13 @@ import 'package:seasonthon_team_25_fe/feature/onboarding/data/models/onboarding_
 part 'onboarding_api.g.dart';
 
 // retrofit interface
+// onboarding_api.dart
 @RestApi()
 abstract class OnboardingApi {
   factory OnboardingApi(Dio dio, {String baseUrl}) = _OnboardingApi;
 
-  @POST('/api/onboarding/character')
-  Future<void> createCharacter(@Body() CharacterRequest body);
+  @POST('/api/auth/character/create-name')
+  Future<NickNameResponse> createNickName(@Body() NickNameRequest body);
 }
 
 final onboardingApiProvider = Provider<OnboardingApi>((ref) {

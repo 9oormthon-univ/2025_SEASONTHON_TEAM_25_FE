@@ -3,10 +3,22 @@ part 'onboarding_models.freezed.dart';
 part 'onboarding_models.g.dart';
 
 @freezed
-abstract class CharacterRequest with _$CharacterRequest {
-  const factory CharacterRequest({required String characterName}) =
-      _CharacterRequest;
+abstract class NickNameRequest with _$NickNameRequest {
+  const factory NickNameRequest({required String characterName}) =
+      _NickNameRequest;
 
-  factory CharacterRequest.fromJson(Map<String, dynamic> json) =>
-      _$CharacterRequestFromJson(json);
+  factory NickNameRequest.fromJson(Map<String, dynamic> json) =>
+      _$NickNameRequestFromJson(json);
+}
+
+@freezed
+abstract class NickNameResponse with _$NickNameResponse {
+  const factory NickNameResponse({
+    required String characterName,
+    required bool characterCreated,
+    String? message,
+  }) = _NickNameResponse;
+
+  factory NickNameResponse.fromJson(Map<String, dynamic> json) =>
+      _$NickNameResponseFromJson(json);
 }

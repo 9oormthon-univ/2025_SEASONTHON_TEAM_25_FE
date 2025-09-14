@@ -189,12 +189,7 @@ final dioProvider = Provider<Dio>((ref) {
         if (statusCode != 401 || shouldSkip(requestOptions)) {
           final errorMessage = mapDioError(error);
           log('User-friendly error: $errorMessage');
-          if (scaffoldMessengerKey.currentContext != null) {
-            ToastUtils.showErrorToast(
-              scaffoldMessengerKey.currentContext!,
-              errorMessage,
-            );
-          }
+          ToastUtils.showErrorToast(null, errorMessage);
           return handler.next(error);
         }
 

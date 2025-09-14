@@ -13,22 +13,22 @@ part of 'onboarding_models.dart';
 T _$identity<T>(T value) => value;
 
 /// @nodoc
-mixin _$CharacterRequest {
+mixin _$NickNameRequest {
 
  String get characterName;
-/// Create a copy of CharacterRequest
+/// Create a copy of NickNameRequest
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-$CharacterRequestCopyWith<CharacterRequest> get copyWith => _$CharacterRequestCopyWithImpl<CharacterRequest>(this as CharacterRequest, _$identity);
+$NickNameRequestCopyWith<NickNameRequest> get copyWith => _$NickNameRequestCopyWithImpl<NickNameRequest>(this as NickNameRequest, _$identity);
 
-  /// Serializes this CharacterRequest to a JSON map.
+  /// Serializes this NickNameRequest to a JSON map.
   Map<String, dynamic> toJson();
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CharacterRequest&&(identical(other.characterName, characterName) || other.characterName == characterName));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is NickNameRequest&&(identical(other.characterName, characterName) || other.characterName == characterName));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -37,15 +37,15 @@ int get hashCode => Object.hash(runtimeType,characterName);
 
 @override
 String toString() {
-  return 'CharacterRequest(characterName: $characterName)';
+  return 'NickNameRequest(characterName: $characterName)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class $CharacterRequestCopyWith<$Res>  {
-  factory $CharacterRequestCopyWith(CharacterRequest value, $Res Function(CharacterRequest) _then) = _$CharacterRequestCopyWithImpl;
+abstract mixin class $NickNameRequestCopyWith<$Res>  {
+  factory $NickNameRequestCopyWith(NickNameRequest value, $Res Function(NickNameRequest) _then) = _$NickNameRequestCopyWithImpl;
 @useResult
 $Res call({
  String characterName
@@ -56,14 +56,14 @@ $Res call({
 
 }
 /// @nodoc
-class _$CharacterRequestCopyWithImpl<$Res>
-    implements $CharacterRequestCopyWith<$Res> {
-  _$CharacterRequestCopyWithImpl(this._self, this._then);
+class _$NickNameRequestCopyWithImpl<$Res>
+    implements $NickNameRequestCopyWith<$Res> {
+  _$NickNameRequestCopyWithImpl(this._self, this._then);
 
-  final CharacterRequest _self;
-  final $Res Function(CharacterRequest) _then;
+  final NickNameRequest _self;
+  final $Res Function(NickNameRequest) _then;
 
-/// Create a copy of CharacterRequest
+/// Create a copy of NickNameRequest
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? characterName = null,}) {
   return _then(_self.copyWith(
@@ -75,8 +75,8 @@ as String,
 }
 
 
-/// Adds pattern-matching-related methods to [CharacterRequest].
-extension CharacterRequestPatterns on CharacterRequest {
+/// Adds pattern-matching-related methods to [NickNameRequest].
+extension NickNameRequestPatterns on NickNameRequest {
 /// A variant of `map` that fallback to returning `orElse`.
 ///
 /// It is equivalent to doing:
@@ -89,10 +89,10 @@ extension CharacterRequestPatterns on CharacterRequest {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _CharacterRequest value)?  $default,{required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _NickNameRequest value)?  $default,{required TResult orElse(),}){
 final _that = this;
 switch (_that) {
-case _CharacterRequest() when $default != null:
+case _NickNameRequest() when $default != null:
 return $default(_that);case _:
   return orElse();
 
@@ -111,10 +111,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _CharacterRequest value)  $default,){
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _NickNameRequest value)  $default,){
 final _that = this;
 switch (_that) {
-case _CharacterRequest():
+case _NickNameRequest():
 return $default(_that);case _:
   throw StateError('Unexpected subclass');
 
@@ -132,10 +132,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _CharacterRequest value)?  $default,){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _NickNameRequest value)?  $default,){
 final _that = this;
 switch (_that) {
-case _CharacterRequest() when $default != null:
+case _NickNameRequest() when $default != null:
 return $default(_that);case _:
   return null;
 
@@ -155,7 +155,7 @@ return $default(_that);case _:
 
 @optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String characterName)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
-case _CharacterRequest() when $default != null:
+case _NickNameRequest() when $default != null:
 return $default(_that.characterName);case _:
   return orElse();
 
@@ -176,7 +176,7 @@ return $default(_that.characterName);case _:
 
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String characterName)  $default,) {final _that = this;
 switch (_that) {
-case _CharacterRequest():
+case _NickNameRequest():
 return $default(_that.characterName);case _:
   throw StateError('Unexpected subclass');
 
@@ -196,7 +196,7 @@ return $default(_that.characterName);case _:
 
 @optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String characterName)?  $default,) {final _that = this;
 switch (_that) {
-case _CharacterRequest() when $default != null:
+case _NickNameRequest() when $default != null:
 return $default(_that.characterName);case _:
   return null;
 
@@ -208,26 +208,26 @@ return $default(_that.characterName);case _:
 /// @nodoc
 @JsonSerializable()
 
-class _CharacterRequest implements CharacterRequest {
-  const _CharacterRequest({required this.characterName});
-  factory _CharacterRequest.fromJson(Map<String, dynamic> json) => _$CharacterRequestFromJson(json);
+class _NickNameRequest implements NickNameRequest {
+  const _NickNameRequest({required this.characterName});
+  factory _NickNameRequest.fromJson(Map<String, dynamic> json) => _$NickNameRequestFromJson(json);
 
 @override final  String characterName;
 
-/// Create a copy of CharacterRequest
+/// Create a copy of NickNameRequest
 /// with the given fields replaced by the non-null parameter values.
 @override @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-_$CharacterRequestCopyWith<_CharacterRequest> get copyWith => __$CharacterRequestCopyWithImpl<_CharacterRequest>(this, _$identity);
+_$NickNameRequestCopyWith<_NickNameRequest> get copyWith => __$NickNameRequestCopyWithImpl<_NickNameRequest>(this, _$identity);
 
 @override
 Map<String, dynamic> toJson() {
-  return _$CharacterRequestToJson(this, );
+  return _$NickNameRequestToJson(this, );
 }
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CharacterRequest&&(identical(other.characterName, characterName) || other.characterName == characterName));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _NickNameRequest&&(identical(other.characterName, characterName) || other.characterName == characterName));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -236,15 +236,15 @@ int get hashCode => Object.hash(runtimeType,characterName);
 
 @override
 String toString() {
-  return 'CharacterRequest(characterName: $characterName)';
+  return 'NickNameRequest(characterName: $characterName)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class _$CharacterRequestCopyWith<$Res> implements $CharacterRequestCopyWith<$Res> {
-  factory _$CharacterRequestCopyWith(_CharacterRequest value, $Res Function(_CharacterRequest) _then) = __$CharacterRequestCopyWithImpl;
+abstract mixin class _$NickNameRequestCopyWith<$Res> implements $NickNameRequestCopyWith<$Res> {
+  factory _$NickNameRequestCopyWith(_NickNameRequest value, $Res Function(_NickNameRequest) _then) = __$NickNameRequestCopyWithImpl;
 @override @useResult
 $Res call({
  String characterName
@@ -255,19 +255,288 @@ $Res call({
 
 }
 /// @nodoc
-class __$CharacterRequestCopyWithImpl<$Res>
-    implements _$CharacterRequestCopyWith<$Res> {
-  __$CharacterRequestCopyWithImpl(this._self, this._then);
+class __$NickNameRequestCopyWithImpl<$Res>
+    implements _$NickNameRequestCopyWith<$Res> {
+  __$NickNameRequestCopyWithImpl(this._self, this._then);
 
-  final _CharacterRequest _self;
-  final $Res Function(_CharacterRequest) _then;
+  final _NickNameRequest _self;
+  final $Res Function(_NickNameRequest) _then;
 
-/// Create a copy of CharacterRequest
+/// Create a copy of NickNameRequest
 /// with the given fields replaced by the non-null parameter values.
 @override @pragma('vm:prefer-inline') $Res call({Object? characterName = null,}) {
-  return _then(_CharacterRequest(
+  return _then(_NickNameRequest(
 characterName: null == characterName ? _self.characterName : characterName // ignore: cast_nullable_to_non_nullable
 as String,
+  ));
+}
+
+
+}
+
+
+/// @nodoc
+mixin _$NickNameResponse {
+
+ String get characterName; bool get characterCreated; String? get message;
+/// Create a copy of NickNameResponse
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$NickNameResponseCopyWith<NickNameResponse> get copyWith => _$NickNameResponseCopyWithImpl<NickNameResponse>(this as NickNameResponse, _$identity);
+
+  /// Serializes this NickNameResponse to a JSON map.
+  Map<String, dynamic> toJson();
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is NickNameResponse&&(identical(other.characterName, characterName) || other.characterName == characterName)&&(identical(other.characterCreated, characterCreated) || other.characterCreated == characterCreated)&&(identical(other.message, message) || other.message == message));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,characterName,characterCreated,message);
+
+@override
+String toString() {
+  return 'NickNameResponse(characterName: $characterName, characterCreated: $characterCreated, message: $message)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $NickNameResponseCopyWith<$Res>  {
+  factory $NickNameResponseCopyWith(NickNameResponse value, $Res Function(NickNameResponse) _then) = _$NickNameResponseCopyWithImpl;
+@useResult
+$Res call({
+ String characterName, bool characterCreated, String? message
+});
+
+
+
+
+}
+/// @nodoc
+class _$NickNameResponseCopyWithImpl<$Res>
+    implements $NickNameResponseCopyWith<$Res> {
+  _$NickNameResponseCopyWithImpl(this._self, this._then);
+
+  final NickNameResponse _self;
+  final $Res Function(NickNameResponse) _then;
+
+/// Create a copy of NickNameResponse
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? characterName = null,Object? characterCreated = null,Object? message = freezed,}) {
+  return _then(_self.copyWith(
+characterName: null == characterName ? _self.characterName : characterName // ignore: cast_nullable_to_non_nullable
+as String,characterCreated: null == characterCreated ? _self.characterCreated : characterCreated // ignore: cast_nullable_to_non_nullable
+as bool,message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
+as String?,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [NickNameResponse].
+extension NickNameResponsePatterns on NickNameResponse {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _NickNameResponse value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _NickNameResponse() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _NickNameResponse value)  $default,){
+final _that = this;
+switch (_that) {
+case _NickNameResponse():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _NickNameResponse value)?  $default,){
+final _that = this;
+switch (_that) {
+case _NickNameResponse() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String characterName,  bool characterCreated,  String? message)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _NickNameResponse() when $default != null:
+return $default(_that.characterName,_that.characterCreated,_that.message);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String characterName,  bool characterCreated,  String? message)  $default,) {final _that = this;
+switch (_that) {
+case _NickNameResponse():
+return $default(_that.characterName,_that.characterCreated,_that.message);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String characterName,  bool characterCreated,  String? message)?  $default,) {final _that = this;
+switch (_that) {
+case _NickNameResponse() when $default != null:
+return $default(_that.characterName,_that.characterCreated,_that.message);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+@JsonSerializable()
+
+class _NickNameResponse implements NickNameResponse {
+  const _NickNameResponse({required this.characterName, required this.characterCreated, this.message});
+  factory _NickNameResponse.fromJson(Map<String, dynamic> json) => _$NickNameResponseFromJson(json);
+
+@override final  String characterName;
+@override final  bool characterCreated;
+@override final  String? message;
+
+/// Create a copy of NickNameResponse
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$NickNameResponseCopyWith<_NickNameResponse> get copyWith => __$NickNameResponseCopyWithImpl<_NickNameResponse>(this, _$identity);
+
+@override
+Map<String, dynamic> toJson() {
+  return _$NickNameResponseToJson(this, );
+}
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _NickNameResponse&&(identical(other.characterName, characterName) || other.characterName == characterName)&&(identical(other.characterCreated, characterCreated) || other.characterCreated == characterCreated)&&(identical(other.message, message) || other.message == message));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,characterName,characterCreated,message);
+
+@override
+String toString() {
+  return 'NickNameResponse(characterName: $characterName, characterCreated: $characterCreated, message: $message)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$NickNameResponseCopyWith<$Res> implements $NickNameResponseCopyWith<$Res> {
+  factory _$NickNameResponseCopyWith(_NickNameResponse value, $Res Function(_NickNameResponse) _then) = __$NickNameResponseCopyWithImpl;
+@override @useResult
+$Res call({
+ String characterName, bool characterCreated, String? message
+});
+
+
+
+
+}
+/// @nodoc
+class __$NickNameResponseCopyWithImpl<$Res>
+    implements _$NickNameResponseCopyWith<$Res> {
+  __$NickNameResponseCopyWithImpl(this._self, this._then);
+
+  final _NickNameResponse _self;
+  final $Res Function(_NickNameResponse) _then;
+
+/// Create a copy of NickNameResponse
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? characterName = null,Object? characterCreated = null,Object? message = freezed,}) {
+  return _then(_NickNameResponse(
+characterName: null == characterName ? _self.characterName : characterName // ignore: cast_nullable_to_non_nullable
+as String,characterCreated: null == characterCreated ? _self.characterCreated : characterCreated // ignore: cast_nullable_to_non_nullable
+as bool,message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 
