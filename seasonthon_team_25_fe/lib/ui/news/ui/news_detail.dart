@@ -1,16 +1,20 @@
-// ui/news/ui/news_detail.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:seasonthon_team_25_fe/core/theme/button_size.dart';
+
 import 'package:seasonthon_team_25_fe/core/theme/colors.dart';
-import 'package:seasonthon_team_25_fe/ui/components/custom_app_bar.dart';
-import 'package:seasonthon_team_25_fe/ui/components/mini_done_alret.dart';
-import 'package:seasonthon_team_25_fe/ui/components/primary_action_dtn.dart';
-import 'package:seasonthon_team_25_fe/feature/news/repository/list.dart'
-  show newsRepositoryProvider, NewsDetailModel, ContentBlock;
+import 'package:seasonthon_team_25_fe/core/theme/typography.dart';
+import 'package:seasonthon_team_25_fe/feature/news/domain/entities/new_detail_entity.dart';
+import 'package:seasonthon_team_25_fe/feature/news/presentation/provider/news_detail.controller.dart';
+import 'package:seasonthon_team_25_fe/ui/components/app_bar/custom_app_bar.dart';
+import 'package:seasonthon_team_25_fe/ui/components/buttons/primary_filled_button.dart';
+import 'package:seasonthon_team_25_fe/ui/components/chip/sk_filled_chip.dart';
+import 'package:seasonthon_team_25_fe/ui/components/chip/sk_outlined_chip.dart';
+import 'package:seasonthon_team_25_fe/utils/date_time_x.dart';
 
 class NewsDetail extends ConsumerStatefulWidget {
-  final int newsId; // ← long 대응: Dart int
+  final int newsId;
   const NewsDetail({super.key, required this.newsId});
 
   @override
@@ -18,95 +22,68 @@ class NewsDetail extends ConsumerStatefulWidget {
 }
 
 class _NewsDetailState extends ConsumerState<NewsDetail> {
-  late Future<NewsDetailModel> _future;
-  bool isDone = false;
+  bool isScrapped = false;
 
   @override
   void initState() {
     super.initState();
-    _future = ref.read(newsRepositoryProvider).fetchNewsDetail(widget.newsId);
+    Future.microtask(() {
+      ref.read(newsDetailControllerProvider.notifier).load(widget.newsId);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final state = ref.watch(newsDetailControllerProvider);
+
     return Scaffold(
       backgroundColor: AppColors.wt,
-      appBar: CustomAppBar(title: '뉴스', showLeft: true, showRight: true, onTapLeft: () {
-        context.go("/news");
-      }, onTapRight: () {
-        context.go("/news");
-      },),
-      body: FutureBuilder<NewsDetailModel>(
-        future: _future,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState != ConnectionState.done) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (snapshot.hasError) {
-            return Center(child: Text('불러오기 실패: ${snapshot.error}'));
-          }
-          if (!snapshot.hasData) {
+      appBar: CustomAppBar(
+        title: '뉴스',
+        showLeftBtn: true,
+        showRightBtn: true,
+        onTapLeftBtn: () => context.go("/news"),
+        onTapRightBtn: () => context.go("/news"),
+      ),
+      body: state.detail.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (e, _) => Center(child: Text('불러오기 실패: $e')),
+        data: (news) {
+          if (news == null) {
             return const Center(child: Text('뉴스를 찾을 수 없습니다.'));
           }
 
-          final news = snapshot.data!;
-          final approveDate = news.approveDate.contains('T')
-              ? news.approveDate.split('T').first
-              : news.approveDate;
+          final approveDateText = news.approveDate.ymdSlashHm();
 
           return Stack(
             children: [
               Padding(
-                padding: const EdgeInsets.fromLTRB(20, 0, 20, 90),
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 82),
                 child: SingleChildScrollView(
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      // 제목
                       Text(
                         news.title,
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.bk,
+                        style: AppTypography.h1,
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        approveDateText,
+                        style: AppTypography.m500.copyWith(
+                          color: AppColors.gr600,
                         ),
                       ),
-                      const SizedBox(height: 8),
-
-                      // 날짜 + 부처 뱃지
-                      Row(
-                        children: [
-                          Text(
-                            approveDate,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w400,
-                              color: AppColors.gr600,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          if (news.ministerCode.isNotEmpty)
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFF3F4F6),
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              child: Text(
-                                news.ministerCode,
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  color: AppColors.bk,
-                                ),
-                              ),
-                            ),
-                        ],
+                      const SizedBox(height: 18),
+                      const Divider(
+                        height: 25,
+                        thickness: 1,
+                        color: AppColors.gr200,
                       ),
-                      const SizedBox(height: 16),
-
+                      const SizedBox(height: 22),
                       // 썸네일
-                      if (news.thumbnailUrl.isNotEmpty)
+                      if (news.thumbnailUrl.trim().isNotEmpty)
                         ClipRRect(
                           borderRadius: BorderRadius.circular(12),
                           child: Image.network(
@@ -122,49 +99,40 @@ class _NewsDetailState extends ConsumerState<NewsDetail> {
                             ),
                           ),
                         ),
-                      const SizedBox(height: 16),
-
-                      const Divider(height: 32, thickness: 1),
+                      const SizedBox(height: 12),
 
                       // 요약
-                      if (news.aiSummary.isNotEmpty) ...[
-                        MiniDoneAlret(
-                          width: 70,
-                          child: const Text(
-                            '요약',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              color: AppColors.sk,
-                            ),
-                          ),
+                      if (news.aiSummary.trim().isNotEmpty) ...[
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: SkFilledChip(label: 'AI 요약'),
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 4),
                         Text(
                           news.aiSummary,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400,
-                            color: AppColors.sk,
+                          style: AppTypography.m500.copyWith(
+                            color: AppColors.primarySky,
                           ),
                         ),
                         const SizedBox(height: 12),
                       ],
 
                       // 본문 블록
-                      ...news.contentBlocks.map((block) => _buildBlock(block)),
+                      ...news.contentBlocks.map(_buildBlock),
 
-                      const SizedBox(height: 20),
-                      const Divider(height: 32, thickness: 1),
+                      const SizedBox(height: 24),
+                      const Divider(
+                        height: 25,
+                        thickness: 1,
+                        color: AppColors.gr200,
+                      ),
+                      const SizedBox(height: 24),
 
                       // 출처/고지
-                      const Text(
+                      Text(
                         '파프의 뉴스 시스템은 대한민국 공식 전자정부 누리집인 '
                         '<대한민국 정책브리핑>의 검증된 기사만을 사용합니다.',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
+                        style: AppTypography.s400.copyWith(
                           color: AppColors.gr600,
                         ),
                       ),
@@ -174,41 +142,26 @@ class _NewsDetailState extends ConsumerState<NewsDetail> {
               ),
 
               // 토스트(조건부)
-              if (isDone)
+              if (isScrapped)
                 Positioned(
-                  left: 0,
-                  right: 0,
-                  bottom: 20,
-                  child: Center(
-                    child: MiniDoneAlret(
-                      width: 110,
-                      child: const Text(
-                        '스크랩 완료!',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: AppColors.primary,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ),
+                  right: 140.5,
+                  bottom: 159,
+                  child: Center(child: SkOutlinedChip(label: '스크랩 완료!')),
                 ),
 
-              // 우하단 스크랩 버튼
+              // 우하단 스크랩 버튼 (동작은 예시)
               Positioned(
                 right: 20,
                 bottom: 20,
-                child: PrimaryActionButton(
-                  height: 44,
-                  width: 95,
+                child: PrimaryFilledButton(
+                  widthType: ButtonWidth.small,
                   isLoading: false,
                   label: '스크랩',
                   onPressed: () {
-                    setState(() => isDone = true);
-                    Future.delayed(const Duration(seconds: 3), () {
+                    setState(() => isScrapped = true);
+                    Future.delayed(const Duration(seconds: 1), () {
                       if (!mounted) return;
-                      setState(() => isDone = false);
+                      setState(() => isScrapped = false);
                     });
                   },
                 ),
@@ -220,29 +173,22 @@ class _NewsDetailState extends ConsumerState<NewsDetail> {
     );
   }
 
-  Widget _buildBlock(ContentBlock block) {
+  // ContentBlockEntity -> 위젯
+  Widget _buildBlock(ContentBlockEntity block) {
     switch (block.blockType) {
-      case 'text':
-        final t = block.plainContent ?? block.originalContent ?? '';
-        if (t.trim().isEmpty) return const SizedBox.shrink();
+      case NewsBlockType.text:
+        final t = (block.plainContent ?? block.originalContent ?? '').trim();
+        if (t.isEmpty) return const SizedBox.shrink();
         return Padding(
-          padding: const EdgeInsets.only(bottom: 12),
-          child: Text(
-            t,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w400,
-              color: AppColors.bk,
-              height: 1.6,
-            ),
-          ),
+          padding: const EdgeInsets.only(bottom: 24),
+          child: Text(t, style: AppTypography.l400),
         );
 
-      case 'paragraph_break':
-        return const SizedBox(height: 16);
+      case NewsBlockType.paragraphBreak:
+        return const SizedBox(height: 0);
 
-      case 'image':
-        final url = block.url ?? '';
+      case NewsBlockType.image:
+        final url = (block.url ?? '').trim();
         if (url.isEmpty) return const SizedBox.shrink();
         return Padding(
           padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -261,7 +207,7 @@ class _NewsDetailState extends ConsumerState<NewsDetail> {
           ),
         );
 
-      default:
+      case NewsBlockType.unknown:
         return const SizedBox.shrink();
     }
   }

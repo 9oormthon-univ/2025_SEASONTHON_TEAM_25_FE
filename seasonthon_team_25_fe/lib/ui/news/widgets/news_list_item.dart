@@ -1,29 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:seasonthon_team_25_fe/feature/news/repository/list.dart' show NewsItem;
+import 'package:seasonthon_team_25_fe/core/theme/colors.dart';
+import 'package:seasonthon_team_25_fe/core/theme/radius.dart';
+import 'package:seasonthon_team_25_fe/core/theme/typography.dart';
+import 'package:seasonthon_team_25_fe/feature/news/domain/entities/news_item_entity.dart';
+import 'package:seasonthon_team_25_fe/utils/date_time_x.dart';
 
 class NewsListItem extends StatelessWidget {
+  const NewsListItem({super.key, required this.item, this.onTap});
 
-  const NewsListItem({
-    super.key,
-    required this.item,
-    this.onTap,
-  });
-
-  final NewsItem item;
+  final NewsItemEntity item;
   final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    // 날짜는 "YYYY-MM-DD"만 보여주기
-    final dateText = (item.approveDate.isNotEmpty && item.approveDate.contains('T'))
-        ? item.approveDate.split('T').first
-        : item.approveDate;
+    final dateText = item.approveDate.ymdSlashHmOr('');
+
+    final thumb = (item.thumbnailUrl).trim();
 
     return Container(
       decoration: const BoxDecoration(
-        border: Border(
-          bottom: BorderSide(color: Color(0xFFE5E7EB), width: 1),
-        ),
+        border: Border(bottom: BorderSide(color: AppColors.gr200, width: 1)),
       ),
       child: InkWell(
         onTap: onTap,
@@ -34,25 +30,23 @@ class NewsListItem extends StatelessWidget {
             children: [
               // 왼쪽 썸네일
               ClipRRect(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(AppRadius.bottomSheet),
                 child: SizedBox(
-                  width: 72,
-                  height: 72,
-                  child: Image.network(
-                    item.thumbnailUrl,
-                    fit: BoxFit.cover,
-                    loadingBuilder: (context, child, progress) {
-                      if (progress == null) return child;
-                      return const Center(child: CircularProgressIndicator(strokeWidth: 2));
-                    },
-                    errorBuilder: (context, error, stack) {
-                      return Container(
-                        color: const Color(0xFFF3F4F6),
-                        alignment: Alignment.center,
-                        child: const Icon(Icons.image_not_supported),
-                      );
-                    },
-                  ),
+                  width: 84,
+                  height: 84,
+                  child: thumb.isNotEmpty
+                      ? Image.network(
+                          thumb,
+                          fit: BoxFit.cover,
+                          loadingBuilder: (context, child, progress) {
+                            if (progress == null) return child;
+                            return const Center(
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            );
+                          },
+                          errorBuilder: (_, __, ___) => _thumbPlaceholder(),
+                        )
+                      : _thumbPlaceholder(),
                 ),
               ),
               const SizedBox(width: 12),
@@ -65,7 +59,7 @@ class NewsListItem extends StatelessWidget {
                     // 제목
                     Text(
                       item.title,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
+                      style: AppTypography.h3,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -74,14 +68,18 @@ class NewsListItem extends StatelessWidget {
                     // 날짜
                     Text(
                       dateText,
-                      style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Colors.grey[600]),
+                      style: AppTypography.s400.copyWith(
+                        color: AppColors.gr600,
+                      ),
                     ),
                     const SizedBox(height: 6),
 
                     // 요약
                     Text(
                       item.aiSummary,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey[800]),
+                      style: AppTypography.m500.copyWith(
+                        color: AppColors.primarySky,
+                      ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -92,6 +90,14 @@ class NewsListItem extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _thumbPlaceholder() {
+    return Container(
+      color: AppColors.gr200,
+      alignment: Alignment.center,
+      child: const Icon(Icons.image_not_supported),
     );
   }
 }
