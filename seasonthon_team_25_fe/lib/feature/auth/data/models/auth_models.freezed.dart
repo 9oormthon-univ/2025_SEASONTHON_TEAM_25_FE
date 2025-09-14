@@ -1118,7 +1118,7 @@ $LoginUserResponseCopyWith<$Res> get user {
 /// @nodoc
 mixin _$LoginUserResponse {
 
- int get userId; String get email; String get role; String get status; bool get characterCreated;
+ int get userId; String get email; String get role; String get status; String? get characterName; bool get characterCreated;
 /// Create a copy of LoginUserResponse
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -1131,16 +1131,16 @@ $LoginUserResponseCopyWith<LoginUserResponse> get copyWith => _$LoginUserRespons
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is LoginUserResponse&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.email, email) || other.email == email)&&(identical(other.role, role) || other.role == role)&&(identical(other.status, status) || other.status == status)&&(identical(other.characterCreated, characterCreated) || other.characterCreated == characterCreated));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is LoginUserResponse&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.email, email) || other.email == email)&&(identical(other.role, role) || other.role == role)&&(identical(other.status, status) || other.status == status)&&(identical(other.characterName, characterName) || other.characterName == characterName)&&(identical(other.characterCreated, characterCreated) || other.characterCreated == characterCreated));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,userId,email,role,status,characterCreated);
+int get hashCode => Object.hash(runtimeType,userId,email,role,status,characterName,characterCreated);
 
 @override
 String toString() {
-  return 'LoginUserResponse(userId: $userId, email: $email, role: $role, status: $status, characterCreated: $characterCreated)';
+  return 'LoginUserResponse(userId: $userId, email: $email, role: $role, status: $status, characterName: $characterName, characterCreated: $characterCreated)';
 }
 
 
@@ -1151,7 +1151,7 @@ abstract mixin class $LoginUserResponseCopyWith<$Res>  {
   factory $LoginUserResponseCopyWith(LoginUserResponse value, $Res Function(LoginUserResponse) _then) = _$LoginUserResponseCopyWithImpl;
 @useResult
 $Res call({
- int userId, String email, String role, String status, bool characterCreated
+ int userId, String email, String role, String status, String? characterName, bool characterCreated
 });
 
 
@@ -1168,13 +1168,14 @@ class _$LoginUserResponseCopyWithImpl<$Res>
 
 /// Create a copy of LoginUserResponse
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? userId = null,Object? email = null,Object? role = null,Object? status = null,Object? characterCreated = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? userId = null,Object? email = null,Object? role = null,Object? status = null,Object? characterName = freezed,Object? characterCreated = null,}) {
   return _then(_self.copyWith(
 userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
 as int,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
 as String,role: null == role ? _self.role : role // ignore: cast_nullable_to_non_nullable
 as String,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
-as String,characterCreated: null == characterCreated ? _self.characterCreated : characterCreated // ignore: cast_nullable_to_non_nullable
+as String,characterName: freezed == characterName ? _self.characterName : characterName // ignore: cast_nullable_to_non_nullable
+as String?,characterCreated: null == characterCreated ? _self.characterCreated : characterCreated // ignore: cast_nullable_to_non_nullable
 as bool,
   ));
 }
@@ -1260,10 +1261,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int userId,  String email,  String role,  String status,  bool characterCreated)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int userId,  String email,  String role,  String status,  String? characterName,  bool characterCreated)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _LoginUserResponse() when $default != null:
-return $default(_that.userId,_that.email,_that.role,_that.status,_that.characterCreated);case _:
+return $default(_that.userId,_that.email,_that.role,_that.status,_that.characterName,_that.characterCreated);case _:
   return orElse();
 
 }
@@ -1281,10 +1282,10 @@ return $default(_that.userId,_that.email,_that.role,_that.status,_that.character
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int userId,  String email,  String role,  String status,  bool characterCreated)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int userId,  String email,  String role,  String status,  String? characterName,  bool characterCreated)  $default,) {final _that = this;
 switch (_that) {
 case _LoginUserResponse():
-return $default(_that.userId,_that.email,_that.role,_that.status,_that.characterCreated);case _:
+return $default(_that.userId,_that.email,_that.role,_that.status,_that.characterName,_that.characterCreated);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -1301,10 +1302,10 @@ return $default(_that.userId,_that.email,_that.role,_that.status,_that.character
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int userId,  String email,  String role,  String status,  bool characterCreated)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int userId,  String email,  String role,  String status,  String? characterName,  bool characterCreated)?  $default,) {final _that = this;
 switch (_that) {
 case _LoginUserResponse() when $default != null:
-return $default(_that.userId,_that.email,_that.role,_that.status,_that.characterCreated);case _:
+return $default(_that.userId,_that.email,_that.role,_that.status,_that.characterName,_that.characterCreated);case _:
   return null;
 
 }
@@ -1316,13 +1317,14 @@ return $default(_that.userId,_that.email,_that.role,_that.status,_that.character
 @JsonSerializable()
 
 class _LoginUserResponse implements LoginUserResponse {
-  const _LoginUserResponse({required this.userId, required this.email, required this.role, required this.status, required this.characterCreated});
+  const _LoginUserResponse({required this.userId, required this.email, required this.role, required this.status, this.characterName, required this.characterCreated});
   factory _LoginUserResponse.fromJson(Map<String, dynamic> json) => _$LoginUserResponseFromJson(json);
 
 @override final  int userId;
 @override final  String email;
 @override final  String role;
 @override final  String status;
+@override final  String? characterName;
 @override final  bool characterCreated;
 
 /// Create a copy of LoginUserResponse
@@ -1338,16 +1340,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _LoginUserResponse&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.email, email) || other.email == email)&&(identical(other.role, role) || other.role == role)&&(identical(other.status, status) || other.status == status)&&(identical(other.characterCreated, characterCreated) || other.characterCreated == characterCreated));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _LoginUserResponse&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.email, email) || other.email == email)&&(identical(other.role, role) || other.role == role)&&(identical(other.status, status) || other.status == status)&&(identical(other.characterName, characterName) || other.characterName == characterName)&&(identical(other.characterCreated, characterCreated) || other.characterCreated == characterCreated));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,userId,email,role,status,characterCreated);
+int get hashCode => Object.hash(runtimeType,userId,email,role,status,characterName,characterCreated);
 
 @override
 String toString() {
-  return 'LoginUserResponse(userId: $userId, email: $email, role: $role, status: $status, characterCreated: $characterCreated)';
+  return 'LoginUserResponse(userId: $userId, email: $email, role: $role, status: $status, characterName: $characterName, characterCreated: $characterCreated)';
 }
 
 
@@ -1358,7 +1360,7 @@ abstract mixin class _$LoginUserResponseCopyWith<$Res> implements $LoginUserResp
   factory _$LoginUserResponseCopyWith(_LoginUserResponse value, $Res Function(_LoginUserResponse) _then) = __$LoginUserResponseCopyWithImpl;
 @override @useResult
 $Res call({
- int userId, String email, String role, String status, bool characterCreated
+ int userId, String email, String role, String status, String? characterName, bool characterCreated
 });
 
 
@@ -1375,13 +1377,14 @@ class __$LoginUserResponseCopyWithImpl<$Res>
 
 /// Create a copy of LoginUserResponse
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? userId = null,Object? email = null,Object? role = null,Object? status = null,Object? characterCreated = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? userId = null,Object? email = null,Object? role = null,Object? status = null,Object? characterName = freezed,Object? characterCreated = null,}) {
   return _then(_LoginUserResponse(
 userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
 as int,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
 as String,role: null == role ? _self.role : role // ignore: cast_nullable_to_non_nullable
 as String,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
-as String,characterCreated: null == characterCreated ? _self.characterCreated : characterCreated // ignore: cast_nullable_to_non_nullable
+as String,characterName: freezed == characterName ? _self.characterName : characterName // ignore: cast_nullable_to_non_nullable
+as String?,characterCreated: null == characterCreated ? _self.characterCreated : characterCreated // ignore: cast_nullable_to_non_nullable
 as bool,
   ));
 }

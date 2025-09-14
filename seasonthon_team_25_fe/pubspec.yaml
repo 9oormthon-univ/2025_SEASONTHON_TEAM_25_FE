@@ -19,7 +19,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.7.2
+  sdk: ^3.8.0
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -40,7 +40,6 @@ dependencies:
   flutter_gen: ^5.11.0  # 에셋 관리
   flutter_svg: ^2.2.0    # SVG 이미지
   lottie: ^3.3.1
-  fluttertoast: ^8.2.12
 
   #상태/모델
   freezed_annotation: ^3.1.0

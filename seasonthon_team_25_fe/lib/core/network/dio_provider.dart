@@ -1,57 +1,141 @@
-// core/network/dio_provider.dart
 import 'dart:async';
 import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:seasonthon_team_25_fe/core/network/error_mapper.dart';
+import 'package:seasonthon_team_25_fe/core/router/app_router.dart';
+import 'package:seasonthon_team_25_fe/main.dart';
+import 'package:seasonthon_team_25_fe/utils/toasts.dart';
+import 'package:universal_html/html.dart' as html;
+import 'package:flutter/foundation.dart';
 
-// refresh 호출용
-import 'package:seasonthon_team_25_fe/feature/auth/data/datasources/remote/auth_api.dart';
-import 'package:seasonthon_team_25_fe/feature/auth/data/models/auth_models.dart';
+abstract class TokenStorage {
+  Future<void> saveTokens({
+    required String accessToken,
+    required String refreshToken,
+    String? tokenType,
+    int? expiresIn,
+  });
+  Future<String?> getAccessToken();
+  Future<String?> getRefreshToken();
+  Future<void> clearTokens();
+}
 
-/// ===============================
-/// SecureStorage & Token Keys
-/// ===============================
-final secureStorageProvider = Provider((ref) => const FlutterSecureStorage());
+// 웹 - 쿠키를 사용
+class WebTokenStorage implements TokenStorage {
+  String _cookieAttrs({int? maxAge}) {
+    final attrs = <String>[
+      'path=/',
+      if (maxAge != null) 'max-age=$maxAge',
+      // 개발 http라면 secure 빼도 되지만, 실서비스 https면 secure 권장
+      if (html.window.location.protocol == 'https:') 'secure',
+      'samesite=lax',
+    ];
+    return attrs.join('; ');
+  }
 
-const _kAccess = 'accessToken';
-const _kRefresh = 'refreshToken';
-const _kType = 'tokenType';
-const _kExpiresIn = 'expiresIn';
+  String? _readCookie(String name) {
+    final c = html.document.cookie;
+    if (c == null) return null;
+    final m = RegExp('(?:^|;\\s*)${RegExp.escape(name)}=([^;]*)').firstMatch(c);
+    return m?.group(1);
+  }
 
-/// ===============================
-/// BaseOptions
-/// ===============================
+  @override
+  Future<void> saveTokens({
+    required String accessToken,
+    required String refreshToken,
+    String? tokenType,
+    int? expiresIn,
+  }) async {
+    final attrsAccess = _cookieAttrs(maxAge: expiresIn ?? 1800);
+    final attrsRefresh = _cookieAttrs(maxAge: 60 * 60 * 24 * 14); // 14days 예시
+    html.document.cookie = 'accessToken=$accessToken; $attrsAccess';
+    html.document.cookie = 'refreshToken=$refreshToken; $attrsRefresh';
+  }
+
+  @override
+  Future<String?> getAccessToken() async => _readCookie('accessToken');
+
+  @override
+  Future<String?> getRefreshToken() async => _readCookie('refreshToken');
+
+  @override
+  Future<void> clearTokens() async {
+    html.document.cookie =
+        'accessToken=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;';
+    html.document.cookie =
+        'refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;';
+  }
+}
+
+// 모바일 - flutter_secure_storage를 사용
+class MobileTokenStorage implements TokenStorage {
+  final _storage = const FlutterSecureStorage();
+  static const _kAccess = 'accessToken';
+  static const _kRefresh = 'refreshToken';
+  static const _kExpiresAt = 'accessToken.expiresAt';
+
+  @override
+  Future<void> saveTokens({
+    required String accessToken,
+    required String refreshToken,
+    String? tokenType,
+    int? expiresIn,
+  }) async {
+    await _storage.write(key: _kAccess, value: accessToken);
+    await _storage.write(key: _kRefresh, value: refreshToken);
+    if (expiresIn != null) {
+      final expiresAt = DateTime.now()
+          .add(Duration(seconds: expiresIn))
+          .millisecondsSinceEpoch
+          .toString();
+      await _storage.write(key: _kExpiresAt, value: expiresAt);
+    }
+  }
+
+  @override
+  Future<String?> getAccessToken() => _storage.read(key: _kAccess);
+
+  @override
+  Future<String?> getRefreshToken() => _storage.read(key: _kRefresh);
+
+  @override
+  Future<void> clearTokens() async {
+    await _storage.delete(key: _kAccess);
+    await _storage.delete(key: _kRefresh);
+    await _storage.delete(key: _kExpiresAt);
+  }
+}
+
+final tokenStorageProvider = Provider<TokenStorage>((ref) {
+  return kIsWeb ? WebTokenStorage() : MobileTokenStorage();
+});
+
+// Dio 기본 설정 및 로거 인터셉터
 BaseOptions _baseOptions() => BaseOptions(
-  baseUrl: const String.fromEnvironment(
-    'API_BASE_URL',
-    defaultValue:
-        'https://financial-freedom-g6gedpdhhah5afdm.koreacentral-01.azurewebsites.net',
-  ),
+  baseUrl: 'http://34.47.69.71',
   connectTimeout: const Duration(seconds: 10),
   receiveTimeout: const Duration(seconds: 10),
   headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
 );
 
-/// ===============================
-/// Logger (디버그용)
-/// ===============================
 class SimpleLogInterceptor extends Interceptor {
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    log(
-      '[REQ] ${options.method} ${options.uri}\n'
-      'Headers: ${options.headers}\n'
-      'Data: ${options.data}',
-    );
+    log('[REQ] ${options.method} ${options.uri}\nData: ${options.data}');
     super.onRequest(options, handler);
   }
 
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
+    final path = response.requestOptions.path;
+    final isTokenEndpoint =
+        path.contains('/login') || path.contains('/refresh');
+    final safeData = isTokenEndpoint ? '<redacted>' : '${response.data}';
     log(
-      '[RES] ${response.statusCode} ${response.requestOptions.uri}\n'
-      'Data: ${response.data}',
+      '[RES] ${response.statusCode} ${response.requestOptions.uri}\nData: $safeData',
     );
     super.onResponse(response, handler);
   }
@@ -59,152 +143,120 @@ class SimpleLogInterceptor extends Interceptor {
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
     log(
-      '[ERR] ${err.requestOptions.method} ${err.requestOptions.uri}\n'
-      'Type: ${err.type}\n'
-      'Message: ${err.message}\n'
-      'Data: ${err.response?.data}',
+      '[ERR] ${err.requestOptions.uri}\nMessage: ${err.message}\nData: ${err.response?.data}',
     );
     super.onError(err, handler);
   }
 }
 
-/// ===============================
-/// Refresh 전용 Dio/AuthApi (인터셉터 없음)
-/// ===============================
-final _baseDioOptionsProvider = Provider<BaseOptions>((_) => _baseOptions());
-
-final refreshDioProvider = Provider<Dio>((ref) {
-  return Dio(ref.watch(_baseDioOptionsProvider));
-});
-
-final refreshApiProvider = Provider<AuthApi>((ref) {
-  final dio = ref.watch(refreshDioProvider);
-  return AuthApi(dio);
-});
-
-/// ===============================
-/// 메인 Dio: Authorization 주입 + 401 Refresh + 원요청 재시도
-/// ===============================
 final dioProvider = Provider<Dio>((ref) {
-  final dio = Dio(ref.watch(_baseDioOptionsProvider));
+  final dio = Dio(_baseOptions());
+  // 플랫폼에 맞는 토큰 저장소 주입
+  final tokenStorage = ref.watch(tokenStorageProvider);
+  final goRouter = ref.watch(routerProvider);
 
-  final storage = ref.watch(secureStorageProvider);
-  final refreshApi = ref.watch(refreshApiProvider);
+  // 동시 401 에러 대응: 락(lock)을 이용해 refresh 요청이 중복되지 않도록 합니다.
+  Future<String?>? refreshingToken;
 
-  // 동시 401 대응: refresh를 1회만 수행하기 위한 락
-  Future<bool>? refreshing;
-
-  bool shouldSkip(RequestOptions o) {
-    final p = o.path;
-    // 로그인/가입/리프레시 엔드포인트는 Authorization 헤더를 붙이지 않고,
-    // 401이어도 refresh 로직을 태우지 않습니다.
-    return p.contains('/api/auth/login') ||
-        p.contains('/api/auth/sign-up') ||
-        p.contains('/api/auth/refresh');
+  bool shouldSkip(RequestOptions options) {
+    // 인증 헤더를 제외할 경로를 정의합니다.
+    final path = options.path;
+    return path.contains('/sign-up') ||
+        path.contains('/login') ||
+        path.contains('/refresh');
   }
 
   dio.interceptors.add(
+    // 요청을 큐에 넣어 순서대로 처리
     QueuedInterceptorsWrapper(
-      // 1) Request: Authorization 헤더 주입
       onRequest: (options, handler) async {
-        if (!shouldSkip(options)) {
-          final at = await storage.read(key: _kAccess);
-          final tt = await storage.read(key: _kType);
-          if (at != null && at.isNotEmpty) {
-            options.headers['Authorization'] = '${tt ?? 'Bearer'} $at';
-          }
-        } else {
-          // 안전 차원: 스킵 대상은 Authorization 제거
-          options.headers.remove('Authorization');
+        // 인증이 필요 없는 경로인지 확인
+        if (shouldSkip(options)) {
+          return handler.next(options);
+        }
+
+        final accessToken = await tokenStorage.getAccessToken();
+        if (accessToken != null) {
+          options.headers['Authorization'] = 'Bearer $accessToken';
         }
         handler.next(options);
       },
-
-      // 2) Error: 401 → refresh → 원요청 재시도
       onError: (error, handler) async {
-        final status = error.response?.statusCode ?? 0;
-        final req = error.requestOptions;
+        final statusCode = error.response?.statusCode;
+        final requestOptions = error.requestOptions;
 
-        // 401이 아니거나, 스킵 대상(로그인/가입/리프레시)이면 그냥 통과
-        if (status != 401 || shouldSkip(req)) {
-          return handler.next(error);
-        }
-
-        // refresh 토큰 확인
-        final rt = await storage.read(key: _kRefresh);
-        if (rt == null || rt.isEmpty) {
-          return handler.next(error);
-        }
-
-        // 중복 refresh 방지
-        refreshing ??= () async {
-          try {
-            final res = await refreshApi.refresh(
-              RefreshRequest(refreshToken: rt),
+        // 401 오류가 아니거나, 토큰이 필요 없는 경로면 토스트를 띄우고 다음으로 이동
+        if (statusCode != 401 || shouldSkip(requestOptions)) {
+          final errorMessage = mapDioError(error);
+          log('User-friendly error: $errorMessage');
+          if (scaffoldMessengerKey.currentContext != null) {
+            ToastUtils.showErrorToast(
+              scaffoldMessengerKey.currentContext!,
+              errorMessage,
             );
-
-            // 새 토큰 저장
-            await storage.write(key: _kAccess, value: res.accessToken);
-            await storage.write(key: _kRefresh, value: res.refreshToken);
-            await storage.write(key: _kType, value: res.tokenType);
-            await storage.write(
-              key: _kExpiresIn,
-              value: res.expiresIn.toString(),
-            );
-            return true;
-          } catch (_) {
-            // refresh 실패 → 토큰 삭제
-            await storage.delete(key: _kAccess);
-            await storage.delete(key: _kRefresh);
-            await storage.delete(key: _kType);
-            await storage.delete(key: _kExpiresIn);
-            return false;
-          } finally {
-            // 잠깐 지연 후 락 해제(연쇄 요청 안전하게)
-            await Future<void>.delayed(const Duration(milliseconds: 10));
-            refreshing = null;
           }
-        }();
+          return handler.next(error);
+        }
 
-        final ok = await refreshing!;
-        if (!ok) return handler.next(error);
+        final refreshToken = await tokenStorage.getRefreshToken();
+        if (refreshToken == null) {
+          await tokenStorage.clearTokens();
+          // 회원 가입 페이지로 이동
+          goRouter.go('/sign-up');
+          return handler.next(error);
+        }
 
-        // 원 요청 재시도 (새 Access Token 반영)
-        final newAt = await storage.read(key: _kAccess);
-        final newTt = await storage.read(key: _kType);
-        final opts = Options(
-          method: req.method,
-          headers: {
-            // 원래의 헤더 중 Authorization은 새 토큰으로 대체
-            ...req.headers..remove('Authorization'),
-            if (newAt != null && newAt.isNotEmpty)
-              'Authorization': '${newTt ?? 'Bearer'} $newAt',
-          },
-          responseType: req.responseType,
-          contentType: req.contentType,
-          followRedirects: req.followRedirects,
-          validateStatus: req.validateStatus,
-          receiveDataWhenStatusError: req.receiveDataWhenStatusError,
-          extra: req.extra,
-        );
+        // 락이 걸려 있으면(다른 요청이 이미 토큰 갱신을 시작한 상황) 해제될 때까지 대기
+        if (refreshingToken != null) {
+          await refreshingToken;
+          return handler.resolve(await dio.fetch(requestOptions));
+        }
+
+        // 리프레시 토큰 요청 시작
+        final completer = Completer<String?>();
+        refreshingToken = completer.future;
 
         try {
-          final clone = await dio.request<dynamic>(
-            req.path,
-            data: req.data,
-            queryParameters: req.queryParameters,
-            options: opts,
+          // 리프레시 요청을 보냅니다.
+          final response = await dio.post(
+            '/api/auth/refresh',
+            data: {'refreshToken': refreshToken},
+            options: Options(
+              headers: {'Authorization': 'Bearer $refreshToken'},
+            ),
           );
-          return handler.resolve(clone);
-        } catch (_) {
-          return handler.next(error);
+
+          final newAccessToken = response.data['accessToken'];
+          final newRefreshToken = response.data['refreshToken'];
+          final newTokenType = response.data['tokenType'] as String?;
+          final newExpiresIn = response.data['expiresIn'] as int?;
+
+          // 새로운 토큰 저장
+          await tokenStorage.saveTokens(
+            accessToken: newAccessToken,
+            refreshToken: newRefreshToken,
+            tokenType: newTokenType,
+            expiresIn: newExpiresIn,
+          );
+
+          completer.complete(newAccessToken);
+
+          // 원래 요청을 새 토큰으로 다시 시도
+          requestOptions.headers['Authorization'] = 'Bearer $newAccessToken';
+          return handler.resolve(await dio.fetch(requestOptions));
+        } on DioException catch (e) {
+          completer.complete(null);
+          await tokenStorage.clearTokens();
+          // 회원 가입 페이지로 이동
+          goRouter.go('/sign-up');
+          return handler.next(e);
+        } finally {
+          refreshingToken = null;
         }
       },
     ),
   );
 
-  // 마지막에 로거 추가(재시도 후 응답도 로깅됨)
   dio.interceptors.add(SimpleLogInterceptor());
-
   return dio;
 });

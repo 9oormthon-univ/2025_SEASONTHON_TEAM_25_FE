@@ -23,7 +23,7 @@ class _SplashState extends ConsumerState<SplashPage> {
   }
 
   void _navigateToNextPage() {
-    Future.delayed(const Duration(seconds: 10), () {
+    Future.delayed(const Duration(seconds: 1), () {
       if (!mounted) return;
       context.go('/sign-up');
     });
