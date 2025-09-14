@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:seasonthon_team_25_fe/core/theme/colors.dart';
+import 'package:seasonthon_team_25_fe/core/theme/radius.dart';
 import 'package:seasonthon_team_25_fe/core/theme/typography.dart';
 import 'package:seasonthon_team_25_fe/feature/auth/presentation/providers/auth_controller.dart';
-import 'package:seasonthon_team_25_fe/ui/components/primary_action_dtn.dart';
+import 'package:seasonthon_team_25_fe/feature/data/local/nickname_storage_prefs.dart';
+import 'package:seasonthon_team_25_fe/ui/components/buttons/primary_filled_button.dart';
+import 'package:seasonthon_team_25_fe/utils/toasts.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
@@ -15,14 +18,17 @@ class LoginPage extends ConsumerStatefulWidget {
 
 class _LoginPageState extends ConsumerState<LoginPage> {
   final _formKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
   final _emailFieldKey = GlobalKey<FormFieldState<String>>();
   final _passwordFieldKey = GlobalKey<FormFieldState<String>>();
-
   bool isEmailError = false;
   bool isPasswordError = false;
 
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -36,20 +42,24 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     final state = ref.watch(authControllerProvider);
     final isLoading = state.login.isLoading;
 
-    ref.listen(authControllerProvider, (prev, next) {
+    ref.listen<AuthState>(authControllerProvider, (prev, next) async {
       next.login.when(
-        data: (entity) {
+        data: (entity) async {
           if (entity == null) return;
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(const SnackBar(content: Text('로그인 성공! 👋')));
-          //context.go('/nickname');
-          context.go('/home');  //시연을 위함
+          if (!mounted) return;
+          // 닉네임 설정 여부에 따라
+          final nickname = ref.read(nicknameStorageProvider).getNickname();
+          final hasNickname = nickname != null && nickname.trim().isNotEmpty;
+
+          if (hasNickname) {
+            context.go('/home');
+          } else {
+            context.go('/onboarding');
+          }
         },
         error: (e, _) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(e.toString())));
+          if (!mounted) return;
+          ToastUtils.showErrorToast(context, e.toString());
         },
         loading: () {},
       );
@@ -62,13 +72,14 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         child: GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
           child: SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(20, 94, 20, 0),
+            padding: const EdgeInsets.fromLTRB(20, 142, 20, 145),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
                   "로그인",
-                  style: AppTypography.h1.copyWith(color: AppColors.bk),
+                  style: AppTypography.h1,
+                  textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 6),
                 Text(
@@ -76,13 +87,14 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   style: AppTypography.l500,
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 131),
+                const SizedBox(height: 115),
 
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Form(
                     key: _formKey,
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    autovalidateMode:
+                        AutovalidateMode.disabled, // 버튼 클릭 시에만 검증하도록 설정
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -90,12 +102,12 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         const SizedBox(height: 4),
                         SizedBox(
                           width: double.infinity,
-                          height: 48,
                           child: TextFormField(
                             key: _emailFieldKey,
                             controller: _emailController,
                             keyboardType: TextInputType.emailAddress,
                             onChanged: (_) {
+                              // 사용자가 다시 입력하면 에러 하이라이트 해제
                               if (isEmailError) {
                                 setState(() => isEmailError = false);
                               }
@@ -103,27 +115,20 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                             decoration: InputDecoration(
                               contentPadding: const EdgeInsets.symmetric(
                                 horizontal: 10,
-                                vertical: 20,
+                                vertical: 13,
                               ),
                               filled: true,
-                              fillColor:
-                                  isEmailError
-                                      ? AppColors.rd.withValues(alpha: .25)
-                                      : AppColors.sk.withValues(alpha: .8),
-                              hintText:
-                                  isEmailError
-                                      ? "유효한 이메일 주소를 입력해 주세요"
-                                      : "name@example.com 형태로 입력해 주세요",
-                              hintStyle:
-                                  isEmailError
-                                      ? AppTypography.m500.copyWith(
-                                        color: AppColors.rd.withValues(
-                                          alpha: .75,
-                                        ),
-                                      )
-                                      : AppTypography.m500,
+                              fillColor: !isEmailError
+                                  ? AppColors.sk_50
+                                  : AppColors.rd_25,
+                              hintText: "이메일 주소를 입력해 주세요",
+                              hintStyle: AppTypography.m500.copyWith(
+                                color: AppColors.wt_50,
+                              ),
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(
+                                  AppRadius.bottomSheet,
+                                ),
                                 borderSide: BorderSide.none,
                               ),
                               helperText: '',
@@ -131,19 +136,16 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                 height: 0,
                                 fontSize: 0,
                               ),
-                              errorStyle: const TextStyle(
-                                height: 0,
-                                fontSize: 0,
+                              errorStyle: AppTypography.m500.copyWith(
+                                color: AppColors.secondaryRd,
                               ),
                             ),
                             validator: (value) {
                               final v = (value ?? '').trim();
-                              if (v.isEmpty) {
-                                return "이메일을 입력해 주세요";
-                              }
+                              if (v.isEmpty) return "이메일 주소를 입력해 주세요";
                               final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
                               if (!emailRegex.hasMatch(v)) {
-                                return "name@example.com 형태로 입력해 주세요";
+                                return "example@faff.com 형태로 입력해 주세요";
                               }
                               return null;
                             },
@@ -156,7 +158,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         const SizedBox(height: 4),
                         SizedBox(
                           width: double.infinity,
-                          height: 48,
                           child: TextFormField(
                             key: _passwordFieldKey,
                             controller: _passwordController,
@@ -169,50 +170,43 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                             decoration: InputDecoration(
                               contentPadding: const EdgeInsets.symmetric(
                                 horizontal: 10,
-                                vertical: 20,
+                                vertical: 13,
                               ),
                               filled: true,
-                              fillColor:
-                                  isPasswordError
-                                      ? AppColors.rd.withValues(alpha: .25)
-                                      : AppColors.sk.withValues(alpha: .8),
-                              hintText: "영어, 숫자, 특수문자를 포함한 8-20자를 입력해 주세요",
-                              hintStyle:
-                                  isPasswordError
-                                      ? AppTypography.m500.copyWith(
-                                        color: AppColors.rd.withValues(
-                                          alpha: .75,
-                                        ),
-                                      )
-                                      : AppTypography.m500,
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide.none,
+                              fillColor: !isPasswordError
+                                  ? AppColors.sk_50
+                                  : AppColors.rd_25,
+                              hintText: "비밀번호를 입력해 주세요",
+                              hintStyle: AppTypography.m500.copyWith(
+                                color: AppColors.wt_50,
                               ),
-                              errorStyle: const TextStyle(
-                                height: 0,
-                                fontSize: 0,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(
+                                  AppRadius.bottomSheet,
+                                ),
+                                borderSide: BorderSide.none,
                               ),
                               helperText: '',
                               helperStyle: const TextStyle(
                                 height: 0,
                                 fontSize: 0,
                               ),
+                              errorStyle: AppTypography.m500.copyWith(
+                                color: AppColors.secondaryRd,
+                              ),
                             ),
                             validator: (value) {
                               final v = value ?? '';
-                              if (v.isEmpty) {
-                                return "비밀번호를 입력해 주세요";
-                              }
+                              if (v.isEmpty) return "비밀번호를 입력해 주세요";
                               if (v.length < 8 || v.length > 20) {
                                 return "비밀번호는 8자-20자여야 합니다";
                               }
                               final hasLetter = RegExp(r'[A-Za-z]').hasMatch(v);
                               final hasNumber = RegExp(r'[0-9]').hasMatch(v);
-                              final hasSpecialChar = RegExp(
+                              final hasSpecial = RegExp(
                                 r'[!@#$%^&*(),.?":{}|<>]',
                               ).hasMatch(v);
-                              if (!hasLetter || !hasNumber || !hasSpecialChar) {
+                              if (!hasLetter || !hasNumber || !hasSpecial) {
                                 return "영어와 숫자와 특수문자를 모두 포함해야 합니다";
                               }
                               return null;
@@ -226,21 +220,26 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
                 const SizedBox(height: 139),
 
-                PrimaryActionButton(
+                PrimaryFilledButton(
+                  label: '로그인하기',
                   isLoading: isLoading,
-                  label: '로그인',
+                  customWidth: double.infinity,
                   onPressed: () async {
-                    final emailOk =
-                        _emailFieldKey.currentState?.validate() ?? false;
-                    final pwOk =
-                        _passwordFieldKey.currentState?.validate() ?? false;
+                    FocusScope.of(context).unfocus();
+
+                    // 폼 전체 1회 검증
+                    final ok = _formKey.currentState?.validate() ?? false;
 
                     setState(() {
+                      final emailOk =
+                          _emailFieldKey.currentState?.validate() ?? false;
+                      final pwOk =
+                          _passwordFieldKey.currentState?.validate() ?? false;
                       isEmailError = !emailOk;
                       isPasswordError = !pwOk;
                     });
 
-                    if (!(emailOk && pwOk)) return;
+                    if (!ok) return;
 
                     final email = _emailController.text.trim();
                     final password = _passwordController.text;
@@ -250,6 +249,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         .login(email, password);
                   },
                 ),
+
+                const SizedBox(height: 12),
               ],
             ),
           ),

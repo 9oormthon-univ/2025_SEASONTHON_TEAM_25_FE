@@ -5,6 +5,7 @@ import 'package:seasonthon_team_25_fe/feature/auth/routes/auth_routes.dart';
 import 'package:seasonthon_team_25_fe/feature/bank/routes/bank_routes.dart';
 import 'package:seasonthon_team_25_fe/feature/home/routes/home_routes.dart';
 import 'package:seasonthon_team_25_fe/feature/news/routes/news_routes.dart';
+import 'package:seasonthon_team_25_fe/feature/onboarding/routes/onboarding_routes.dart';
 import 'package:seasonthon_team_25_fe/feature/quiz/routes/quiz_routes.dart';
 import 'package:seasonthon_team_25_fe/feature/scrap/routes/scrap_routes.dart';
 import 'package:seasonthon_team_25_fe/feature/splash/routes/splah_routes.dart';
@@ -19,6 +20,7 @@ final routerProvider = Provider<GoRouter>((ref) {
     routes: [
       ...splashRoutes,
       ...authRoutes,
+      ...onboardingRoutes,
       ...quizRoutes,
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {

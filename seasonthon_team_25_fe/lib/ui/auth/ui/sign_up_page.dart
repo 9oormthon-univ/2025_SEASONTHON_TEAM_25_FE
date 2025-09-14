@@ -76,7 +76,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  "원활한 서비스 이용을 위해서는 로그인이 필요해요",
+                  "원활한 서비스 이용을 위해서는 회원가입이 필요해요",
                   style: AppTypography.l500,
                   textAlign: TextAlign.center,
                 ),
