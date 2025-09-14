@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seasonthon_team_25_fe/core/network/error_mapper.dart';
-import 'package:seasonthon_team_25_fe/feature/data/local/nickname_storage_prefs.dart';
+import 'package:seasonthon_team_25_fe/feature/onboarding/data/datasources/local/nickname_storage_prefs.dart';
 import 'package:seasonthon_team_25_fe/feature/onboarding/data/datasources/remote/onboarding_api.dart';
 import 'package:seasonthon_team_25_fe/feature/onboarding/data/models/onboarding_models.dart';
 import 'package:seasonthon_team_25_fe/feature/onboarding/domain/entities/nick_name_entity.dart';

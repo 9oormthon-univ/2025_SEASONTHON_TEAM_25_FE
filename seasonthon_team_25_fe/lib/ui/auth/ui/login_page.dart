@@ -5,7 +5,7 @@ import 'package:seasonthon_team_25_fe/core/theme/colors.dart';
 import 'package:seasonthon_team_25_fe/core/theme/radius.dart';
 import 'package:seasonthon_team_25_fe/core/theme/typography.dart';
 import 'package:seasonthon_team_25_fe/feature/auth/presentation/providers/auth_controller.dart';
-import 'package:seasonthon_team_25_fe/feature/data/local/nickname_storage_prefs.dart';
+import 'package:seasonthon_team_25_fe/feature/onboarding/data/datasources/local/nickname_storage_prefs.dart';
 import 'package:seasonthon_team_25_fe/ui/components/buttons/primary_filled_button.dart';
 import 'package:seasonthon_team_25_fe/utils/toasts.dart';
 
