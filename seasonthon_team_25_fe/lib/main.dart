@@ -1,23 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:seasonthon_team_25_fe/core/local/shared_prefs_provider.dart';
 import 'package:seasonthon_team_25_fe/core/router/app_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
+final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
+    GlobalKey<ScaffoldMessengerState>();
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final prefs = await SharedPreferences.getInstance();
+
   runApp(
     ProviderScope(
-      // 반드시 앱 전체를 감싸야 함
+      overrides: [sharedPrefsProvider.overrideWithValue(prefs)],
       child: const MyApp(),
     ),
   );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final appRouter = ref.watch(routerProvider); // 전역 라우터 불러오기
+
     return MaterialApp.router(
+      debugShowCheckedModeBanner: false,
       routerConfig: appRouter, // 전역 라우터 불러오기
+      scaffoldMessengerKey: scaffoldMessengerKey,
     );
   }
 }

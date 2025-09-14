@@ -13,7 +13,6 @@ abstract class SignUpRequest with _$SignUpRequest {
       _$SignUpRequestFromJson(json);
 }
 
-/// 201 Created 응답 스펙
 @freezed
 abstract class SignUpResponse with _$SignUpResponse {
   const factory SignUpResponse({
@@ -61,6 +60,7 @@ abstract class LoginUserResponse with _$LoginUserResponse {
     required String email,
     required String role,
     required String status,
+    String? characterName,
     required bool characterCreated,
   }) = _LoginUserResponse;
 
@@ -77,7 +77,6 @@ abstract class RefreshRequest with _$RefreshRequest {
       _$RefreshRequestFromJson(json);
 }
 
-/// 201 Created 응답 스펙
 @freezed
 abstract class RefreshResponse with _$RefreshResponse {
   const factory RefreshResponse({

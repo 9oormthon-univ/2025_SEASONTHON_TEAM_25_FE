@@ -17,7 +17,7 @@ abstract class AuthApi {
   Future<LoginResponse> login(@Body() LoginRequest body);
 
   @POST('/api/auth/refresh')
-  Future<LoginResponse> refresh(@Body() RefreshRequest body);
+  Future<RefreshResponse> refresh(@Body() RefreshRequest body);
 }
 
 final authApiProvider = Provider<AuthApi>((ref) {

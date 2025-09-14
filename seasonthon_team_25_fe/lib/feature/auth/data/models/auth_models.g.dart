@@ -68,6 +68,7 @@ _LoginUserResponse _$LoginUserResponseFromJson(Map<String, dynamic> json) =>
       email: json['email'] as String,
       role: json['role'] as String,
       status: json['status'] as String,
+      characterName: json['characterName'] as String?,
       characterCreated: json['characterCreated'] as bool,
     );
 
@@ -77,6 +78,7 @@ Map<String, dynamic> _$LoginUserResponseToJson(_LoginUserResponse instance) =>
       'email': instance.email,
       'role': instance.role,
       'status': instance.status,
+      'characterName': instance.characterName,
       'characterCreated': instance.characterCreated,
     };
 
