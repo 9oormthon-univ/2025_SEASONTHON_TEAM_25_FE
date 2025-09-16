@@ -246,6 +246,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                 const SizedBox(height: 12),
 
                 SecondaryOutLinedButton(
+                  customWidth: double.infinity,
                   label: "로그인하기",
                   onPressed: () => context.go('/login'),
                 ),

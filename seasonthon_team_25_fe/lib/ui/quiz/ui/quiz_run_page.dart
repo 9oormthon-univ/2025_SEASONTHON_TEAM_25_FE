@@ -1,6 +1,9 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:seasonthon_team_25_fe/core/theme/button_size.dart';
 import 'package:seasonthon_team_25_fe/core/theme/colors.dart';
 import 'package:seasonthon_team_25_fe/core/theme/radius.dart';
 import 'package:seasonthon_team_25_fe/core/theme/shadows.dart';
@@ -10,6 +13,7 @@ import 'package:seasonthon_team_25_fe/feature/quiz/presentation/provider/quiz_ru
 import 'package:seasonthon_team_25_fe/gen/assets.gen.dart';
 import 'package:seasonthon_team_25_fe/ui/components/app_bar/custom_white_app_bar.dart';
 import 'package:seasonthon_team_25_fe/ui/components/buttons/primary_filled_button.dart';
+import 'package:seasonthon_team_25_fe/ui/components/buttons/secondary_outlined_button.dart';
 import 'package:seasonthon_team_25_fe/ui/components/chip/sk_filled_chip.dart';
 import 'package:seasonthon_team_25_fe/ui/components/speech_bubble/speech_bubble.dart';
 
@@ -174,14 +178,43 @@ class _QuizRunPageState extends ConsumerState<QuizRunPage> {
                       },
                       child: Row(
                         children: [
-                          Image(
-                            image: Assets.images.characters.ffStart.provider(),
-                            width: 100,
-                            height: 122.49,
+                          // Image(
+                          //   image: Assets.images.characters.ffStart.provider(),
+                          //   width: 100,
+                          //   height: 122.49,
+                          // ),
+                          Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              // 블러 + 색깔 배경
+                              ImageFiltered(
+                                imageFilter: ImageFilter.blur(
+                                  sigmaX: 12,
+                                  sigmaY: 12,
+                                ),
+                                child: Container(
+                                  width: 140,
+                                  height: 160,
+                                  decoration: BoxDecoration(
+                                    color: Color(0xffFFF6AA),
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                ),
+                              ),
+
+                              // 실제 이미지
+                              Image(
+                                image: Assets.images.characters.ffStart
+                                    .provider(),
+                                width: 100,
+                                height: 122.49,
+                              ),
+                            ],
                           ),
                           // 말풍선
                           Expanded(
                             child: SpeechBubble(
+                              blurType: BlurType.hint,
                               color: AppColors.wt_75, // 말풍선 연한 하늘색 채움
                               radius: AppRadius.button,
                               elevation: 8,
@@ -200,7 +233,8 @@ class _QuizRunPageState extends ConsumerState<QuizRunPage> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Text(
-                                    result?.explanation ?? '앗! 혹시 문제가 너무 어려웠나요?\n저를 클릭하시면 힌트를 볼 수 있어요.\n힌트를 보고 다시 도전해 볼까요?',
+                                    result?.explanation ??
+                                        '앗! 혹시 문제가 너무 어려웠나요?\n저를 클릭하시면 힌트를 볼 수 있어요.\n힌트를 보고 다시 도전해 볼까요?',
                                     style: AppTypography.m600.copyWith(
                                       color: AppColors.primarySky,
                                     ),
@@ -215,14 +249,35 @@ class _QuizRunPageState extends ConsumerState<QuizRunPage> {
                   ],
                 ],
                 const SizedBox(height: 52),
-                PrimaryFilledButton(
-                  label: "선택했어요",
-                  onPressed: () {
-                    final canSubmit = selected != null && !state.submitting;
-                    if (!canSubmit) return;
-                    submit();
-                  },
-                ),
+                if (showResult) ...[
+                  Row(
+                    children: [
+                      PrimaryFilledButton(
+                        widthType: ButtonWidth.medium,
+                        label: "다음 퀴즈로",
+                        onPressed: () {
+                          // 다음 퀴즈로 이동
+                        },
+                      ),
+                      SecondaryOutLinedButton(
+                        widthType: ButtonWidth.small,
+                        label: "힌트 보기",
+                        onPressed: () {
+                          // 힌트 보기
+                        },
+                      ),
+                    ],
+                  ),
+                ] else ...[
+                  PrimaryFilledButton(
+                    label: "선택했어요",
+                    onPressed: () {
+                      final canSubmit = selected != null && !state.submitting;
+                      if (!canSubmit) return;
+                      submit();
+                    },
+                  ),
+                ],
               ],
             ),
           ),
