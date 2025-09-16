@@ -24,7 +24,7 @@ class MiniDoneAlret extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withOpacity(0.5),
+            color: AppColors.primarySky.withOpacity(0.5),
             blurRadius: 12,
             spreadRadius: 2,
             offset: const Offset(0, 0),

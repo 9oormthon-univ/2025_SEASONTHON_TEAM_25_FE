@@ -15,12 +15,12 @@ class RoundedTextBox extends StatelessWidget {
         vertical: 8,   // 상하 여백
       ),
       decoration: BoxDecoration(
-        color: AppColors.sk.withValues(alpha: 0.25), // 배경색
+        color: AppColors.secondarySk.withValues(alpha: 0.25), // 배경색
         borderRadius: BorderRadius.circular(24), // 모서리 둥글게
       ),
       child: Text(
         text,
-        style: AppTypography.m500.copyWith(color: AppColors.primary)
+        style: AppTypography.m500.copyWith(color: AppColors.primarySky)
       ),
     );
   }

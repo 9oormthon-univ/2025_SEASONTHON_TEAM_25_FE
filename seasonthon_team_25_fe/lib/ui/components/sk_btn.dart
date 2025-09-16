@@ -26,7 +26,7 @@ class SkyBlueButton extends StatelessWidget {
         child: ElevatedButton(
           onPressed: isLoading ? null : onPressed,
           style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.sk,
+            backgroundColor: AppColors.secondarySk,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),

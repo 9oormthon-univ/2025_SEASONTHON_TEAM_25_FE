@@ -8,7 +8,7 @@ import 'package:seasonthon_team_25_fe/core/theme/typography.dart';
 import 'package:seasonthon_team_25_fe/feature/bank/repository/product_register.dart';
 import 'package:seasonthon_team_25_fe/ui/bank/ui/financial_product_sign_up_complete.dart';
 import 'package:seasonthon_team_25_fe/ui/components/blur_card.dart';
-import 'package:seasonthon_team_25_fe/ui/components/custom_app_bar.dart';
+import 'package:seasonthon_team_25_fe/ui/components/app_bar/custom_app_bar.dart';
 import 'package:seasonthon_team_25_fe/ui/components/primary_action_dtn.dart';
 import 'package:seasonthon_team_25_fe/ui/components/reward_box.dart';
 
@@ -87,9 +87,9 @@ class _FinancialProductSignUpPageState
       backgroundColor: AppColors.wt,
       appBar: CustomAppBar(
         title: '금융 상품 가입하기',
-        showLeft: true,
-        showRight: false,
-        onTapLeft: () {
+        showLeftBtn: true,
+        showRightBtn: false,
+        onTapLeftBtn: () {
           context.go("/bank/list");
         },
       ),
@@ -105,8 +105,8 @@ class _FinancialProductSignUpPageState
                 alignment: Alignment.topLeft,
                 child: RewardBox(
                   text: "${balance?.toString() ?? '-'}원",
-                  textColor: AppColors.primary,
-                  backgroundColor: AppColors.sk.withValues(alpha: .25),
+                  textColor: AppColors.primarySky,
+                  backgroundColor: AppColors.secondarySk.withValues(alpha: .25),
                 ),
               ),
               BlurredCard(
@@ -154,7 +154,9 @@ class _FinancialProductSignUpPageState
                         controller: _textController,
                         decoration: InputDecoration(
                           filled: true,
-                          fillColor: AppColors.sk.withValues(alpha: .25),
+                          fillColor: AppColors.secondarySk.withValues(
+                            alpha: .25,
+                          ),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12.0),
                             borderSide: BorderSide.none,

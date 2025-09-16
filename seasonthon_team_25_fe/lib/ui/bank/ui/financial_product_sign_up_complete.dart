@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:seasonthon_team_25_fe/core/theme/colors.dart';
 import 'package:seasonthon_team_25_fe/core/theme/typography.dart';
 import 'package:seasonthon_team_25_fe/gen/assets.gen.dart';
-import 'package:seasonthon_team_25_fe/ui/components/custom_app_bar.dart';
+import 'package:seasonthon_team_25_fe/ui/components/app_bar/custom_app_bar.dart';
 import 'package:seasonthon_team_25_fe/ui/components/primary_action_dtn.dart';
 import 'package:seasonthon_team_25_fe/ui/components/sk_btn.dart';
 
@@ -50,7 +50,11 @@ class _FinancialProductSignUpCompletePageState
 
     return Scaffold(
       backgroundColor: AppColors.wt,
-      appBar: CustomAppBar(title: '가입 완료', showLeft: false, showRight: true),
+      appBar: CustomAppBar(
+        title: '가입 완료',
+        showLeftBtn: false,
+        showRightBtn: true,
+      ),
       body: Container(
         width: double.infinity,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
@@ -62,7 +66,10 @@ class _FinancialProductSignUpCompletePageState
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("짝짝짝, 가입이 완료되었어요!", style: AppTypography.h3.copyWith(color: AppColors.bk)),
+                  Text(
+                    "짝짝짝, 가입이 완료되었어요!",
+                    style: AppTypography.h3.copyWith(color: AppColors.bk),
+                  ),
                   Text(
                     "$amount원씩 $months회 자동으로 납입될 예정이며,\n만기 예정일은 $maturity일이에요.",
                   ),
@@ -76,13 +83,21 @@ class _FinancialProductSignUpCompletePageState
               fit: BoxFit.contain,
             ),
             const SizedBox(height: 100),
-            PrimaryActionButton(isLoading: false, label: "가입 내역 보러가기", onPressed: (){
-              context.go("/bank/in-progress");
-            }),
+            PrimaryActionButton(
+              isLoading: false,
+              label: "가입 내역 보러가기",
+              onPressed: () {
+                context.go("/bank/in-progress");
+              },
+            ),
             const SizedBox(height: 12),
-            SkyBlueButton(isLoading: false, label: "홈으로", onPressed: (){
-              context.go("/home");
-            }),
+            SkyBlueButton(
+              isLoading: false,
+              label: "홈으로",
+              onPressed: () {
+                context.go("/home");
+              },
+            ),
           ],
         ),
       ),

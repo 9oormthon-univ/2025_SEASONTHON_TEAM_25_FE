@@ -60,7 +60,7 @@ Future<void> _loadBalance() async {
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [AppColors.sk, AppColors.wt],
+          colors: [AppColors.secondarySk, AppColors.wt],
         ),
       ),
 
@@ -115,7 +115,7 @@ Future<void> _loadBalance() async {
                         "업적 확인",
                         style: AppTypography.m600.copyWith(
                           fontSize: 16,
-                          color: AppColors.primary,
+                          color: AppColors. primarySky,
                         ),
                       ),
                     ],
@@ -142,7 +142,7 @@ Future<void> _loadBalance() async {
                         "내 퀘스트",
                         style: AppTypography.m600.copyWith(
                           fontSize: 16,
-                          color: AppColors.primary,
+                          color: AppColors.primarySky,
                         ),
                       ),
                     ],
@@ -169,7 +169,7 @@ Future<void> _loadBalance() async {
                         "출석 체크",
                         style: AppTypography.m600.copyWith(
                           fontSize: 16,
-                          color: AppColors.primary,
+                          color: AppColors.primarySky,
                         ),
                       ),
                     ],

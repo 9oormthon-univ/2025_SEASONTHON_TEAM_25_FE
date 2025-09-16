@@ -42,7 +42,7 @@ class BlurredCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(borderRadius),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withValues(alpha: alpha),
+            color: AppColors.primarySky.withValues(alpha: alpha),
             blurRadius: blurRadius,
             spreadRadius: spreadRadius,
             offset: const Offset(0, 0),

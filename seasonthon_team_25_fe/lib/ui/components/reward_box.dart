@@ -43,7 +43,7 @@ class RewardBox extends StatelessWidget {
           const SizedBox(width: 8),
           Text(
             text,
-            style: AppTypography.m500.copyWith(color: AppColors.primary),
+            style: AppTypography.m500.copyWith(color: AppColors.primarySky),
           ),
         ],
       ),
