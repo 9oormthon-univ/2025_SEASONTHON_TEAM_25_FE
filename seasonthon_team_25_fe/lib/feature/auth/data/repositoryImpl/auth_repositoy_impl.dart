@@ -8,7 +8,7 @@ import 'package:seasonthon_team_25_fe/feature/auth/domain/entities/sign_up_entit
 import 'package:seasonthon_team_25_fe/feature/auth/domain/entities/token_entity.dart';
 import 'package:seasonthon_team_25_fe/feature/auth/domain/entities/user_entity.dart';
 import 'package:seasonthon_team_25_fe/feature/auth/domain/repositories/auth_repository.dart';
-import 'package:seasonthon_team_25_fe/feature/data/local/nickname_storage_prefs.dart';
+import 'package:seasonthon_team_25_fe/feature/onboarding/data/datasources/local/nickname_storage_prefs.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   final AuthApi _remote;

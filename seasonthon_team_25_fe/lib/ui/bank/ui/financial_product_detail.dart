@@ -6,7 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:seasonthon_team_25_fe/core/network/dio_provider.dart';
 import 'package:seasonthon_team_25_fe/core/theme/colors.dart';
 import 'package:seasonthon_team_25_fe/ui/components/blur_card.dart';
-import 'package:seasonthon_team_25_fe/ui/components/custom_app_bar.dart';
+import 'package:seasonthon_team_25_fe/ui/components/app_bar/custom_app_bar.dart';
 import 'package:seasonthon_team_25_fe/ui/components/primary_action_dtn.dart';
 import 'package:seasonthon_team_25_fe/ui/components/reward_box.dart';
 import 'package:seasonthon_team_25_fe/feature/bank/repository/product_detail.dart'; // ✅ 방금 작성한 레포 import
@@ -52,12 +52,12 @@ class _FinancialProductDetailPageState
       backgroundColor: AppColors.wt,
       appBar: CustomAppBar(
         title: '금융 상품 상세 보기',
-        showLeft: true,
-        showRight: true,
-        onTapLeft: () {
+        showLeftBtn: true,
+        showRightBtn: true,
+        onTapLeftBtn: () {
           context.go('/bank/list');
         },
-        onTapRight: () {
+        onTapRightBtn: () {
           context.go('/bank/list');
         },
       ),
@@ -84,8 +84,10 @@ class _FinancialProductDetailPageState
                   alignment: Alignment.topLeft,
                   child: RewardBox(
                     text: "${balance?.toString() ?? '-'}원",
-                    textColor: AppColors.primary,
-                    backgroundColor: AppColors.sk.withValues(alpha: .25),
+                    textColor: AppColors.primarySky,
+                    backgroundColor: AppColors.secondarySk.withValues(
+                      alpha: .25,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 12),

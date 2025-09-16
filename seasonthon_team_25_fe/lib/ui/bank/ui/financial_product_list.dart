@@ -6,7 +6,7 @@ import 'package:seasonthon_team_25_fe/core/network/dio_provider.dart';
 import 'package:seasonthon_team_25_fe/core/theme/colors.dart';
 import 'package:seasonthon_team_25_fe/feature/bank/repository/product_summary.dart';
 import 'package:seasonthon_team_25_fe/ui/bank/widget/financial_list_item.dart';
-import 'package:seasonthon_team_25_fe/ui/components/custom_app_bar.dart';
+import 'package:seasonthon_team_25_fe/ui/components/app_bar/custom_app_bar.dart';
 import 'package:seasonthon_team_25_fe/ui/components/reward_box.dart';
 
 class FinancialProductListPage extends ConsumerStatefulWidget {
@@ -63,17 +63,22 @@ class _FinancialProductListPageState
 
     return Scaffold(
       backgroundColor: AppColors.wt,
-      appBar: CustomAppBar(title: '금융 상품 보기', showLeft: true, showRight: false,onTapLeft: (){
-        context.go('/bank');
-      },),
+      appBar: CustomAppBar(
+        title: '금융 상품 보기',
+        showLeftBtn: true,
+        showRightBtn: false,
+        onTapLeftBtn: () {
+          context.go('/bank');
+        },
+      ),
       body: Column(
         children: [
           Align(
             alignment: Alignment.topLeft,
             child: RewardBox(
               text: "${balance?.toString() ?? '-'}원",
-              textColor: AppColors.primary,
-              backgroundColor: AppColors.sk.withValues(alpha: .25),
+              textColor: AppColors.primarySky,
+              backgroundColor: AppColors.secondarySk.withValues(alpha: .25),
             ),
           ),
           Expanded(
@@ -82,10 +87,10 @@ class _FinancialProductListPageState
               child: Column(
                 children: [
                   TabBar(
-                    labelColor: AppColors.primary,
+                    labelColor: AppColors.primarySky,
                     unselectedLabelColor: Colors.grey,
-                    indicatorColor: AppColors.primary,
-                    tabs: const [Tab(text: '적금'), Tab(text: '예금')],//예금
+                    indicatorColor: AppColors.primarySky,
+                    tabs: const [Tab(text: '적금'), Tab(text: '예금')], //예금
                   ),
                   Expanded(
                     child: TabBarView(

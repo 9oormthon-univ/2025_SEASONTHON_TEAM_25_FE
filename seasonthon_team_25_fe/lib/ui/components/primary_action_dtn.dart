@@ -29,7 +29,7 @@ class PrimaryActionButton extends StatelessWidget {
         decoration: BoxDecoration(
           boxShadow: [
             BoxShadow(
-              color: AppColors.primary.withOpacity(0.5),
+              color: AppColors.primarySky.withOpacity(0.5),
               blurRadius: 12,
               spreadRadius: 2,
               offset: const Offset(0, 0),
@@ -40,7 +40,7 @@ class PrimaryActionButton extends StatelessWidget {
         child: ElevatedButton(
           onPressed: isLoading ? null : onPressed,
           style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.primary,
+            backgroundColor: AppColors. primarySky,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),

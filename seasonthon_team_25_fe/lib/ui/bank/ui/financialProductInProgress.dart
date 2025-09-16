@@ -7,7 +7,7 @@ import 'package:seasonthon_team_25_fe/core/theme/colors.dart';
 import 'package:seasonthon_team_25_fe/core/theme/typography.dart';
 import 'package:seasonthon_team_25_fe/gen/assets.gen.dart';
 import 'package:seasonthon_team_25_fe/ui/components/blur_card.dart';
-import 'package:seasonthon_team_25_fe/ui/components/custom_app_bar.dart';
+import 'package:seasonthon_team_25_fe/ui/components/app_bar/custom_app_bar.dart';
 import 'package:seasonthon_team_25_fe/feature/bank/repository/subscription.dart';
 
 class FinancialProductInProgressPage extends ConsumerStatefulWidget {
@@ -125,9 +125,9 @@ class _FinancialProductInProgressPageState
       backgroundColor: AppColors.wt,
       appBar: CustomAppBar(
         title: '진행 중인 금융 상품',
-        showLeft: true,
-        showRight: false,
-        onTapLeft:() {
+        showLeftBtn: true,
+        showRightBtn: false,
+        onTapLeftBtn:() {
           context.go("/home");
         },
       ),
@@ -140,7 +140,7 @@ class _FinancialProductInProgressPageState
               margin: const EdgeInsets.symmetric(horizontal: 20),
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: AppColors.sk.withValues(alpha: .25),
+                color: AppColors.secondarySk.withValues(alpha: .25),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
@@ -148,7 +148,7 @@ class _FinancialProductInProgressPageState
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
-                  color: AppColors.primary,
+                  color: AppColors.primarySky,
                 ),
               ),
             ),
@@ -204,7 +204,7 @@ class _FinancialProductInProgressPageState
                                 LinearProgressIndicator(
                                   value: sub.progressPercentage / 100,
                                   backgroundColor: Colors.grey[200],
-                                  color: AppColors.primary,
+                                  color: AppColors.primarySky,
                                   minHeight: 8,
                                   borderRadius: BorderRadius.circular(4),
                                 ),
@@ -256,7 +256,7 @@ class _FinancialProductInProgressPageState
                                       child: ElevatedButton(
                                         onPressed: () => _handleDeposit(sub),
                                         style: ElevatedButton.styleFrom(
-                                          backgroundColor: AppColors.primary,
+                                          backgroundColor: AppColors.primarySky,
                                           shape: RoundedRectangleBorder(
                                             borderRadius:
                                                 BorderRadius.circular(12),
@@ -297,7 +297,7 @@ class _FinancialProductInProgressPageState
                                         child: Text(
                                           "해지",
                                           style: AppTypography.xl500.copyWith(
-                                            color: AppColors.primary,
+                                            color: AppColors.primarySky,
                                           ),
                                         ),
                                       ),

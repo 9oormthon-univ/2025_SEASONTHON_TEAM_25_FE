@@ -1,5 +1,3 @@
-// lib/core/widgets/custom_bottom_nav_bar.dart
-
 import 'package:flutter/material.dart';
 import 'package:seasonthon_team_25_fe/core/theme/colors.dart';
 import 'package:seasonthon_team_25_fe/core/theme/radius.dart';
@@ -71,13 +69,12 @@ class _CustomNavItem extends StatelessWidget {
           duration: _duration,
           curve: Curves.easeOut,
           padding: _padding,
-          decoration:
-              selected
-                  ? BoxDecoration(
-                    color: AppColors.sk_25,
-                    borderRadius: BorderRadius.circular(AppRadius.bottomSheet),
-                  )
-                  : null,
+          decoration: selected
+              ? BoxDecoration(
+                  color: AppColors.sk_25,
+                  borderRadius: BorderRadius.circular(AppRadius.bottomSheet),
+                )
+              : null,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -87,14 +84,11 @@ class _CustomNavItem extends StatelessWidget {
                 height: 35,
                 child: Text(
                   item.label,
-                  style:
-                      selected
-                          ? AppTypography.s500.copyWith(
-                            color: AppColors.primarySky,
-                          )
-                          : AppTypography.s400.copyWith(
-                            color: AppColors.primarySky,
-                          ),
+                  style: selected
+                      ? AppTypography.s500.copyWith(color: AppColors.primarySky)
+                      : AppTypography.s400.copyWith(
+                          color: AppColors.primarySky,
+                        ),
                   textAlign: TextAlign.center,
                 ),
               ),

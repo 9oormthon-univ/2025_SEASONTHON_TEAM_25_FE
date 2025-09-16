@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:seasonthon_team_25_fe/core/network/dio_provider.dart';
 import 'package:seasonthon_team_25_fe/core/theme/colors.dart';
 import 'package:seasonthon_team_25_fe/core/theme/typography.dart';
 import 'package:seasonthon_team_25_fe/gen/assets.gen.dart';
 import 'package:seasonthon_team_25_fe/ui/components/blur_card.dart';
-import 'package:seasonthon_team_25_fe/ui/components/custom_app_bar.dart';
+import 'package:seasonthon_team_25_fe/ui/components/app_bar/custom_app_bar.dart';
 import 'package:seasonthon_team_25_fe/ui/components/reward_box.dart';
 
 class BankPage extends ConsumerStatefulWidget {
@@ -66,8 +65,8 @@ class _BankPageState extends ConsumerState<BankPage> {
       extendBodyBehindAppBar: true,
       appBar: CustomAppBar(
         title: "나만의 뱅크",
-        showLeft: false,
-        showRight: false,
+        showLeftBtn: false,
+        showRightBtn: false,
         // onTapLeft: () {
         //   context.go("/home");
         // },
@@ -79,7 +78,7 @@ class _BankPageState extends ConsumerState<BankPage> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [AppColors.sk, AppColors.wt],
+            colors: [AppColors.primarySky, AppColors.wt],
           ),
         ),
         child: Column(
@@ -98,7 +97,7 @@ class _BankPageState extends ConsumerState<BankPage> {
             RewardBox(
               text: balance?.toString() ?? '-원',
               textColor: AppColors.wt,
-              backgroundColor: AppColors.sk.withValues(alpha: .25),
+              backgroundColor: AppColors.secondarySk.withValues(alpha: .25),
             ),
           ],
         ),

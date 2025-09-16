@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seasonthon_team_25_fe/feature/onboarding/domain/entities/nick_name_entity.dart';
 import 'package:seasonthon_team_25_fe/feature/onboarding/domain/usecases/onboarding_usecase.dart';
-import 'package:seasonthon_team_25_fe/feature/data/local/nickname_storage_prefs.dart';
+import 'package:seasonthon_team_25_fe/feature/onboarding/data/datasources/local/nickname_storage_prefs.dart';
 
 // 화면에서 사용할 온보딩 상태
 class OnboardingState {
