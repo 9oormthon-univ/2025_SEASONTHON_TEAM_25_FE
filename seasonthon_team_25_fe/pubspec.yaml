@@ -95,7 +95,7 @@ flutter:
     - assets/images/quiz/
     - assets/images/bank/
     - assets/images/app_logo/
-   
+    - assets/images/characters/
 
   # To add assets to your application, add an assets section, like this:
   # assets:

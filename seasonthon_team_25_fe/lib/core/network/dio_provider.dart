@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:seasonthon_team_25_fe/core/network/error_mapper.dart';
 import 'package:seasonthon_team_25_fe/core/router/app_router.dart';
-import 'package:seasonthon_team_25_fe/main.dart';
 import 'package:seasonthon_team_25_fe/utils/toasts.dart';
 import 'package:universal_html/html.dart' as html;
 import 'package:flutter/foundation.dart';

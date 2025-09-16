@@ -5,8 +5,13 @@ import 'package:seasonthon_team_25_fe/core/theme/typography.dart';
 
 class SkFilledChip extends StatelessWidget {
   final String label;
+  final TextStyle? textStyle;
 
-  const SkFilledChip({super.key, required this.label});
+  const SkFilledChip({
+    super.key,
+    required this.label,
+    this.textStyle,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +23,9 @@ class SkFilledChip extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: AppTypography.s500.copyWith(color: AppColors.primarySky),
+        style:
+            textStyle ??
+            AppTypography.s500.copyWith(color: AppColors.primarySky),
       ),
     );
   }
