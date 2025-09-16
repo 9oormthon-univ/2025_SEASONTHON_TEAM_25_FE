@@ -4,6 +4,7 @@ import 'package:seasonthon_team_25_fe/core/theme/radius.dart';
 import 'package:seasonthon_team_25_fe/core/theme/shadows.dart';
 import 'package:seasonthon_team_25_fe/core/theme/typography.dart';
 import 'package:seasonthon_team_25_fe/ui/components/chip/sk_filled_chip.dart';
+import 'package:seasonthon_team_25_fe/ui/components/img/html_image.dart';
 
 class NewsCardItem extends StatelessWidget {
   final String title;
@@ -64,20 +65,12 @@ class NewsCardItem extends StatelessWidget {
 
               // 썸네일
               if (hasThumb) ...[
-                ClipRRect(
+                HtmlImage(
+                  url: thumbnailUrl,
+                  width: double.infinity,
+                  height: 175,
+                  fit: BoxFit.cover,
                   borderRadius: BorderRadius.circular(12),
-                  child: Image.network(
-                    thumbnailUrl,
-                    width: double.infinity,
-                    height: 175,
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => Container(
-                      height: 175,
-                      color: const Color(0xFFF3F4F6),
-                      alignment: Alignment.center,
-                      child: const Icon(Icons.image_not_supported),
-                    ),
-                  ),
                 ),
                 const SizedBox(height: 16),
               ],

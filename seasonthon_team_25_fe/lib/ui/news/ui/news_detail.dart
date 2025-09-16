@@ -11,6 +11,7 @@ import 'package:seasonthon_team_25_fe/ui/components/app_bar/custom_app_bar.dart'
 import 'package:seasonthon_team_25_fe/ui/components/buttons/primary_filled_button.dart';
 import 'package:seasonthon_team_25_fe/ui/components/chip/sk_filled_chip.dart';
 import 'package:seasonthon_team_25_fe/ui/components/chip/sk_outlined_chip.dart';
+import 'package:seasonthon_team_25_fe/ui/components/img/html_image.dart';
 import 'package:seasonthon_team_25_fe/utils/date_time_x.dart';
 
 class NewsDetail extends ConsumerStatefulWidget {
@@ -86,17 +87,12 @@ class _NewsDetailState extends ConsumerState<NewsDetail> {
                       if (news.thumbnailUrl.trim().isNotEmpty)
                         ClipRRect(
                           borderRadius: BorderRadius.circular(12),
-                          child: Image.network(
-                            news.thumbnailUrl,
+                          child: HtmlImage(
+                            url: news.thumbnailUrl,
                             width: double.infinity,
                             height: 180,
                             fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => Container(
-                              height: 180,
-                              color: const Color(0xFFF3F4F6),
-                              alignment: Alignment.center,
-                              child: const Icon(Icons.image_not_supported),
-                            ),
+                            borderRadius: BorderRadius.circular(12),
                           ),
                         ),
                       const SizedBox(height: 12),
@@ -194,14 +190,12 @@ class _NewsDetailState extends ConsumerState<NewsDetail> {
           padding: const EdgeInsets.symmetric(vertical: 8.0),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(10),
-            child: Image.network(
-              url,
-              fit: BoxFit.cover,
-              errorBuilder: (_, __, ___) => Container(
-                height: 160,
-                color: const Color(0xFFF3F4F6),
-                alignment: Alignment.center,
-                child: const Icon(Icons.broken_image_outlined),
+            child: SizedBox(
+              height: 160,
+              child: HtmlImage(
+                url: url,
+                fit: BoxFit.cover,
+                borderRadius: BorderRadius.circular(10),
               ),
             ),
           ),

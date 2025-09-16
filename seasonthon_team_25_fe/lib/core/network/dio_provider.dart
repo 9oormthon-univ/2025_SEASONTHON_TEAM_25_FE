@@ -114,7 +114,7 @@ final tokenStorageProvider = Provider<TokenStorage>((ref) {
 
 // Dio 기본 설정 및 로거 인터셉터
 BaseOptions _baseOptions() => BaseOptions(
-  baseUrl: 'http://34.47.69.71',
+  baseUrl: 'https://financial-freedom.duckdns.org',
   connectTimeout: const Duration(seconds: 10),
   receiveTimeout: const Duration(seconds: 10),
   headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
