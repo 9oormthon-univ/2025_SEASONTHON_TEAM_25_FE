@@ -15,6 +15,7 @@ import 'package:seasonthon_team_25_fe/ui/components/buttons/secondary_outlined_b
 import 'package:seasonthon_team_25_fe/ui/components/chip/coin_balance_chip.dart';
 import 'package:seasonthon_team_25_fe/ui/components/modal/dubble_btn_modal.dart';
 import 'package:seasonthon_team_25_fe/ui/components/speech_bubble/speech_bubble.dart';
+import 'package:syncfusion_flutter_gauges/gauges.dart';
 
 // 예시를 위한 Mock 데이터 클래스
 class Product {
@@ -223,7 +224,7 @@ class _FinancialProductInProgressPageState
                               ),
                             ],
                           ),
-                          const SizedBox(height: 77),
+                          const SizedBox(height: 16),
                           // 이미지
                           Stack(
                             alignment: Alignment.topCenter,
@@ -232,6 +233,45 @@ class _FinancialProductInProgressPageState
                               Stack(
                                 alignment: Alignment.center,
                                 children: [
+                                  SizedBox(
+                                    width: 250,
+                                    height: 300,
+                                    child: SfRadialGauge(
+                                      axes: <RadialAxis>[
+                                        RadialAxis(
+                                          minimum: 0,
+                                          maximum: 100,
+                                          showLabels: false,
+                                          showTicks: false,
+                                          axisLineStyle: const AxisLineStyle(
+                                            thickness: 0.2,
+                                            thicknessUnit: GaugeSizeUnit.factor,
+                                          ),
+                                          pointers: <GaugePointer>[
+                                            RangePointer(
+                                              value: mockProducts[_currentIndex]
+                                                  .progressPercentage,
+                                              cornerStyle: CornerStyle
+                                                  .bothCurve, // 양 끝 곡선 처리
+                                              width: 0.2, // 게이지 두께
+                                              sizeUnit:
+                                                  GaugeSizeUnit.factor, // 비율 단위
+                                              color:
+                                                  AppColors.secondarySk, // 색상
+                                            ),
+                                          ],
+                                          annotations: <GaugeAnnotation>[
+                                            GaugeAnnotation(
+                                              widget: Text(''),
+                                              angle: 90,
+                                              positionFactor:
+                                                  0.5, // 게이지 안쪽 중앙에 표시
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                   // Glow 효과용 (뒤에 배경처럼 퍼지는 블러)
                                   ImageFiltered(
                                     imageFilter: ImageFilter.blur(
@@ -267,7 +307,7 @@ class _FinancialProductInProgressPageState
                                 ],
                               ),
                               Positioned(
-                                top: -40,
+                                top: 20,
                                 child: SpeechBubble(
                                   nip: BubbleNip.bottomCenter,
                                   color: AppColors.wt,
@@ -287,7 +327,7 @@ class _FinancialProductInProgressPageState
                               ),
                             ],
                           ),
-                          const SizedBox(height: 27),
+                          const SizedBox(height: 16),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
