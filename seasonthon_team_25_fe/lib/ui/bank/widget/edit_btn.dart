@@ -30,7 +30,7 @@ class EditBtn extends StatelessWidget {
             ),
             const SizedBox(width: 4),
             SvgPicture.asset(
-              Assets.images.bank.settingIcon.path,
+              Assets.images.bank.editIcon.path,
               width: 24,
               height: 24,
             ),

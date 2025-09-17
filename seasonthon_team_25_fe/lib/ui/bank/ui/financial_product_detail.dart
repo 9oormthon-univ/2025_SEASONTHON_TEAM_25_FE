@@ -7,6 +7,8 @@ import 'package:seasonthon_team_25_fe/core/theme/shadows.dart';
 import 'package:seasonthon_team_25_fe/core/theme/typography.dart';
 import 'package:seasonthon_team_25_fe/ui/bank/widget/detail_card_info.dart';
 import 'package:seasonthon_team_25_fe/ui/bank/widget/edit_btn.dart';
+import 'package:seasonthon_team_25_fe/ui/bank/widget/product_period_bottom_sheet.dart';
+import 'package:seasonthon_team_25_fe/ui/bank/widget/select_deposit_amount_bottom_sheet.dart';
 import 'package:seasonthon_team_25_fe/ui/bank/widget/simulation_card_info.dart';
 import 'package:seasonthon_team_25_fe/ui/components/app_bar/custom_white_app_bar.dart';
 import 'package:seasonthon_team_25_fe/ui/components/buttons/primary_filled_button.dart';
@@ -102,11 +104,46 @@ class _FinancialProductDetailPageState
                   const SizedBox(height: 48),
                   Text("만기 금액 미리보기", style: AppTypography.h2),
                   const SizedBox(height: 18),
+                  // 시뮬레이션
                   Row(
                     spacing: 12,
                     children: [
-                      EditBtn(text: "12개월 간", onTap: () {}),
-                      EditBtn(text: "100만원", onTap: () {}),
+                      EditBtn(
+                        text: "12개월 간",
+                        onTap: () {
+                          showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.vertical(
+                                top: Radius.circular(24),
+                              ),
+                            ),
+                            builder: (context) {
+                              return ProductPeriodBottomSheet();
+                            },
+                          );
+                        },
+                      ),
+                      EditBtn(
+                        text: "100만원",
+                        onTap: () {
+                          showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.vertical(
+                                top: Radius.circular(24),
+                              ),
+                            ),
+                            builder: (context) {
+                              return SelectDepositAmountBottomSheet(
+                                maxAmount: 1000000,
+                              );
+                            },
+                          );
+                        },
+                      ),
                       Text(
                         "씩 납부하면",
                         style: AppTypography.m600.copyWith(
@@ -253,10 +290,13 @@ class _FinancialProductDetailPageState
               width: MediaQuery.of(context).size.width,
               color: AppColors.wt.withOpacity(0.3),
               padding: const EdgeInsets.fromLTRB(20, 30, 20, 30),
-              child: PrimaryFilledButton(onPressed: () {
-                // 1 -> id로 수정
-                context.push("/bank/signup/1");
-              }, label: "가입하기"),
+              child: PrimaryFilledButton(
+                onPressed: () {
+                  // 1 -> id로 수정
+                  context.push("/bank/signup/1");
+                },
+                label: "가입하기",
+              ),
             ),
           ),
         ],
