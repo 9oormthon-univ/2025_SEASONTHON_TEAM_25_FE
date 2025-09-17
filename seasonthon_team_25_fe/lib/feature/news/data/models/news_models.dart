@@ -15,6 +15,7 @@ abstract class NewsItemDto with _$NewsItemDto {
     required DateTime approveDate,
     required DateTime modifyDate,
     required String thumbnailUrl,
+    required String originalImgUrl,
     required String aiSummary,
     required String plainTextContent,
     required String ministerCode,

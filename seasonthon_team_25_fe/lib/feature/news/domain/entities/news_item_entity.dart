@@ -8,6 +8,7 @@ class NewsItemEntity {
   final DateTime approveDate;
   final DateTime modifyDate;
   final String thumbnailUrl;
+  final String originalImgUrl;
   final String aiSummary;
   final String plainTextContent;
   final String ministerCode;
@@ -22,6 +23,7 @@ class NewsItemEntity {
     required this.approveDate,
     required this.modifyDate,
     required this.thumbnailUrl,
+    required this.originalImgUrl,
     required this.aiSummary,
     required this.plainTextContent,
     required this.ministerCode,

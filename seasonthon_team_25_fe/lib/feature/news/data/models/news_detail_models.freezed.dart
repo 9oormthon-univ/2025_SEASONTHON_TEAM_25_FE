@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$NewsDetailResponse {
 
- int get id; String get newsItemId; String get title; DateTime get approveDate; DateTime get modifyDate; String get thumbnailUrl; String get aiSummary; String get plainTextContent; String get ministerCode; List<ContentBlockResponse> get contentBlocks; bool get scraped;
+ int get id; String get newsItemId; String get title; DateTime get approveDate; DateTime get modifyDate; String get thumbnailUrl; String get originalImgUrl; String get aiSummary; String get plainTextContent; String get ministerCode; List<ContentBlockResponse> get contentBlocks; bool get scraped;
 /// Create a copy of NewsDetailResponse
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $NewsDetailResponseCopyWith<NewsDetailResponse> get copyWith => _$NewsDetailResp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is NewsDetailResponse&&(identical(other.id, id) || other.id == id)&&(identical(other.newsItemId, newsItemId) || other.newsItemId == newsItemId)&&(identical(other.title, title) || other.title == title)&&(identical(other.approveDate, approveDate) || other.approveDate == approveDate)&&(identical(other.modifyDate, modifyDate) || other.modifyDate == modifyDate)&&(identical(other.thumbnailUrl, thumbnailUrl) || other.thumbnailUrl == thumbnailUrl)&&(identical(other.aiSummary, aiSummary) || other.aiSummary == aiSummary)&&(identical(other.plainTextContent, plainTextContent) || other.plainTextContent == plainTextContent)&&(identical(other.ministerCode, ministerCode) || other.ministerCode == ministerCode)&&const DeepCollectionEquality().equals(other.contentBlocks, contentBlocks)&&(identical(other.scraped, scraped) || other.scraped == scraped));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is NewsDetailResponse&&(identical(other.id, id) || other.id == id)&&(identical(other.newsItemId, newsItemId) || other.newsItemId == newsItemId)&&(identical(other.title, title) || other.title == title)&&(identical(other.approveDate, approveDate) || other.approveDate == approveDate)&&(identical(other.modifyDate, modifyDate) || other.modifyDate == modifyDate)&&(identical(other.thumbnailUrl, thumbnailUrl) || other.thumbnailUrl == thumbnailUrl)&&(identical(other.originalImgUrl, originalImgUrl) || other.originalImgUrl == originalImgUrl)&&(identical(other.aiSummary, aiSummary) || other.aiSummary == aiSummary)&&(identical(other.plainTextContent, plainTextContent) || other.plainTextContent == plainTextContent)&&(identical(other.ministerCode, ministerCode) || other.ministerCode == ministerCode)&&const DeepCollectionEquality().equals(other.contentBlocks, contentBlocks)&&(identical(other.scraped, scraped) || other.scraped == scraped));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,newsItemId,title,approveDate,modifyDate,thumbnailUrl,aiSummary,plainTextContent,ministerCode,const DeepCollectionEquality().hash(contentBlocks),scraped);
+int get hashCode => Object.hash(runtimeType,id,newsItemId,title,approveDate,modifyDate,thumbnailUrl,originalImgUrl,aiSummary,plainTextContent,ministerCode,const DeepCollectionEquality().hash(contentBlocks),scraped);
 
 @override
 String toString() {
-  return 'NewsDetailResponse(id: $id, newsItemId: $newsItemId, title: $title, approveDate: $approveDate, modifyDate: $modifyDate, thumbnailUrl: $thumbnailUrl, aiSummary: $aiSummary, plainTextContent: $plainTextContent, ministerCode: $ministerCode, contentBlocks: $contentBlocks, scraped: $scraped)';
+  return 'NewsDetailResponse(id: $id, newsItemId: $newsItemId, title: $title, approveDate: $approveDate, modifyDate: $modifyDate, thumbnailUrl: $thumbnailUrl, originalImgUrl: $originalImgUrl, aiSummary: $aiSummary, plainTextContent: $plainTextContent, ministerCode: $ministerCode, contentBlocks: $contentBlocks, scraped: $scraped)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $NewsDetailResponseCopyWith<$Res>  {
   factory $NewsDetailResponseCopyWith(NewsDetailResponse value, $Res Function(NewsDetailResponse) _then) = _$NewsDetailResponseCopyWithImpl;
 @useResult
 $Res call({
- int id, String newsItemId, String title, DateTime approveDate, DateTime modifyDate, String thumbnailUrl, String aiSummary, String plainTextContent, String ministerCode, List<ContentBlockResponse> contentBlocks, bool scraped
+ int id, String newsItemId, String title, DateTime approveDate, DateTime modifyDate, String thumbnailUrl, String originalImgUrl, String aiSummary, String plainTextContent, String ministerCode, List<ContentBlockResponse> contentBlocks, bool scraped
 });
 
 
@@ -65,7 +65,7 @@ class _$NewsDetailResponseCopyWithImpl<$Res>
 
 /// Create a copy of NewsDetailResponse
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? newsItemId = null,Object? title = null,Object? approveDate = null,Object? modifyDate = null,Object? thumbnailUrl = null,Object? aiSummary = null,Object? plainTextContent = null,Object? ministerCode = null,Object? contentBlocks = null,Object? scraped = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? newsItemId = null,Object? title = null,Object? approveDate = null,Object? modifyDate = null,Object? thumbnailUrl = null,Object? originalImgUrl = null,Object? aiSummary = null,Object? plainTextContent = null,Object? ministerCode = null,Object? contentBlocks = null,Object? scraped = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,newsItemId: null == newsItemId ? _self.newsItemId : newsItemId // ignore: cast_nullable_to_non_nullable
@@ -73,6 +73,7 @@ as String,title: null == title ? _self.title : title // ignore: cast_nullable_to
 as String,approveDate: null == approveDate ? _self.approveDate : approveDate // ignore: cast_nullable_to_non_nullable
 as DateTime,modifyDate: null == modifyDate ? _self.modifyDate : modifyDate // ignore: cast_nullable_to_non_nullable
 as DateTime,thumbnailUrl: null == thumbnailUrl ? _self.thumbnailUrl : thumbnailUrl // ignore: cast_nullable_to_non_nullable
+as String,originalImgUrl: null == originalImgUrl ? _self.originalImgUrl : originalImgUrl // ignore: cast_nullable_to_non_nullable
 as String,aiSummary: null == aiSummary ? _self.aiSummary : aiSummary // ignore: cast_nullable_to_non_nullable
 as String,plainTextContent: null == plainTextContent ? _self.plainTextContent : plainTextContent // ignore: cast_nullable_to_non_nullable
 as String,ministerCode: null == ministerCode ? _self.ministerCode : ministerCode // ignore: cast_nullable_to_non_nullable
@@ -163,10 +164,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String newsItemId,  String title,  DateTime approveDate,  DateTime modifyDate,  String thumbnailUrl,  String aiSummary,  String plainTextContent,  String ministerCode,  List<ContentBlockResponse> contentBlocks,  bool scraped)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String newsItemId,  String title,  DateTime approveDate,  DateTime modifyDate,  String thumbnailUrl,  String originalImgUrl,  String aiSummary,  String plainTextContent,  String ministerCode,  List<ContentBlockResponse> contentBlocks,  bool scraped)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _NewsDetailResponse() when $default != null:
-return $default(_that.id,_that.newsItemId,_that.title,_that.approveDate,_that.modifyDate,_that.thumbnailUrl,_that.aiSummary,_that.plainTextContent,_that.ministerCode,_that.contentBlocks,_that.scraped);case _:
+return $default(_that.id,_that.newsItemId,_that.title,_that.approveDate,_that.modifyDate,_that.thumbnailUrl,_that.originalImgUrl,_that.aiSummary,_that.plainTextContent,_that.ministerCode,_that.contentBlocks,_that.scraped);case _:
   return orElse();
 
 }
@@ -184,10 +185,10 @@ return $default(_that.id,_that.newsItemId,_that.title,_that.approveDate,_that.mo
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String newsItemId,  String title,  DateTime approveDate,  DateTime modifyDate,  String thumbnailUrl,  String aiSummary,  String plainTextContent,  String ministerCode,  List<ContentBlockResponse> contentBlocks,  bool scraped)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String newsItemId,  String title,  DateTime approveDate,  DateTime modifyDate,  String thumbnailUrl,  String originalImgUrl,  String aiSummary,  String plainTextContent,  String ministerCode,  List<ContentBlockResponse> contentBlocks,  bool scraped)  $default,) {final _that = this;
 switch (_that) {
 case _NewsDetailResponse():
-return $default(_that.id,_that.newsItemId,_that.title,_that.approveDate,_that.modifyDate,_that.thumbnailUrl,_that.aiSummary,_that.plainTextContent,_that.ministerCode,_that.contentBlocks,_that.scraped);case _:
+return $default(_that.id,_that.newsItemId,_that.title,_that.approveDate,_that.modifyDate,_that.thumbnailUrl,_that.originalImgUrl,_that.aiSummary,_that.plainTextContent,_that.ministerCode,_that.contentBlocks,_that.scraped);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -204,10 +205,10 @@ return $default(_that.id,_that.newsItemId,_that.title,_that.approveDate,_that.mo
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String newsItemId,  String title,  DateTime approveDate,  DateTime modifyDate,  String thumbnailUrl,  String aiSummary,  String plainTextContent,  String ministerCode,  List<ContentBlockResponse> contentBlocks,  bool scraped)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String newsItemId,  String title,  DateTime approveDate,  DateTime modifyDate,  String thumbnailUrl,  String originalImgUrl,  String aiSummary,  String plainTextContent,  String ministerCode,  List<ContentBlockResponse> contentBlocks,  bool scraped)?  $default,) {final _that = this;
 switch (_that) {
 case _NewsDetailResponse() when $default != null:
-return $default(_that.id,_that.newsItemId,_that.title,_that.approveDate,_that.modifyDate,_that.thumbnailUrl,_that.aiSummary,_that.plainTextContent,_that.ministerCode,_that.contentBlocks,_that.scraped);case _:
+return $default(_that.id,_that.newsItemId,_that.title,_that.approveDate,_that.modifyDate,_that.thumbnailUrl,_that.originalImgUrl,_that.aiSummary,_that.plainTextContent,_that.ministerCode,_that.contentBlocks,_that.scraped);case _:
   return null;
 
 }
@@ -219,7 +220,7 @@ return $default(_that.id,_that.newsItemId,_that.title,_that.approveDate,_that.mo
 @JsonSerializable()
 
 class _NewsDetailResponse implements NewsDetailResponse {
-  const _NewsDetailResponse({required this.id, required this.newsItemId, required this.title, required this.approveDate, required this.modifyDate, required this.thumbnailUrl, required this.aiSummary, required this.plainTextContent, required this.ministerCode, required final  List<ContentBlockResponse> contentBlocks, required this.scraped}): _contentBlocks = contentBlocks;
+  const _NewsDetailResponse({required this.id, required this.newsItemId, required this.title, required this.approveDate, required this.modifyDate, required this.thumbnailUrl, required this.originalImgUrl, required this.aiSummary, required this.plainTextContent, required this.ministerCode, required final  List<ContentBlockResponse> contentBlocks, required this.scraped}): _contentBlocks = contentBlocks;
   factory _NewsDetailResponse.fromJson(Map<String, dynamic> json) => _$NewsDetailResponseFromJson(json);
 
 @override final  int id;
@@ -228,6 +229,7 @@ class _NewsDetailResponse implements NewsDetailResponse {
 @override final  DateTime approveDate;
 @override final  DateTime modifyDate;
 @override final  String thumbnailUrl;
+@override final  String originalImgUrl;
 @override final  String aiSummary;
 @override final  String plainTextContent;
 @override final  String ministerCode;
@@ -253,16 +255,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _NewsDetailResponse&&(identical(other.id, id) || other.id == id)&&(identical(other.newsItemId, newsItemId) || other.newsItemId == newsItemId)&&(identical(other.title, title) || other.title == title)&&(identical(other.approveDate, approveDate) || other.approveDate == approveDate)&&(identical(other.modifyDate, modifyDate) || other.modifyDate == modifyDate)&&(identical(other.thumbnailUrl, thumbnailUrl) || other.thumbnailUrl == thumbnailUrl)&&(identical(other.aiSummary, aiSummary) || other.aiSummary == aiSummary)&&(identical(other.plainTextContent, plainTextContent) || other.plainTextContent == plainTextContent)&&(identical(other.ministerCode, ministerCode) || other.ministerCode == ministerCode)&&const DeepCollectionEquality().equals(other._contentBlocks, _contentBlocks)&&(identical(other.scraped, scraped) || other.scraped == scraped));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _NewsDetailResponse&&(identical(other.id, id) || other.id == id)&&(identical(other.newsItemId, newsItemId) || other.newsItemId == newsItemId)&&(identical(other.title, title) || other.title == title)&&(identical(other.approveDate, approveDate) || other.approveDate == approveDate)&&(identical(other.modifyDate, modifyDate) || other.modifyDate == modifyDate)&&(identical(other.thumbnailUrl, thumbnailUrl) || other.thumbnailUrl == thumbnailUrl)&&(identical(other.originalImgUrl, originalImgUrl) || other.originalImgUrl == originalImgUrl)&&(identical(other.aiSummary, aiSummary) || other.aiSummary == aiSummary)&&(identical(other.plainTextContent, plainTextContent) || other.plainTextContent == plainTextContent)&&(identical(other.ministerCode, ministerCode) || other.ministerCode == ministerCode)&&const DeepCollectionEquality().equals(other._contentBlocks, _contentBlocks)&&(identical(other.scraped, scraped) || other.scraped == scraped));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,newsItemId,title,approveDate,modifyDate,thumbnailUrl,aiSummary,plainTextContent,ministerCode,const DeepCollectionEquality().hash(_contentBlocks),scraped);
+int get hashCode => Object.hash(runtimeType,id,newsItemId,title,approveDate,modifyDate,thumbnailUrl,originalImgUrl,aiSummary,plainTextContent,ministerCode,const DeepCollectionEquality().hash(_contentBlocks),scraped);
 
 @override
 String toString() {
-  return 'NewsDetailResponse(id: $id, newsItemId: $newsItemId, title: $title, approveDate: $approveDate, modifyDate: $modifyDate, thumbnailUrl: $thumbnailUrl, aiSummary: $aiSummary, plainTextContent: $plainTextContent, ministerCode: $ministerCode, contentBlocks: $contentBlocks, scraped: $scraped)';
+  return 'NewsDetailResponse(id: $id, newsItemId: $newsItemId, title: $title, approveDate: $approveDate, modifyDate: $modifyDate, thumbnailUrl: $thumbnailUrl, originalImgUrl: $originalImgUrl, aiSummary: $aiSummary, plainTextContent: $plainTextContent, ministerCode: $ministerCode, contentBlocks: $contentBlocks, scraped: $scraped)';
 }
 
 
@@ -273,7 +275,7 @@ abstract mixin class _$NewsDetailResponseCopyWith<$Res> implements $NewsDetailRe
   factory _$NewsDetailResponseCopyWith(_NewsDetailResponse value, $Res Function(_NewsDetailResponse) _then) = __$NewsDetailResponseCopyWithImpl;
 @override @useResult
 $Res call({
- int id, String newsItemId, String title, DateTime approveDate, DateTime modifyDate, String thumbnailUrl, String aiSummary, String plainTextContent, String ministerCode, List<ContentBlockResponse> contentBlocks, bool scraped
+ int id, String newsItemId, String title, DateTime approveDate, DateTime modifyDate, String thumbnailUrl, String originalImgUrl, String aiSummary, String plainTextContent, String ministerCode, List<ContentBlockResponse> contentBlocks, bool scraped
 });
 
 
@@ -290,7 +292,7 @@ class __$NewsDetailResponseCopyWithImpl<$Res>
 
 /// Create a copy of NewsDetailResponse
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? newsItemId = null,Object? title = null,Object? approveDate = null,Object? modifyDate = null,Object? thumbnailUrl = null,Object? aiSummary = null,Object? plainTextContent = null,Object? ministerCode = null,Object? contentBlocks = null,Object? scraped = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? newsItemId = null,Object? title = null,Object? approveDate = null,Object? modifyDate = null,Object? thumbnailUrl = null,Object? originalImgUrl = null,Object? aiSummary = null,Object? plainTextContent = null,Object? ministerCode = null,Object? contentBlocks = null,Object? scraped = null,}) {
   return _then(_NewsDetailResponse(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,newsItemId: null == newsItemId ? _self.newsItemId : newsItemId // ignore: cast_nullable_to_non_nullable
@@ -298,6 +300,7 @@ as String,title: null == title ? _self.title : title // ignore: cast_nullable_to
 as String,approveDate: null == approveDate ? _self.approveDate : approveDate // ignore: cast_nullable_to_non_nullable
 as DateTime,modifyDate: null == modifyDate ? _self.modifyDate : modifyDate // ignore: cast_nullable_to_non_nullable
 as DateTime,thumbnailUrl: null == thumbnailUrl ? _self.thumbnailUrl : thumbnailUrl // ignore: cast_nullable_to_non_nullable
+as String,originalImgUrl: null == originalImgUrl ? _self.originalImgUrl : originalImgUrl // ignore: cast_nullable_to_non_nullable
 as String,aiSummary: null == aiSummary ? _self.aiSummary : aiSummary // ignore: cast_nullable_to_non_nullable
 as String,plainTextContent: null == plainTextContent ? _self.plainTextContent : plainTextContent // ignore: cast_nullable_to_non_nullable
 as String,ministerCode: null == ministerCode ? _self.ministerCode : ministerCode // ignore: cast_nullable_to_non_nullable

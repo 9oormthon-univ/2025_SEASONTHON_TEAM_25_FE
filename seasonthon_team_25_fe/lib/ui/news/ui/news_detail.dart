@@ -83,16 +83,24 @@ class _NewsDetailState extends ConsumerState<NewsDetail> {
                         color: AppColors.gr200,
                       ),
                       const SizedBox(height: 22),
-                      // 썸네일
-                      if (news.thumbnailUrl.trim().isNotEmpty)
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(12),
-                          child: HtmlImage(
-                            url: news.thumbnailUrl,
-                            width: double.infinity,
-                            height: 180,
-                            fit: BoxFit.cover,
+                      // 썸네일 (반응형 크기)
+                      if (news.originalImgUrl.trim().isNotEmpty)
+                        Container(
+                          width: double.infinity,
+                          height: MediaQuery.of(context).size.width > 600 ? 280 : 220,
+                          decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(12),
+                            color: AppColors.gr100,
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: HtmlImage(
+                              url: news.originalImgUrl,
+                              width: double.infinity,
+                              height: MediaQuery.of(context).size.width > 600 ? 280 : 220,
+                              fit: BoxFit.cover,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
                           ),
                         ),
                       const SizedBox(height: 12),
@@ -188,16 +196,20 @@ class _NewsDetailState extends ConsumerState<NewsDetail> {
         if (url.isEmpty) return const SizedBox.shrink();
         return Padding(
           padding: const EdgeInsets.symmetric(vertical: 8.0),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(10),
-            child: SizedBox(
-              width: double.infinity,
-              height: 160,
+          child: Container(
+            width: double.infinity,
+            height: MediaQuery.of(context).size.width > 600 ? 250 : 200,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: AppColors.gr100,
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(10),
               child: HtmlImage(
                 url: url,
                 width: double.infinity,
-                height: 160,
-                fit: BoxFit.cover,
+                height: MediaQuery.of(context).size.width > 600 ? 250 : 200,
+                fit: BoxFit.fill,
                 borderRadius: BorderRadius.circular(10),
               ),
             ),
