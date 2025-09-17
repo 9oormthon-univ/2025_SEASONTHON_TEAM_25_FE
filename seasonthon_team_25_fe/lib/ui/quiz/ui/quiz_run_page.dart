@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lottie/lottie.dart';
 import 'package:seasonthon_team_25_fe/core/theme/button_size.dart';
 import 'package:seasonthon_team_25_fe/core/theme/colors.dart';
 import 'package:seasonthon_team_25_fe/core/theme/radius.dart';
@@ -13,7 +14,7 @@ import 'package:seasonthon_team_25_fe/feature/quiz/presentation/provider/quiz_ru
 import 'package:seasonthon_team_25_fe/gen/assets.gen.dart';
 import 'package:seasonthon_team_25_fe/ui/components/app_bar/custom_white_app_bar.dart';
 import 'package:seasonthon_team_25_fe/ui/components/buttons/primary_filled_button.dart';
-import 'package:seasonthon_team_25_fe/ui/components/buttons/secondary_outlined_button.dart';
+import 'package:seasonthon_team_25_fe/ui/components/buttons/secondary_white_button.dart';
 import 'package:seasonthon_team_25_fe/ui/components/chip/sk_filled_chip.dart';
 import 'package:seasonthon_team_25_fe/ui/components/speech_bubble/speech_bubble.dart';
 
@@ -37,8 +38,8 @@ class _QuizRunPageState extends ConsumerState<QuizRunPage> {
     final selected = state.answers[q.userQuizId];
 
     final result = state.lastResult; // SubmitAnswerResponse?
-    //final showResult = result != null; // 제출됨
-    final showResult = result == null; // 제출됨
+    final showResult = result != null; // 제출됨
+    //final showResult = result == null; // 디자인 수정 위함
     final isCorrect = result?.correct ?? false;
 
     Future<void> submit() async {
@@ -128,7 +129,7 @@ class _QuizRunPageState extends ConsumerState<QuizRunPage> {
                 if (showResult) ...[
                   const SizedBox(height: 30),
                   // isCorrect||hintClicked == true
-                  if (false) ...[
+                  if (isCorrect || hintClicked == true) ...[
                     Row(
                       children: [
                         Image(
@@ -156,7 +157,7 @@ class _QuizRunPageState extends ConsumerState<QuizRunPage> {
                                 const SizedBox(height: 8),
                                 // 본문 텍스트 (파란색, 넉넉한 행간)
                                 Text(
-                                  result?.explanation ?? '',
+                                  result.explanation,
                                   style: AppTypography.m600.copyWith(
                                     color: AppColors.primarySky,
                                   ),
@@ -168,7 +169,7 @@ class _QuizRunPageState extends ConsumerState<QuizRunPage> {
                       ],
                     ),
                   ] else ...[
-                    InkWell(
+                    GestureDetector(
                       onTap: () {
                         // 힌트 보기 클릭 시
                         debugPrint("힌트 보기 클릭됨");
@@ -178,69 +179,93 @@ class _QuizRunPageState extends ConsumerState<QuizRunPage> {
                       },
                       child: Row(
                         children: [
-                          // Image(
-                          //   image: Assets.images.characters.ffStart.provider(),
-                          //   width: 100,
-                          //   height: 122.49,
-                          // ),
                           Stack(
                             alignment: Alignment.center,
                             children: [
-                              // 블러 + 색깔 배경
+                              // Glow 효과용 (뒤에 배경처럼 퍼지는 블러)
                               ImageFiltered(
                                 imageFilter: ImageFilter.blur(
-                                  sigmaX: 12,
-                                  sigmaY: 12,
+                                  sigmaX: 24, // 블러 강도 (값이 클수록 멀리 퍼짐)
+                                  sigmaY: 24,
                                 ),
-                                child: Container(
-                                  width: 140,
-                                  height: 160,
-                                  decoration: BoxDecoration(
-                                    color: Color(0xffFFF6AA),
-                                    borderRadius: BorderRadius.circular(16),
+                                child: ColorFiltered(
+                                  colorFilter: ColorFilter.mode(
+                                    AppColors.hintBk, // 원하는 Glow 색상
+                                    BlendMode.srcATop,
+                                  ),
+                                  child: Image(
+                                    image: Assets.images.characters.ffStart
+                                        .provider(),
+                                    width: 100, // 원본보다 크게 → Glow 퍼지는 느낌
+                                    height: 122.49,
+                                    fit: BoxFit.contain,
                                   ),
                                 ),
                               ),
 
-                              // 실제 이미지
+                              // 앞쪽 선명한 원본 이미지
                               Image(
                                 image: Assets.images.characters.ffStart
                                     .provider(),
                                 width: 100,
                                 height: 122.49,
+                                fit: BoxFit.contain,
                               ),
                             ],
                           ),
+
                           // 말풍선
                           Expanded(
-                            child: SpeechBubble(
-                              blurType: BlurType.hint,
-                              color: AppColors.wt_75, // 말풍선 연한 하늘색 채움
-                              radius: AppRadius.button,
-                              elevation: 8,
-                              nip: BubbleNip.left, // 좌측 꼬리
-                              nipWidth: 16, // 꼬리 길이
-                              nipHeight: 16, // 꼬리 두께(세로)
-                              nipOffset: 80, // 위에서부터 거리
-                              padding: const EdgeInsets.fromLTRB(
-                                20,
-                                12,
-                                20,
-                                12,
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    result?.explanation ??
+                            child: Stack(
+                              clipBehavior: Clip.none, // 말풍선 위로 나와도 잘리게 하지 않음
+                              children: [
+                                // 말풍선 본체
+                                SpeechBubble(
+                                  blurType: BlurType.hint,
+                                  color: AppColors.wt_75,
+                                  radius: AppRadius.button,
+                                  elevation: 8,
+                                  nip: BubbleNip.left,
+                                  nipWidth: 16,
+                                  nipHeight: 16,
+                                  nipOffset: 80,
+                                  padding: const EdgeInsets.fromLTRB(
+                                    20,
+                                    12,
+                                    20,
+                                    12,
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
                                         '앗! 혹시 문제가 너무 어려웠나요?\n저를 클릭하시면 힌트를 볼 수 있어요.\n힌트를 보고 다시 도전해 볼까요?',
-                                    style: AppTypography.m600.copyWith(
-                                      color: AppColors.primarySky,
+                                        style: AppTypography.m600.copyWith(
+                                          color: AppColors.primarySky,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+
+                                // Lottie 애니메이션 (말풍선 위쪽)
+                                Positioned(
+                                  top: -40, // 말풍선 위로 띄우기
+                                  left: 0,
+                                  right: -90,
+                                  child: SizedBox(
+                                    width: 246,
+                                    height: 74,
+                                    child: Lottie.asset(
+                                      Assets.lottie.click,
+                                      repeat: true,
+                                      animate: true,
                                     ),
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ),
                         ],
@@ -259,11 +284,12 @@ class _QuizRunPageState extends ConsumerState<QuizRunPage> {
                           // 다음 퀴즈로 이동
                         },
                       ),
-                      SecondaryOutLinedButton(
+                      const SizedBox(width: 20),
+                      SecondaryWhiteButton(
                         widthType: ButtonWidth.small,
-                        label: "힌트 보기",
+                        label: "스크랩",
                         onPressed: () {
-                          // 힌트 보기
+                          // 스크랩하기
                         },
                       ),
                     ],
@@ -404,56 +430,6 @@ class _McqView extends StatelessWidget {
           trailing: isSel ? const Icon(Icons.check) : null,
         );
       },
-    );
-  }
-}
-
-class _ResultSheet extends StatelessWidget {
-  const _ResultSheet({
-    required this.isCorrect,
-    required this.explanation,
-    required this.category,
-    required this.hint,
-  });
-
-  final bool isCorrect;
-  final String explanation;
-  final String category;
-  final String hint;
-
-  @override
-  Widget build(BuildContext context) {
-    final c = Theme.of(context).colorScheme;
-    return Padding(
-      padding: const EdgeInsets.all(20),
-      child: Wrap(
-        runSpacing: 12,
-        children: [
-          Row(
-            children: [
-              Icon(
-                isCorrect ? Icons.check_circle : Icons.cancel,
-                color: isCorrect ? c.primary : c.error,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                isCorrect ? '정답입니다!' : '오답입니다.',
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-            ],
-          ),
-          Text('해설: $explanation'),
-          if (category == 'news') Text('힌트(뉴스 ID): $hint'),
-          const SizedBox(height: 8),
-          Align(
-            alignment: Alignment.centerRight,
-            child: FilledButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('다음 문제'),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

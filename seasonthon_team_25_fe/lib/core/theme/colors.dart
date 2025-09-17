@@ -29,4 +29,7 @@ class AppColors {
 
   static final wt_50 = wt.withValues(alpha: .50);
   static final wt_75 = wt.withValues(alpha: .75);
+
+  // HINT
+  static const hintBk = Color(0xffFFF6AA);
 }
