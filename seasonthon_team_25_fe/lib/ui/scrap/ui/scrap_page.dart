@@ -10,6 +10,7 @@ import 'package:seasonthon_team_25_fe/feature/scrap/presentation/provider/scrap_
 import 'package:seasonthon_team_25_fe/gen/assets.gen.dart';
 import 'package:seasonthon_team_25_fe/ui/components/app_bar/custom_app_bar.dart';
 import 'package:seasonthon_team_25_fe/ui/components/img/html_image.dart';
+import 'package:seasonthon_team_25_fe/ui/scrap/widgets/scrap_quiz_item.dart';
 
 class ScrapPage extends ConsumerStatefulWidget {
   const ScrapPage({super.key});
@@ -30,6 +31,15 @@ class _ScrapPageState extends ConsumerState<ScrapPage>
     // 페이지 로드 시 스크랩 목록 조회
     Future.microtask(() {
       ref.read(scrapControllerProvider.notifier).loadScrapNews();
+      ref.read(scrapControllerProvider.notifier).loadScrapQuiz();
+    });
+    
+    // 탭 변경 리스너 추가
+    _tabController.addListener(() {
+      if (_tabController.index == 1) {
+        // 퀴즈 탭 선택 시 퀴즈 목록 새로고침
+        ref.read(scrapControllerProvider.notifier).loadScrapQuiz();
+      }
     });
   }
 
@@ -114,10 +124,27 @@ class _ScrapPageState extends ConsumerState<ScrapPage>
   }
 
   Widget _buildQuizTab() {
-    return _buildEmptyState(
-      message: '스크랩한 퀴즈가 없어요',
-      subMessage: '흥미로운 퀴즈를 스크랩해보세요!',
-    );
+    final scrapState = ref.watch(scrapControllerProvider);
+    final scrapQuizPage = scrapState.scrapQuizPage;
+    final isLoading = scrapState.isLoadingQuizList;
+    final error = scrapState.error;
+
+    if (error != null) {
+      return _buildErrorState(error);
+    }
+
+    if (isLoading && scrapQuizPage == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (scrapQuizPage == null || scrapQuizPage.content.isEmpty) {
+      return _buildEmptyState(
+        message: '스크랩한 퀴즈가 없어요',
+        subMessage: '흥미로운 퀴즈를 스크랩해보세요!',
+      );
+    }
+
+    return _buildQuizGroupedList(scrapQuizPage);
   }
 
   Widget _buildEmptyState({
@@ -324,6 +351,53 @@ class _ScrapPageState extends ConsumerState<ScrapPage>
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildQuizGroupedList(scrapQuizPage) {
+    // 날짜별로 퀴즈 그룹화
+    final Map<String, List<ScrapQuizItem>> groupedQuiz = {};
+    for (final item in scrapQuizPage.content) {
+      final date = item.scrappedDate;
+      if (groupedQuiz[date] == null) {
+        groupedQuiz[date] = [];
+      }
+      groupedQuiz[date]!.add(item);
+    }
+
+    return RefreshIndicator(
+      onRefresh: () async {
+        await ref.read(scrapControllerProvider.notifier).loadScrapQuiz();
+      },
+      child: ListView.builder(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        itemCount: groupedQuiz.length,
+        itemBuilder: (context, index) {
+          final date = groupedQuiz.keys.elementAt(index);
+          final quizItems = groupedQuiz[date]!;
+          
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // 날짜 헤더
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                child: Text(
+                  date,
+                  style: AppTypography.h3.copyWith(
+                    color: AppColors.primarySky,
+                  ),
+                ),
+              ),
+              
+              // 해당 날짜의 퀴즈 아이템들
+              ...quizItems.map((item) => ScrapQuizItemWidget(quizItem: item)),
+              
+              const SizedBox(height: 8),
+            ],
+          );
+        },
       ),
     );
   }

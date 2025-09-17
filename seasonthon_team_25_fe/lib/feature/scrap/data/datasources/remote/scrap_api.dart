@@ -25,6 +25,22 @@ abstract class ScrapApi {
     @Query('size') int size = 20,
     @Query('sort') String sort = 'scrappedDate,desc',
   });
+
+  /// 퀴즈 스크랩 등록/해제
+  /// POST /api/scrap/quiz
+  @POST('/api/scrap/quiz')
+  Future<QuizScrapResponse> toggleQuizScrap(
+    @Body() QuizScrapRequest request,
+  );
+
+  /// 퀴즈 스크랩 목록 조회
+  /// GET /api/scrap/quiz
+  @GET('/api/scrap/quiz')
+  Future<ScrapQuizPageResponse> getScrapQuiz({
+    @Query('page') int page = 0,
+    @Query('size') int size = 20,
+    @Query('sort') String sort = 'scrappedDate,desc',
+  });
 }
 
 final scrapApiProvider = Provider<ScrapApi>((ref) {

@@ -11,6 +11,7 @@ import 'package:seasonthon_team_25_fe/core/theme/shadows.dart';
 import 'package:seasonthon_team_25_fe/core/theme/typography.dart';
 import 'package:seasonthon_team_25_fe/feature/quiz/domain/entities/quiz_entity.dart';
 import 'package:seasonthon_team_25_fe/feature/quiz/presentation/provider/quiz_run_controller.dart';
+import 'package:seasonthon_team_25_fe/feature/scrap/presentation/provider/scrap_controller.dart';
 import 'package:seasonthon_team_25_fe/gen/assets.gen.dart';
 import 'package:seasonthon_team_25_fe/ui/components/app_bar/custom_white_app_bar.dart';
 import 'package:seasonthon_team_25_fe/ui/components/buttons/primary_filled_button.dart';
@@ -31,16 +32,63 @@ class _QuizRunPageState extends ConsumerState<QuizRunPage> {
   List<QuizEntity> get quizzes => widget.quizzes;
   bool hintClicked = false;
 
+  Future<void> _handleQuizScrap() async {
+    final state = ref.read(quizRunControllerProvider(quizzes));
+    final q = state.current;
+    final result = state.lastResult;
+    
+    if (result == null) return;
+    
+    final scrapController = ref.read(scrapControllerProvider.notifier);
+    final response = await scrapController.toggleQuizScrap(
+      q.userQuizId,
+      result.correct,
+    );
+    
+    if (response != null && mounted) {
+      // 업적 생성 시 추가 메시지 표시
+      if (response.achievementCreated && response.achievementType != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('🎉 업적 달성: ${response.achievementType}'),
+            backgroundColor: AppColors.primarySky,
+          ),
+        );
+      }
+      
+      // 스크랩 성공 메시지
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(response.message),
+          backgroundColor: response.scraped ? AppColors.primarySky : AppColors.gr600,
+        ),
+      );
+    } else if (mounted) {
+      // 에러 처리
+      final error = ref.read(scrapControllerProvider).error;
+      if (error != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(error),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(quizRunControllerProvider(quizzes));
     final ctrl = ref.read(quizRunControllerProvider(quizzes).notifier);
+    final scrapState = ref.watch(scrapControllerProvider);
     final q = state.current;
     final selected = state.answers[q.userQuizId];
 
     final result = state.lastResult; // SubmitAnswerResponse?
     final showResult = result != null; // 제출됨
     final isCorrect = result?.correct ?? false;
+    final isQuizScraped = scrapState.quizScrapStatus[q.userQuizId] ?? false;
 
     Future<void> submit() async {
       try {
@@ -329,10 +377,12 @@ class _QuizRunPageState extends ConsumerState<QuizRunPage> {
                             const SizedBox(width: 20),
                             SecondaryWhiteButton(
                               widthType: ButtonWidth.small,
-                              label: "스크랩",
-                              onPressed: () {
-                                // 스크랩하기
-                              },
+                              label: isQuizScraped ? "스크랩 해제" : "스크랩",
+                              onPressed: scrapState.isLoading 
+                                ? () {} // 로딩 중일 때는 빈 함수
+                                : () {
+                                    _handleQuizScrap();
+                                  },
                             ),
                           ],
                         ),

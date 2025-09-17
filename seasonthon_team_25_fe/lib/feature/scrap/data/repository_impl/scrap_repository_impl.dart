@@ -25,6 +25,24 @@ class ScrapRepositoryImpl implements ScrapRepository {
       sort: sort,
     );
   }
+
+  @override
+  Future<QuizScrapResponse> toggleQuizScrap(QuizScrapRequest request) {
+    return _api.toggleQuizScrap(request);
+  }
+
+  @override
+  Future<ScrapQuizPageResponse> getScrapQuiz({
+    int page = 0,
+    int size = 20,
+    String sort = 'scrappedDate,desc',
+  }) {
+    return _api.getScrapQuiz(
+      page: page,
+      size: size,
+      sort: sort,
+    );
+  }
 }
 
 final scrapRepositoryProvider = Provider<ScrapRepository>((ref) {

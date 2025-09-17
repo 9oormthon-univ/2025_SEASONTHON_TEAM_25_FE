@@ -10,4 +10,14 @@ abstract class ScrapRepository {
     int size = 20,
     String sort = 'scrappedDate,desc',
   });
+
+  /// 퀴즈 스크랩 등록/해제
+  Future<QuizScrapResponse> toggleQuizScrap(QuizScrapRequest request);
+
+  /// 퀴즈 스크랩 목록 조회
+  Future<ScrapQuizPageResponse> getScrapQuiz({
+    int page = 0,
+    int size = 20,
+    String sort = 'scrappedDate,desc',
+  });
 }
