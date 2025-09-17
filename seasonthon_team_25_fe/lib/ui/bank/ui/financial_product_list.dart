@@ -232,7 +232,7 @@ class _FinancialProductListPageState
                               bank: p.bankName,
                               aiSummary: p.aiSummary,
                               onPressed: () {
-                                context.go(
+                                context.push(
                                   '/bank/detail/${p.productSnapshotId}',
                                 );
                               },

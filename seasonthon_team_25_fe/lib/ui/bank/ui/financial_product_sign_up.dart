@@ -171,6 +171,42 @@ class _FinancialProductSignUpPageState
                 ),
               ),
               const SizedBox(height: 4),
+              Container(
+                width: double.infinity,
+                constraints: BoxConstraints(minHeight: 48),
+                child: TextFormField(
+                  controller: _textController,
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: AppColors.sk_25,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(
+                        AppRadius.bottomSheet,
+                      ),
+                      borderSide: BorderSide.none,
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(
+                        AppRadius.bottomSheet,
+                      ),
+                      borderSide: BorderSide.none,
+                    ),
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: 5,
+                      vertical: 5,
+                    ),
+                    errorStyle: AppTypography.m500.copyWith(
+                      color: AppColors.secondaryRd,
+                    ),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return '금액을 입력해 주세요';
+                    }
+                    return null;
+                  },
+                ),
+              ),
               const SizedBox(height: 24),
               const Divider(color: AppColors.gr200, thickness: 1),
               const SizedBox(height: 50),

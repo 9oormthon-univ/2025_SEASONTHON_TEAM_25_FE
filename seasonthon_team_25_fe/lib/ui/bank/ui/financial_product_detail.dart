@@ -253,7 +253,10 @@ class _FinancialProductDetailPageState
               width: MediaQuery.of(context).size.width,
               color: AppColors.wt.withOpacity(0.3),
               padding: const EdgeInsets.fromLTRB(20, 30, 20, 30),
-              child: PrimaryFilledButton(onPressed: () {}, label: "가입하기"),
+              child: PrimaryFilledButton(onPressed: () {
+                // 1 -> id로 수정
+                context.push("/bank/signup/1");
+              }, label: "가입하기"),
             ),
           ),
         ],
