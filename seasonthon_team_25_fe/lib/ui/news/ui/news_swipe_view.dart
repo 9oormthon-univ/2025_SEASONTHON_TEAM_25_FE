@@ -57,7 +57,7 @@ class NewsSwipeView extends StatelessWidget {
                 date: _dateOnly(item.approveDate),
                 aiSummary: (item.aiSummary).trim(),
                 ministerCode: (item.ministerCode).trim(),
-                thumbnailUrl: (item.thumbnailUrl).trim(),
+                originalImgUrl: (item.originalImgUrl).trim(),
               ),
             ),
           );

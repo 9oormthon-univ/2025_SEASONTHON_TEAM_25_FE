@@ -11,6 +11,7 @@ abstract class NewsDetailResponse with _$NewsDetailResponse {
     required DateTime approveDate,
     required DateTime modifyDate,
     required String thumbnailUrl,
+    required String originalImgUrl,
     required String aiSummary,
     required String plainTextContent,
     required String ministerCode,

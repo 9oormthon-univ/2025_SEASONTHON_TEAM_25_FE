@@ -9,39 +9,53 @@ class HtmlImage extends StatelessWidget {
   final BoxFit fit;
   final BorderRadius? borderRadius;
 
-  HtmlImage({
+  const HtmlImage({
     super.key,
     required this.url,
     this.width,
     this.height,
     this.fit = BoxFit.cover,
     this.borderRadius,
-  }) {
+  });
+
+  @override
+  Widget build(BuildContext context) {
     final viewType = 'html-img-${url.hashCode}';
+    
     ui.platformViewRegistry.registerViewFactory(
       viewType,
       (int viewId) {
         final element = html.ImageElement()
           ..src = url
           ..style.objectFit = _fitToCss(fit)
-          ..style.width = width != null ? '${width}px' : '100%'   // 항상 명시
-          ..style.height = height != null ? '${height}px' : 'auto'; // 높이도 명시
+          ..style.width = width != null ? '${width}px' : '100%'
+          ..style.height = height != null ? '${height}px' : '100%'
+          ..style.borderRadius = borderRadius != null ? '${borderRadius!.topLeft.x}px' : '0px'
+          ..style.display = 'block'
+          ..style.visibility = 'visible'
+          ..style.maxWidth = '100%'
+          ..style.maxHeight = '100%'
+          ..style.minWidth = '100%'
+          ..style.minHeight = '100%'
+          ..style.objectPosition = 'center center'
+          ..style.imageRendering = 'high-quality'
+          ..style.filter = 'contrast(1.1) saturate(1.1) brightness(1.05)'
+          ..style.transform = 'scale(1)'
+          ..style.backfaceVisibility = 'hidden'
+          ..style.perspective = '1000px'
+          ..style.willChange = 'transform'
+          ..style.transformOrigin = 'center center';
+        
         return element;
       },
     );
-    _viewType = viewType;
-  }
 
-  late final String _viewType;
-
-  @override
-  Widget build(BuildContext context) {
     return ClipRRect(
       borderRadius: borderRadius ?? BorderRadius.zero,
       child: SizedBox(
         width: width ?? double.infinity,
         height: height,
-        child: HtmlElementView(viewType: _viewType),
+        child: HtmlElementView(viewType: viewType),
       ),
     );
   }
@@ -55,9 +69,13 @@ class HtmlImage extends StatelessWidget {
       case BoxFit.fill:
         return 'fill';
       case BoxFit.fitHeight:
-        return 'scale-down';
+        return 'cover';
       case BoxFit.fitWidth:
-        return 'scale-down';
+        return 'cover';
+      case BoxFit.none:
+        return 'none';
+      case BoxFit.scaleDown:
+        return 'cover';
       default:
         return 'cover';
     }
