@@ -169,7 +169,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                               fillColor: !isPasswordError
                                   ? AppColors.sk_50
                                   : AppColors.rd_25,
-                              hintText: "영문, 숫자, 특수문자 포함 10자 이상을 입력해 주세요",
+                              hintText: "영문, 숫자, 특수문자 포함 8자-20자를 입력해 주세요",
                               hintStyle: AppTypography.m500.copyWith(
                                 color: AppColors.wt_50,
                               ),

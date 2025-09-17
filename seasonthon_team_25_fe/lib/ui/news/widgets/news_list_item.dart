@@ -3,6 +3,7 @@ import 'package:seasonthon_team_25_fe/core/theme/colors.dart';
 import 'package:seasonthon_team_25_fe/core/theme/radius.dart';
 import 'package:seasonthon_team_25_fe/core/theme/typography.dart';
 import 'package:seasonthon_team_25_fe/feature/news/domain/entities/news_item_entity.dart';
+import 'package:seasonthon_team_25_fe/ui/components/img/html_image.dart';
 import 'package:seasonthon_team_25_fe/utils/date_time_x.dart';
 
 class NewsListItem extends StatelessWidget {
@@ -35,16 +36,14 @@ class NewsListItem extends StatelessWidget {
                   width: 84,
                   height: 84,
                   child: thumb.isNotEmpty
-                      ? Image.network(
-                          thumb,
+                      ? HtmlImage(
+                          url: thumb,
+                          width: 84,
+                          height: 84,
                           fit: BoxFit.cover,
-                          loadingBuilder: (context, child, progress) {
-                            if (progress == null) return child;
-                            return const Center(
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            );
-                          },
-                          errorBuilder: (_, __, ___) => _thumbPlaceholder(),
+                          borderRadius: BorderRadius.circular(
+                            AppRadius.bottomSheet,
+                          ),
                         )
                       : _thumbPlaceholder(),
                 ),
