@@ -1,231 +1,188 @@
+// 금융 상품 상세 보기
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-
+import 'package:seasonthon_team_25_fe/core/network/dio_provider.dart';
 import 'package:seasonthon_team_25_fe/core/theme/colors.dart';
-import 'package:seasonthon_team_25_fe/core/theme/typography.dart';
-import 'package:seasonthon_team_25_fe/gen/assets.gen.dart';
-import 'package:seasonthon_team_25_fe/ui/bank/widget/bank_filter_bottom_sheet.dart';
-import 'package:seasonthon_team_25_fe/ui/bank/widget/sort_bottom_sheet.dart';
+import 'package:seasonthon_team_25_fe/ui/components/blur_card.dart';
 import 'package:seasonthon_team_25_fe/ui/components/app_bar/custom_app_bar.dart';
-import 'package:seasonthon_team_25_fe/ui/components/chip/coin_balance_chip.dart';
-import 'package:seasonthon_team_25_fe/ui/components/tab_bar/custom_tab_bar.dart';
+import 'package:seasonthon_team_25_fe/ui/components/primary_action_dtn.dart';
+import 'package:seasonthon_team_25_fe/ui/components/reward_box.dart';
+import 'package:seasonthon_team_25_fe/feature/bank/repository/product_detail.dart'; // ✅ 방금 작성한 레포 import
 
-import 'package:seasonthon_team_25_fe/feature/home/presentation/provider/coin_controller.dart';
-import 'package:seasonthon_team_25_fe/feature/bank/saving/presentation/provider/savings_product_controller.dart';
-
-class FinancialProductListPage extends ConsumerStatefulWidget {
-  const FinancialProductListPage({super.key});
+class FinancialProductDetailPage extends ConsumerStatefulWidget {
+  final String productId;
+  const FinancialProductDetailPage({super.key, required this.productId});
 
   @override
-  ConsumerState<FinancialProductListPage> createState() =>
-      _FinancialProductListPageState();
+  ConsumerState<FinancialProductDetailPage> createState() =>
+      _FinancialProductDetailPageState();
 }
 
-class _FinancialProductListPageState
-    extends ConsumerState<FinancialProductListPage> {
-  int _tabIndex = 1; // 0: 예금, 1: 적금
-  String _sort = "name"; // 기본 정렬
-  String? _banks; // 선택 은행
+class _FinancialProductDetailPageState
+    extends ConsumerState<FinancialProductDetailPage> {
+  int? balance;
+  late Future<ProductDetail> _future; // ✅ API 결과 저장
 
   @override
   void initState() {
     super.initState();
-    Future.microtask(() {
-      ref.read(coinProvider.notifier).loadBalance();
-      ref
-          .read(savingsProductControllerProvider.notifier)
-          .load(sort: _sort, banks: _banks);
-    });
+    _loadBalance();
+    _future = ref
+        .read(productDetailRepositoryProvider)
+        .fetchDetail(int.parse(widget.productId));
   }
 
-  void _reloadProducts() {
-    ref
-        .read(savingsProductControllerProvider.notifier)
-        .load(sort: _sort, banks: _banks);
+  Future<void> _loadBalance() async {
+    try {
+      final dio = ref.read(dioProvider);
+      final res = await dio.get('/api/wallet/balance');
+      setState(() {
+        balance = res.data['balance'] as int;
+      });
+    } catch (e) {
+      debugPrint('잔액 조회 실패: $e');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final balance = ref.watch(
-      coinProvider.select((state) => state.asData?.value ?? 0),
-    );
-    final productsState = ref.watch(savingsProductControllerProvider);
-
     return Scaffold(
       backgroundColor: AppColors.wt,
       appBar: CustomAppBar(
-        title: '금융 상품 보기',
+        title: '금융 상품 상세 보기',
         showLeftBtn: true,
-        showRightBtn: false,
-        onTapLeftBtn: () => context.go('/bank'),
+        showRightBtn: true,
+        onTapLeftBtn: () {
+          context.go('/bank/list');
+        },
+        onTapRightBtn: () {
+          context.go('/bank/list');
+        },
       ),
-      body: Container(
-        padding: const EdgeInsets.fromLTRB(20, 23, 20, 10),
-        child: Column(
-          children: [
-            Align(
-              alignment: Alignment.topLeft,
-              child: CoinBalanceChip(
-                balance: balance,
-                backgroundColor: AppColors.sk_25,
-                textColor: AppColors.primarySky,
-              ),
-            ),
-            const SizedBox(height: 20),
-            CustomTabBar(
-              labels: const ['예금', '적금'],
-              selectedIndex: _tabIndex,
-              onChanged: (i) => setState(() => _tabIndex = i),
-            ),
-            const SizedBox(height: 18),
+      body: FutureBuilder<ProductDetail>(
+        future: _future,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState != ConnectionState.done) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.hasError) {
+            return Center(child: Text("불러오기 실패: ${snapshot.error}"));
+          }
+          if (!snapshot.hasData) {
+            return const Center(child: Text("상품 정보를 찾을 수 없습니다."));
+          }
 
-            // 🔹 정렬/은행 선택 영역
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          final product = snapshot.data!;
+
+          return Padding(
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 35),
+            child: Column(
               children: [
-                // 정렬 버튼
-                GestureDetector(
-                  onTap: () {
-                    showModalBottomSheet(
-                      context: context,
-                      isScrollControlled: true,
-                      backgroundColor: Colors.transparent,
-                      builder: (_) => SortBottomSheet(
-                        initial: _sort,
-                        onApply: (selected) {
-                          setState(() {
-                            _sort = selected == "기본순" ? "name" : "popular";
-                          });
-                          _reloadProducts();
-                        },
-                      ),
-                    );
-                  },
-                  child: Row(
-                    children: [
-                      SvgPicture.asset(
-                        Assets.images.bank.settingIcon.path,
-                        height: 18,
-                        width: 18,
-                      ),
-                      const SizedBox(width: 5),
-                      Text(
-                        _sort == "name" ? "기본순" : "인기순",
-                        style: AppTypography.m600.copyWith(
-                          color: AppColors.gr600,
-                        ),
-                      ),
-                    ],
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: RewardBox(
+                    text: "${balance?.toString() ?? '-'}원",
+                    textColor: AppColors.primarySky,
+                    backgroundColor: AppColors.secondarySk.withValues(
+                      alpha: .25,
+                    ),
                   ),
                 ),
+                const SizedBox(height: 12),
 
-                // 은행 버튼
-                GestureDetector(
-                  onTap: () {
-                    final banks = productsState.asData?.value.bankNames ?? [];
-                    showModalBottomSheet(
-                      context: context,
-                      isScrollControlled: true,
-                      backgroundColor: Colors.transparent,
-                      builder: (_) => BankFilterBottomSheet(
-                        banks: ["전체 은행", ...banks],
-                        initial: _banks,
-                        onApply: (selected) {
-                          setState(() {
-                            _banks = selected == "전체 은행" ? null : selected;
-                          });
-                          _reloadProducts();
-                        },
-                      ),
-                    );
-                  },
-                  child: Row(
-                    children: [
-                      Text(
-                        _banks ?? "전체 은행",
-                        style: AppTypography.m600.copyWith(
-                          color: AppColors.gr600,
-                        ),
-                      ),
-                      const SizedBox(width: 5),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 9.5,
-                          horizontal: 7,
-                        ),
-                        child: SvgPicture.asset(
-                          Assets.images.bank.toggleBtn.path,
-                          height: 5,
-                          width: 10,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            const Divider(color: AppColors.gr200, thickness: 1),
-
-            // 🔹 리스트 영역
-            Expanded(
-              child: IndexedStack(
-                index: _tabIndex,
-                children: [
-                  // --- [탭 1] 예금 (추후 구현) ---
-                  Center(
+                // 🔹 스크롤 가능 영역
+                Expanded(
+                  child: SingleChildScrollView(
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const SizedBox(height: 50),
-                        Assets.images.characters.faffLove.image(
-                          width: 209,
-                          height: 256,
-                          fit: BoxFit.contain,
-                        ),
-                        Text(
-                          "곧 업데이트 될 예정입니다!\n업그레이드 될 파프 지켜봐 주실거죠?",
-                          style: AppTypography.l400.copyWith(
-                            color: AppColors.secondarySk,
+                        BlurredCard(
+                          height: 60,
+                          child: Row(
+                            children: [
+                              Text(
+                                product.productName,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const Spacer(),
+                              Text(
+                                product.bankName,
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ],
                           ),
-                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 16),
+
+                        Text("가입 방법: ${product.joinWay}"),
+                        Text("만기이자율: ${product.maturityInterest}"),
+                        Text("우대조건: ${product.specialCondition}"),
+                        Text("제한사항: ${product.joinDeny}"),
+                        Text("가입대상: ${product.joinMember}"),
+                        Text("최대 한도: ${product.maxLimit}원"),
+                        Text("비고: ${product.etcNote}"),
+                        const SizedBox(height: 12),
+
+                        Text("상품 요약: ${product.aiSummary}"),
+                        const Divider(height: 24),
+
+                        Text(
+                          "금리 옵션",
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+
+                        ...product.options.map(
+                          (opt) => ListTile(
+                            title: Text(
+                              "${opt.termMonths}개월 · ${opt.reserveTypeName}",
+                            ),
+                            subtitle: Text(
+                              "기본 ${opt.rate}% + 우대 ${opt.ratePreferential}% → ${opt.rate + opt.ratePreferential}%",
+                            ),
+                          ),
                         ),
                       ],
                     ),
                   ),
+                ),
 
-                  // --- [탭 2] 적금 상품 리스트 ---
-                  productsState.when(
-                    loading: () =>
-                        const Center(child: CircularProgressIndicator()),
-                    error: (err, st) => Center(child: Text("에러: $err")),
-                    data: (data) {
-                      final products = data.content;
-                      if (products.isEmpty) {
-                        return const Center(child: Text("상품이 없습니다."));
-                      }
-                      return ListView.builder(
-                        itemCount: products.length,
-                        itemBuilder: (context, i) {
-                          final p = products[i];
-                          return ListTile(
-                            title: Text(p.productName),
-                            subtitle: Text(p.bankName),
-                            trailing: Text(p.aiSummary),
-                            onTap: () {
-                              context.go('/bank/detail/${p.productSnapshotId}');
-                            },
-                          );
-                        },
-                      );
-                    },
-                  ),
-                ],
-              ),
+                // 가입하기 버튼
+                PrimaryActionButton(
+                  isLoading: false,
+                  label: "가입하기",
+                  // onPressed: () {
+                  //   context.go("/bank/sign-up");
+                  // },
+                  onPressed: () {
+                    // 예: 기본 선택값으로 첫 옵션을 사용 (UI에서 선택값 있으면 그걸 사용)
+                    final opt = product.options.first;
+
+                    context.go(
+                      "/bank/sign-up/${product.productSnapshotId}",
+                      extra: SignUpArgs(
+                        termMonths: opt.termMonths,
+                        maxLimit: product.maxLimit,
+                        productName: product.productName,
+                      ),
+                    );
+                  },
+                ),
+              ],
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
