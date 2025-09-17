@@ -29,7 +29,7 @@ class NewsCardItem extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final radius = BorderRadius.circular(AppRadius.chips);
-    final hasThumb = thumbnailUrl.trim().isNotEmpty;
+    final hasThumb = originalImgUrl.trim().isNotEmpty;
     final scrapState = ref.watch(scrapControllerProvider);
     final isScraped = scrapState.scrapStatus[newsId] ?? false;
     //final hasMinister = ministerCode.trim().isNotEmpty;
@@ -50,63 +50,73 @@ class NewsCardItem extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-              // 제목
-              Text(
-                title,
-                style: AppTypography.h3,
-                softWrap: true,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 8),
-
-              // 날짜
-              Text(
-                date,
-                style: AppTypography.m500.copyWith(color: AppColors.gr600),
-              ),
-              const SizedBox(height: 12),
-
-              // 구분선
-              const Divider(height: 25, thickness: 1, color: AppColors.gr200),
-
-              // 썸네일 (반응형 크기)
-              if (hasThumb) ...[
-                Container(
-                  width: double.infinity,
-                  height: MediaQuery.of(context).size.width > 600 ? 220 : 180,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    color: AppColors.gr100,
+                  // 제목
+                  Text(
+                    title,
+                    style: AppTypography.h3,
+                    softWrap: true,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.center,
                   ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: HtmlImage(
-                      url: originalImgUrl,
+                  const SizedBox(height: 8),
+
+                  // 날짜
+                  Text(
+                    date,
+                    style: AppTypography.m500.copyWith(color: AppColors.gr600),
+                  ),
+                  const SizedBox(height: 12),
+
+                  // 구분선
+                  const Divider(
+                    height: 25,
+                    thickness: 1,
+                    color: AppColors.gr200,
+                  ),
+
+                  // 썸네일 (반응형 크기)
+                  if (hasThumb) ...[
+                    Container(
                       width: double.infinity,
-                      height: MediaQuery.of(context).size.width > 600 ? 220 : 180,
-                      fit: BoxFit.cover,
-                      borderRadius: BorderRadius.circular(12),
+                      height: MediaQuery.of(context).size.width > 600
+                          ? 220
+                          : 180,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        color: AppColors.gr100,
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: HtmlImage(
+                          url: originalImgUrl,
+                          width: double.infinity,
+                          height: MediaQuery.of(context).size.width > 600
+                              ? 220
+                              : 180,
+                          fit: BoxFit.cover,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
                     ),
+                    const SizedBox(height: 16),
+                  ],
+
+                  // AI 요약
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: SkFilledChip(label: 'AI 요약'),
                   ),
-                ),
-                const SizedBox(height: 16),
-              ],
+                  const SizedBox(height: 4),
 
-              // AI 요약
-              Align(
-                alignment: Alignment.centerLeft,
-                child: SkFilledChip(label: 'AI 요약'),
-              ),
-              const SizedBox(height: 4),
-
-              Text(
-                aiSummary,
-                style: AppTypography.m500.copyWith(color: AppColors.primarySky),
-                softWrap: true,
-              ),
-              const SizedBox(height: 8),
+                  Text(
+                    aiSummary,
+                    style: AppTypography.m500.copyWith(
+                      color: AppColors.primarySky,
+                    ),
+                    softWrap: true,
+                  ),
+                  const SizedBox(height: 8),
 
                   // 출처/부처 코드
                   Text(
@@ -124,16 +134,19 @@ class NewsCardItem extends ConsumerWidget {
               ),
             ),
           ),
-          
+
           // 스크랩 버튼
           Positioned(
             top: 12,
             right: 12,
             child: GestureDetector(
-              onTap: scrapState.isLoading ? null : () async {
-                await ref.read(scrapControllerProvider.notifier)
-                    .toggleNewsScrap(newsId);
-              },
+              onTap: scrapState.isLoading
+                  ? null
+                  : () async {
+                      await ref
+                          .read(scrapControllerProvider.notifier)
+                          .toggleNewsScrap(newsId);
+                    },
               child: Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(

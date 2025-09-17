@@ -115,7 +115,7 @@ class _FinancialProductSignUpCompletePageState
                   PrimaryFilledButton(
                     label: "가입 내역 보러가기",
                     onPressed: () {
-                      context.go("/bank/in-progress");
+                      context.go("/bank/inprogress");
                     },
                   ),
                   const SizedBox(height: 12),
