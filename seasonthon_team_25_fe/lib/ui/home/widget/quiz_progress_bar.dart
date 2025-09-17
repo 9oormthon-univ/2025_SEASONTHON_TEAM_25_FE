@@ -16,11 +16,9 @@ class QuizProgressBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 바의 전체 너비를 화면 너비의 80%로 가정
-    final double barWidth = MediaQuery.of(context).size.width * 0.8;
-    // 현재 진행률을 계산
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double barWidth = screenWidth * 0.8;
     final double progress = total > 0 ? current / total : 0;
-    // 채워지는 바의 너비를 계산
     final double progressWidth = barWidth * progress;
 
     return SizedBox(
@@ -50,34 +48,53 @@ class QuizProgressBar extends StatelessWidget {
                         : AppShadows.dsRED,
                   ),
                 ),
-                // 텍스트
+                // 텍스트 (1/N)
                 Center(
                   child: Text(
                     '$current/$total',
-                    style: current == 5
-                        ? AppTypography.s500.copyWith(
-                            color: AppColors.secondaryRd,
-                          )
-                        : AppTypography.s500.copyWith(color: AppColors.wt),
+                    style: current != 0
+                        ? (current == 5
+                              ? AppTypography.s500.copyWith(color: AppColors.wt)
+                              : AppTypography.s500.copyWith(
+                                  color: AppColors.secondaryRd,
+                                ))
+                        : AppTypography.s500.copyWith(color: AppColors.gr600),
                   ),
                 ),
               ],
             ),
           ),
           const SizedBox(height: 8), // 바와 텍스트 목록 사이의 간격
-          // 2. 텍스트 목록 부분 (1개, 2개, 3개...)
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: List.generate(total, (index) {
-              final number = index + 1;
-              final bool isCurrent = number == current;
-              return Text(
-                '$number개',
-                style: isCurrent
-                    ? AppTypography.s500.copyWith(color: AppColors.primarySky)
-                    : AppTypography.s500.copyWith(color: AppColors.gr600),
-              );
-            }),
+          // 텍스트 목록 (1개, 2개, 3개...)
+          SizedBox(
+            height: 20, // 텍스트가 들어갈 충분한 높이
+            child: Stack(
+              children: List.generate(total, (index) {
+                final number = index + 1;
+                final double positionLeft = (barWidth / total) * (index);
+
+                // 라벨 색상 3단계 변경 로직
+                Color labelColor;
+                if (number < current) {
+                  // 이미 채워진 상태
+                  labelColor = AppColors.primarySky;
+                } else if (number == current) {
+                  // 현재 채워지는 상태
+                  labelColor = AppColors.secondaryRd;
+                } else {
+                  // 아무것도 안 채워진 상태 (기본 색상)
+                  labelColor = AppColors.gr600;
+                }
+
+                return Positioned(
+                  left: positionLeft,
+                  child: Text(
+                    '$number개',
+                    style: AppTypography.s500.copyWith(color: labelColor),
+                  ),
+                );
+              }),
+            ),
           ),
         ],
       ),
