@@ -39,16 +39,16 @@ class QuestState {
 
 final questControllerProvider =
     StateNotifierProvider<QuestController, QuestState>((ref) {
-  final getCurrentQuestsUseCase = ref.watch(getCurrentQuestsUseCaseProvider);
-  final claimRewardUseCase = ref.watch(claimQuestRewardUseCaseProvider);
-  return QuestController(getCurrentQuestsUseCase, claimRewardUseCase);
-});
+      final getCurrentQuestsUseCase = ref.watch(
+        getCurrentQuestsUseCaseProvider,
+      );
+      final claimRewardUseCase = ref.watch(claimQuestRewardUseCaseProvider);
+      return QuestController(getCurrentQuestsUseCase, claimRewardUseCase);
+    });
 
 class QuestController extends StateNotifier<QuestState> {
-  QuestController(
-    this._getCurrentQuestsUseCase,
-    this._claimQuestRewardUseCase,
-  ) : super(const QuestState());
+  QuestController(this._getCurrentQuestsUseCase, this._claimQuestRewardUseCase)
+    : super(const QuestState());
 
   final GetCurrentQuestsUseCase _getCurrentQuestsUseCase;
   final ClaimQuestRewardUseCase _claimQuestRewardUseCase;
@@ -56,19 +56,13 @@ class QuestController extends StateNotifier<QuestState> {
   /// 현재 주차 퀘스트 목록 조회
   Future<void> loadCurrentQuests() async {
     state = state.copyWith(isLoading: true, error: null);
-    
+
     try {
       final quests = await _getCurrentQuestsUseCase();
-      
-      state = state.copyWith(
-        isLoading: false,
-        quests: quests,
-      );
+
+      state = state.copyWith(isLoading: false, quests: quests);
     } catch (e, st) {
-      state = state.copyWith(
-        isLoading: false,
-        error: mapDioError(e),
-      );
+      state = state.copyWith(isLoading: false, error: mapDioError(e));
     }
   }
 
@@ -81,15 +75,12 @@ class QuestController extends StateNotifier<QuestState> {
 
     final updatedClaimingIds = Set<int>.from(state.claimingQuestIds);
     updatedClaimingIds.add(userQuestId);
-    
-    state = state.copyWith(
-      claimingQuestIds: updatedClaimingIds,
-      error: null,
-    );
-    
+
+    state = state.copyWith(claimingQuestIds: updatedClaimingIds, error: null);
+
     try {
       final response = await _claimQuestRewardUseCase(userQuestId);
-      
+
       // 성공적으로 보상을 수령한 경우에만 상태 업데이트
       if (response.completed) {
         // 퀘스트 목록에서 해당 퀘스트의 claimed 상태 업데이트
@@ -99,20 +90,20 @@ class QuestController extends StateNotifier<QuestState> {
           }
           return quest;
         }).toList();
-        
+
         state = state.copyWith(quests: updatedQuests);
       }
-      
+
       final finalClaimingIds = Set<int>.from(state.claimingQuestIds);
       finalClaimingIds.remove(userQuestId);
-      
+
       state = state.copyWith(claimingQuestIds: finalClaimingIds);
-      
+
       return response;
     } catch (e, st) {
       final finalClaimingIds = Set<int>.from(state.claimingQuestIds);
       finalClaimingIds.remove(userQuestId);
-      
+
       state = state.copyWith(
         claimingQuestIds: finalClaimingIds,
         error: mapDioError(e),
