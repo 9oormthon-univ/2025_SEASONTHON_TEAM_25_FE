@@ -58,9 +58,9 @@ class _QuizRunPageState extends ConsumerState<QuizRunPage> {
       appBar: CustomWhiteAppBar(
         title: '퀴즈',
         showLeftBtn: !showResult,
-        onTapLeftBtn: () => context.go('/quiz'),
+        onTapLeftBtn: () => context.pushReplacement('/quiz'),
         showRightBtn: !showResult,
-        onTapRightBtn: () => context.go('/quiz'),
+        onTapRightBtn: () => context.pushReplacement('/quiz'),
       ),
       body: SingleChildScrollView(
         child: Center(
@@ -314,7 +314,7 @@ class _QuizRunPageState extends ConsumerState<QuizRunPage> {
                               onPressed: () {
                                 final isLast = ctrl.next();
                                 if (isLast) {
-                                  context.go("/quiz");
+                                  context.pushReplacement('/quiz');
                                 }
                               },
                             ),
