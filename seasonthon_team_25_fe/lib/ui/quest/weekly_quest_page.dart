@@ -9,14 +9,14 @@ import 'package:seasonthon_team_25_fe/ui/components/app_bar/custom_app_bar.dart'
 import 'package:seasonthon_team_25_fe/ui/components/chip/coin_balance_chip.dart';
 import 'package:seasonthon_team_25_fe/ui/quest/widgets/quest_card.dart';
 
-class QuestPage extends ConsumerStatefulWidget {
-  const QuestPage({super.key});
+class WeeklyQuestPage extends ConsumerStatefulWidget {
+  const WeeklyQuestPage({super.key});
 
   @override
-  ConsumerState<QuestPage> createState() => _QuestPageState();
+  ConsumerState<WeeklyQuestPage> createState() => _WeeklyQuestPageState();
 }
 
-class _QuestPageState extends ConsumerState<QuestPage> {
+class _WeeklyQuestPageState extends ConsumerState<WeeklyQuestPage> {
   @override
   void initState() {
     super.initState();
@@ -41,7 +41,7 @@ class _QuestPageState extends ConsumerState<QuestPage> {
         title: '퀘스트',
         showLeftBtn: true,
         showRightBtn: false,
-        onTapLeftBtn: () => context.go("/home"),
+        onTapLeftBtn: () => context.pop(),
       ),
       body: Column(
         children: [
@@ -144,104 +144,58 @@ class _QuestPageState extends ConsumerState<QuestPage> {
 
   Widget _buildErrorState(String error) {
     return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(40),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(
-              Icons.wifi_off_outlined,
-              size: 80,
-              color: AppColors.gr400,
-            ),
-            const SizedBox(height: 24),
-            Text(
-              '퀘스트를 불러올 수 없습니다',
-              style: AppTypography.h3.copyWith(color: AppColors.gr600),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 12),
-            Text(
-              '서버 연결에 문제가 있습니다.\n잠시 후 다시 시도해주세요.',
-              style: AppTypography.m400.copyWith(color: AppColors.gr600),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 32),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 40),
-              child: ElevatedButton(
-                onPressed: () {
-                  ref.read(questControllerProvider.notifier).loadCurrentQuests();
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primarySky,
-                  foregroundColor: AppColors.wt,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                child: Text(
-                  '다시 시도',
-                  style: AppTypography.h3,
-                ),
-              ),
-            ),
-          ],
-        ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(
+            Icons.error_outline,
+            size: 64,
+            color: AppColors.gr400,
+          ),
+          const SizedBox(height: 16),
+          Text(
+            '오류가 발생했습니다',
+            style: AppTypography.h3.copyWith(color: AppColors.gr600),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            error,
+            style: AppTypography.m400.copyWith(color: AppColors.gr600),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 24),
+          ElevatedButton(
+            onPressed: () {
+              ref.read(questControllerProvider.notifier).loadCurrentQuests();
+            },
+            child: const Text('다시 시도'),
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildEmptyState() {
     return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(40),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(
-              Icons.emoji_events_outlined,
-              size: 80,
-              color: AppColors.primarySky,
-            ),
-            const SizedBox(height: 24),
-            Text(
-              '이번 주 퀘스트가 준비 중입니다',
-              style: AppTypography.h3.copyWith(color: AppColors.gr600),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 12),
-            Text(
-              '곧 새로운 퀘스트가 업데이트됩니다!\n출석, 뉴스 읽기, 퀴즈 풀기 등\n다양한 활동으로 보상을 받아보세요.',
-              style: AppTypography.m400.copyWith(color: AppColors.gr600),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 32),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 40),
-              child: ElevatedButton(
-                onPressed: () {
-                  ref.read(questControllerProvider.notifier).loadCurrentQuests();
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primarySky,
-                  foregroundColor: AppColors.wt,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                child: Text(
-                  '새로고침',
-                  style: AppTypography.h3,
-                ),
-              ),
-            ),
-          ],
-        ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(
+            Icons.assignment_outlined,
+            size: 64,
+            color: AppColors.gr400,
+          ),
+          const SizedBox(height: 16),
+          Text(
+            '진행 중인 퀘스트가 없습니다',
+            style: AppTypography.h3.copyWith(color: AppColors.gr600),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            '새로운 퀘스트를 기다려주세요!',
+            style: AppTypography.m400.copyWith(color: AppColors.gr600),
+          ),
+        ],
       ),
     );
   }
