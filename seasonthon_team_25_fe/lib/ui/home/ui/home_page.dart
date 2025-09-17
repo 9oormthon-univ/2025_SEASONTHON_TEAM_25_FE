@@ -9,6 +9,7 @@ import 'package:seasonthon_team_25_fe/core/theme/radius.dart';
 import 'package:seasonthon_team_25_fe/core/theme/typography.dart';
 import 'package:seasonthon_team_25_fe/feature/home/presentation/provider/home_controller.dart';
 import 'package:seasonthon_team_25_fe/gen/assets.gen.dart';
+import 'package:seasonthon_team_25_fe/ui/components/chip/coin_balance_chip.dart';
 import 'package:seasonthon_team_25_fe/ui/components/speech_bubble/speech_bubble.dart';
 import 'package:seasonthon_team_25_fe/ui/home/widget/home_action_btn.dart';
 import 'package:seasonthon_team_25_fe/ui/home/widget/quiz_progress_bar.dart';
@@ -74,42 +75,16 @@ class _HomePageState extends ConsumerState<HomePage> {
             child: Container(
               width: double.infinity,
               decoration: BoxDecoration(gradient: AppGradients.homeBackground),
-              padding: const EdgeInsets.fromLTRB(20, 64, 20, 0),
+              padding: const EdgeInsets.fromLTRB(20, 64, 20, 10),
               child: Center(
                 child: Column(
                   children: [
                     Align(
                       alignment: AlignmentGeometry.topLeft,
-                      child: IntrinsicWidth(
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: AppColors.wt_50,
-                            borderRadius: BorderRadius.circular(
-                              AppRadius.chips,
-                            ),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Assets.images.home.coin.image(
-                                width: 18,
-                                height: 18,
-                                fit: BoxFit.contain,
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                "${data.balance}원",
-                                style: AppTypography.m500.copyWith(
-                                  color: AppColors.primarySky,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                      child: CoinBalanceChip(
+                        balance: data.balance,
+                        backgroundColor: AppColors.wt_50,
+                        textColor: AppColors.primarySky,
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -143,10 +118,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                             ),
                           ),
                           const SizedBox(height: 26),
-                          QuizProgressBar(
-                            total: 5,
-                            current: data.quizCount,
-                          ),
+                          QuizProgressBar(total: 5, current: data.quizCount),
                           const SizedBox(height: 26),
                           Row(
                             children: [
@@ -158,7 +130,9 @@ class _HomePageState extends ConsumerState<HomePage> {
                                   height: 48,
                                 ),
                                 label: "업적 확인",
-                                onTap: () => debugPrint("업적 확인 클릭"),
+                                onTap: () {
+                                  context.go("/achievement");
+                                },
                                 showBadge: isAchievementCheckNeeded,
                               ),
                               const SizedBox(width: 16),
@@ -168,7 +142,9 @@ class _HomePageState extends ConsumerState<HomePage> {
                                   height: 48,
                                 ),
                                 label: "내 퀘스트",
-                                onTap: () => debugPrint("내 퀘스트 클릭"),
+                                onTap: () {
+                                  context.go("/quest");
+                                },
                                 showBadge: isQuestCheckNeeded,
                               ),
                               const SizedBox(width: 16),
@@ -178,7 +154,9 @@ class _HomePageState extends ConsumerState<HomePage> {
                                   height: 48,
                                 ),
                                 label: "출석 체크",
-                                onTap: () => debugPrint("출석 체크 클릭"),
+                                onTap: () {
+                                  context.go("/attendance");
+                                },
                                 showBadge: false,
                               ),
                             ],
