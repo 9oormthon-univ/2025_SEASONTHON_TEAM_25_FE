@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lottie/lottie.dart';
 import 'package:seasonthon_team_25_fe/core/theme/colors.dart';
 import 'package:seasonthon_team_25_fe/feature/quiz/presentation/provider/daily_quiz_state.dart';
 import 'package:seasonthon_team_25_fe/feature/quiz/presentation/provider/quiz_controller.dart';
+import 'package:seasonthon_team_25_fe/gen/assets.gen.dart';
 import 'package:seasonthon_team_25_fe/ui/components/app_bar/custom_white_app_bar.dart';
 import 'package:seasonthon_team_25_fe/ui/quiz/widget/quiz_intro_card.dart';
 
@@ -38,7 +40,19 @@ class _QuizPageState extends ConsumerState<QuizPage> {
         onTapRightBtn: () => context.go('/home'),
       ),
       body: state.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => Center(
+          child: SizedBox(
+            width: 200,
+            height: 200,
+            child: Lottie.asset(
+              Assets.lottie.loadingSlow,
+              repeat: true, // 반복 재생
+              animate: true, // 자동 재생
+              fit: BoxFit.contain,
+              frameRate: FrameRate.max,
+            ),
+          ),
+        ),
         error: (msg) => null,
         firstVisitToday: (data, remaining) => Column(
           children: [

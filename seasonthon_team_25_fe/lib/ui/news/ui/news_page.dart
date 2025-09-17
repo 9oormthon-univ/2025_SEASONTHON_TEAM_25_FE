@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lottie/lottie.dart';
 import 'package:seasonthon_team_25_fe/core/theme/colors.dart';
 import 'package:seasonthon_team_25_fe/feature/news/presentation/provider/news_controller.dart';
+import 'package:seasonthon_team_25_fe/gen/assets.gen.dart';
 import 'package:seasonthon_team_25_fe/ui/components/app_bar/custom_app_bar.dart';
 import 'package:seasonthon_team_25_fe/ui/components/tab_bar/custom_tab_bar.dart';
 import 'package:seasonthon_team_25_fe/ui/news/ui/news_list_view.dart';
@@ -70,9 +72,18 @@ class _NewsPageState extends ConsumerState<NewsPage> {
                     // 상단 로딩/에러 표시(최초 로딩 상태)
                     state.page.when(
                       data: (_) => const SizedBox.shrink(),
-                      loading: () => const LinearProgressIndicator(
-                        color: AppColors.primarySky,
-                        backgroundColor: AppColors.gr200,
+                      loading: () => Center(
+                        child: SizedBox(
+                          width: 200,
+                          height: 200,
+                          child: Lottie.asset(
+                            Assets.lottie.loadingSlow,
+                            repeat: true, // 반복 재생
+                            animate: true, // 자동 재생
+                            fit: BoxFit.contain,
+                            frameRate: FrameRate.max,
+                          ),
+                        ),
                       ),
                       error: (e, _) => Padding(
                         padding: const EdgeInsets.symmetric(
