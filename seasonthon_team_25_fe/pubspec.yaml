@@ -41,6 +41,7 @@ dependencies:
   flutter_svg: ^2.2.0    # SVG 이미지
   lottie: ^3.3.2
   card_swiper: ^3.0.1
+  syncfusion_flutter_gauges: ^31.1.20
   
   intl: ^0.20.2
   web: ^1.1.1

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:seasonthon_team_25_fe/core/theme/button_size.dart';
 import 'package:seasonthon_team_25_fe/core/theme/colors.dart';
 import 'package:seasonthon_team_25_fe/core/theme/radius.dart';
+import 'package:seasonthon_team_25_fe/core/theme/shadows.dart';
 import 'package:seasonthon_team_25_fe/core/theme/typography.dart';
 
 class SecondaryBlurWhiteButton extends StatelessWidget {
@@ -11,7 +12,6 @@ class SecondaryBlurWhiteButton extends StatelessWidget {
   final bool isLoading;
   final ButtonWidth widthType;
   final double? customWidth;
-  
   const SecondaryBlurWhiteButton({
     super.key,
     required this.label,

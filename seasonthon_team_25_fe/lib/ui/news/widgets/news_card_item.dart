@@ -14,7 +14,7 @@ class NewsCardItem extends ConsumerWidget {
   final String date;
   final String aiSummary;
   final String ministerCode;
-  final String thumbnailUrl;
+  final String originalImgUrl;
 
   const NewsCardItem({
     super.key,
@@ -23,7 +23,7 @@ class NewsCardItem extends ConsumerWidget {
     required this.date,
     required this.aiSummary,
     required this.ministerCode,
-    required this.thumbnailUrl,
+    required this.originalImgUrl,
   });
 
   @override
@@ -71,14 +71,25 @@ class NewsCardItem extends ConsumerWidget {
               // 구분선
               const Divider(height: 25, thickness: 1, color: AppColors.gr200),
 
-              // 썸네일
+              // 썸네일 (반응형 크기)
               if (hasThumb) ...[
-                HtmlImage(
-                  url: thumbnailUrl,
+                Container(
                   width: double.infinity,
-                  height: 175,
-                  fit: BoxFit.cover,
-                  borderRadius: BorderRadius.circular(12),
+                  height: MediaQuery.of(context).size.width > 600 ? 220 : 180,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    color: AppColors.gr100,
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: HtmlImage(
+                      url: originalImgUrl,
+                      width: double.infinity,
+                      height: MediaQuery.of(context).size.width > 600 ? 220 : 180,
+                      fit: BoxFit.cover,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
                 ),
                 const SizedBox(height: 16),
               ],

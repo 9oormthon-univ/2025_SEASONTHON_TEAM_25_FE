@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$NewsItemDto {
 
- int get id; String get newsItemId; String get title; String get subTitle1; String get subTitle2; String get subTitle3; DateTime get approveDate; DateTime get modifyDate; String get thumbnailUrl; String get aiSummary; String get plainTextContent; String get ministerCode;
+ int get id; String get newsItemId; String get title; String get subTitle1; String get subTitle2; String get subTitle3; DateTime get approveDate; DateTime get modifyDate; String get thumbnailUrl; String get originalImgUrl; String get aiSummary; String get plainTextContent; String get ministerCode;
 /// Create a copy of NewsItemDto
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $NewsItemDtoCopyWith<NewsItemDto> get copyWith => _$NewsItemDtoCopyWithImpl<News
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is NewsItemDto&&(identical(other.id, id) || other.id == id)&&(identical(other.newsItemId, newsItemId) || other.newsItemId == newsItemId)&&(identical(other.title, title) || other.title == title)&&(identical(other.subTitle1, subTitle1) || other.subTitle1 == subTitle1)&&(identical(other.subTitle2, subTitle2) || other.subTitle2 == subTitle2)&&(identical(other.subTitle3, subTitle3) || other.subTitle3 == subTitle3)&&(identical(other.approveDate, approveDate) || other.approveDate == approveDate)&&(identical(other.modifyDate, modifyDate) || other.modifyDate == modifyDate)&&(identical(other.thumbnailUrl, thumbnailUrl) || other.thumbnailUrl == thumbnailUrl)&&(identical(other.aiSummary, aiSummary) || other.aiSummary == aiSummary)&&(identical(other.plainTextContent, plainTextContent) || other.plainTextContent == plainTextContent)&&(identical(other.ministerCode, ministerCode) || other.ministerCode == ministerCode));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is NewsItemDto&&(identical(other.id, id) || other.id == id)&&(identical(other.newsItemId, newsItemId) || other.newsItemId == newsItemId)&&(identical(other.title, title) || other.title == title)&&(identical(other.subTitle1, subTitle1) || other.subTitle1 == subTitle1)&&(identical(other.subTitle2, subTitle2) || other.subTitle2 == subTitle2)&&(identical(other.subTitle3, subTitle3) || other.subTitle3 == subTitle3)&&(identical(other.approveDate, approveDate) || other.approveDate == approveDate)&&(identical(other.modifyDate, modifyDate) || other.modifyDate == modifyDate)&&(identical(other.thumbnailUrl, thumbnailUrl) || other.thumbnailUrl == thumbnailUrl)&&(identical(other.originalImgUrl, originalImgUrl) || other.originalImgUrl == originalImgUrl)&&(identical(other.aiSummary, aiSummary) || other.aiSummary == aiSummary)&&(identical(other.plainTextContent, plainTextContent) || other.plainTextContent == plainTextContent)&&(identical(other.ministerCode, ministerCode) || other.ministerCode == ministerCode));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,newsItemId,title,subTitle1,subTitle2,subTitle3,approveDate,modifyDate,thumbnailUrl,aiSummary,plainTextContent,ministerCode);
+int get hashCode => Object.hash(runtimeType,id,newsItemId,title,subTitle1,subTitle2,subTitle3,approveDate,modifyDate,thumbnailUrl,originalImgUrl,aiSummary,plainTextContent,ministerCode);
 
 @override
 String toString() {
-  return 'NewsItemDto(id: $id, newsItemId: $newsItemId, title: $title, subTitle1: $subTitle1, subTitle2: $subTitle2, subTitle3: $subTitle3, approveDate: $approveDate, modifyDate: $modifyDate, thumbnailUrl: $thumbnailUrl, aiSummary: $aiSummary, plainTextContent: $plainTextContent, ministerCode: $ministerCode)';
+  return 'NewsItemDto(id: $id, newsItemId: $newsItemId, title: $title, subTitle1: $subTitle1, subTitle2: $subTitle2, subTitle3: $subTitle3, approveDate: $approveDate, modifyDate: $modifyDate, thumbnailUrl: $thumbnailUrl, originalImgUrl: $originalImgUrl, aiSummary: $aiSummary, plainTextContent: $plainTextContent, ministerCode: $ministerCode)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $NewsItemDtoCopyWith<$Res>  {
   factory $NewsItemDtoCopyWith(NewsItemDto value, $Res Function(NewsItemDto) _then) = _$NewsItemDtoCopyWithImpl;
 @useResult
 $Res call({
- int id, String newsItemId, String title, String subTitle1, String subTitle2, String subTitle3, DateTime approveDate, DateTime modifyDate, String thumbnailUrl, String aiSummary, String plainTextContent, String ministerCode
+ int id, String newsItemId, String title, String subTitle1, String subTitle2, String subTitle3, DateTime approveDate, DateTime modifyDate, String thumbnailUrl, String originalImgUrl, String aiSummary, String plainTextContent, String ministerCode
 });
 
 
@@ -65,7 +65,7 @@ class _$NewsItemDtoCopyWithImpl<$Res>
 
 /// Create a copy of NewsItemDto
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? newsItemId = null,Object? title = null,Object? subTitle1 = null,Object? subTitle2 = null,Object? subTitle3 = null,Object? approveDate = null,Object? modifyDate = null,Object? thumbnailUrl = null,Object? aiSummary = null,Object? plainTextContent = null,Object? ministerCode = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? newsItemId = null,Object? title = null,Object? subTitle1 = null,Object? subTitle2 = null,Object? subTitle3 = null,Object? approveDate = null,Object? modifyDate = null,Object? thumbnailUrl = null,Object? originalImgUrl = null,Object? aiSummary = null,Object? plainTextContent = null,Object? ministerCode = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,newsItemId: null == newsItemId ? _self.newsItemId : newsItemId // ignore: cast_nullable_to_non_nullable
@@ -76,6 +76,7 @@ as String,subTitle3: null == subTitle3 ? _self.subTitle3 : subTitle3 // ignore: 
 as String,approveDate: null == approveDate ? _self.approveDate : approveDate // ignore: cast_nullable_to_non_nullable
 as DateTime,modifyDate: null == modifyDate ? _self.modifyDate : modifyDate // ignore: cast_nullable_to_non_nullable
 as DateTime,thumbnailUrl: null == thumbnailUrl ? _self.thumbnailUrl : thumbnailUrl // ignore: cast_nullable_to_non_nullable
+as String,originalImgUrl: null == originalImgUrl ? _self.originalImgUrl : originalImgUrl // ignore: cast_nullable_to_non_nullable
 as String,aiSummary: null == aiSummary ? _self.aiSummary : aiSummary // ignore: cast_nullable_to_non_nullable
 as String,plainTextContent: null == plainTextContent ? _self.plainTextContent : plainTextContent // ignore: cast_nullable_to_non_nullable
 as String,ministerCode: null == ministerCode ? _self.ministerCode : ministerCode // ignore: cast_nullable_to_non_nullable
@@ -164,10 +165,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String newsItemId,  String title,  String subTitle1,  String subTitle2,  String subTitle3,  DateTime approveDate,  DateTime modifyDate,  String thumbnailUrl,  String aiSummary,  String plainTextContent,  String ministerCode)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String newsItemId,  String title,  String subTitle1,  String subTitle2,  String subTitle3,  DateTime approveDate,  DateTime modifyDate,  String thumbnailUrl,  String originalImgUrl,  String aiSummary,  String plainTextContent,  String ministerCode)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _NewsItemDto() when $default != null:
-return $default(_that.id,_that.newsItemId,_that.title,_that.subTitle1,_that.subTitle2,_that.subTitle3,_that.approveDate,_that.modifyDate,_that.thumbnailUrl,_that.aiSummary,_that.plainTextContent,_that.ministerCode);case _:
+return $default(_that.id,_that.newsItemId,_that.title,_that.subTitle1,_that.subTitle2,_that.subTitle3,_that.approveDate,_that.modifyDate,_that.thumbnailUrl,_that.originalImgUrl,_that.aiSummary,_that.plainTextContent,_that.ministerCode);case _:
   return orElse();
 
 }
@@ -185,10 +186,10 @@ return $default(_that.id,_that.newsItemId,_that.title,_that.subTitle1,_that.subT
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String newsItemId,  String title,  String subTitle1,  String subTitle2,  String subTitle3,  DateTime approveDate,  DateTime modifyDate,  String thumbnailUrl,  String aiSummary,  String plainTextContent,  String ministerCode)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String newsItemId,  String title,  String subTitle1,  String subTitle2,  String subTitle3,  DateTime approveDate,  DateTime modifyDate,  String thumbnailUrl,  String originalImgUrl,  String aiSummary,  String plainTextContent,  String ministerCode)  $default,) {final _that = this;
 switch (_that) {
 case _NewsItemDto():
-return $default(_that.id,_that.newsItemId,_that.title,_that.subTitle1,_that.subTitle2,_that.subTitle3,_that.approveDate,_that.modifyDate,_that.thumbnailUrl,_that.aiSummary,_that.plainTextContent,_that.ministerCode);case _:
+return $default(_that.id,_that.newsItemId,_that.title,_that.subTitle1,_that.subTitle2,_that.subTitle3,_that.approveDate,_that.modifyDate,_that.thumbnailUrl,_that.originalImgUrl,_that.aiSummary,_that.plainTextContent,_that.ministerCode);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -205,10 +206,10 @@ return $default(_that.id,_that.newsItemId,_that.title,_that.subTitle1,_that.subT
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String newsItemId,  String title,  String subTitle1,  String subTitle2,  String subTitle3,  DateTime approveDate,  DateTime modifyDate,  String thumbnailUrl,  String aiSummary,  String plainTextContent,  String ministerCode)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String newsItemId,  String title,  String subTitle1,  String subTitle2,  String subTitle3,  DateTime approveDate,  DateTime modifyDate,  String thumbnailUrl,  String originalImgUrl,  String aiSummary,  String plainTextContent,  String ministerCode)?  $default,) {final _that = this;
 switch (_that) {
 case _NewsItemDto() when $default != null:
-return $default(_that.id,_that.newsItemId,_that.title,_that.subTitle1,_that.subTitle2,_that.subTitle3,_that.approveDate,_that.modifyDate,_that.thumbnailUrl,_that.aiSummary,_that.plainTextContent,_that.ministerCode);case _:
+return $default(_that.id,_that.newsItemId,_that.title,_that.subTitle1,_that.subTitle2,_that.subTitle3,_that.approveDate,_that.modifyDate,_that.thumbnailUrl,_that.originalImgUrl,_that.aiSummary,_that.plainTextContent,_that.ministerCode);case _:
   return null;
 
 }
@@ -220,7 +221,7 @@ return $default(_that.id,_that.newsItemId,_that.title,_that.subTitle1,_that.subT
 @JsonSerializable()
 
 class _NewsItemDto implements NewsItemDto {
-  const _NewsItemDto({required this.id, required this.newsItemId, required this.title, required this.subTitle1, required this.subTitle2, required this.subTitle3, required this.approveDate, required this.modifyDate, required this.thumbnailUrl, required this.aiSummary, required this.plainTextContent, required this.ministerCode});
+  const _NewsItemDto({required this.id, required this.newsItemId, required this.title, required this.subTitle1, required this.subTitle2, required this.subTitle3, required this.approveDate, required this.modifyDate, required this.thumbnailUrl, required this.originalImgUrl, required this.aiSummary, required this.plainTextContent, required this.ministerCode});
   factory _NewsItemDto.fromJson(Map<String, dynamic> json) => _$NewsItemDtoFromJson(json);
 
 @override final  int id;
@@ -232,6 +233,7 @@ class _NewsItemDto implements NewsItemDto {
 @override final  DateTime approveDate;
 @override final  DateTime modifyDate;
 @override final  String thumbnailUrl;
+@override final  String originalImgUrl;
 @override final  String aiSummary;
 @override final  String plainTextContent;
 @override final  String ministerCode;
@@ -249,16 +251,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _NewsItemDto&&(identical(other.id, id) || other.id == id)&&(identical(other.newsItemId, newsItemId) || other.newsItemId == newsItemId)&&(identical(other.title, title) || other.title == title)&&(identical(other.subTitle1, subTitle1) || other.subTitle1 == subTitle1)&&(identical(other.subTitle2, subTitle2) || other.subTitle2 == subTitle2)&&(identical(other.subTitle3, subTitle3) || other.subTitle3 == subTitle3)&&(identical(other.approveDate, approveDate) || other.approveDate == approveDate)&&(identical(other.modifyDate, modifyDate) || other.modifyDate == modifyDate)&&(identical(other.thumbnailUrl, thumbnailUrl) || other.thumbnailUrl == thumbnailUrl)&&(identical(other.aiSummary, aiSummary) || other.aiSummary == aiSummary)&&(identical(other.plainTextContent, plainTextContent) || other.plainTextContent == plainTextContent)&&(identical(other.ministerCode, ministerCode) || other.ministerCode == ministerCode));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _NewsItemDto&&(identical(other.id, id) || other.id == id)&&(identical(other.newsItemId, newsItemId) || other.newsItemId == newsItemId)&&(identical(other.title, title) || other.title == title)&&(identical(other.subTitle1, subTitle1) || other.subTitle1 == subTitle1)&&(identical(other.subTitle2, subTitle2) || other.subTitle2 == subTitle2)&&(identical(other.subTitle3, subTitle3) || other.subTitle3 == subTitle3)&&(identical(other.approveDate, approveDate) || other.approveDate == approveDate)&&(identical(other.modifyDate, modifyDate) || other.modifyDate == modifyDate)&&(identical(other.thumbnailUrl, thumbnailUrl) || other.thumbnailUrl == thumbnailUrl)&&(identical(other.originalImgUrl, originalImgUrl) || other.originalImgUrl == originalImgUrl)&&(identical(other.aiSummary, aiSummary) || other.aiSummary == aiSummary)&&(identical(other.plainTextContent, plainTextContent) || other.plainTextContent == plainTextContent)&&(identical(other.ministerCode, ministerCode) || other.ministerCode == ministerCode));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,newsItemId,title,subTitle1,subTitle2,subTitle3,approveDate,modifyDate,thumbnailUrl,aiSummary,plainTextContent,ministerCode);
+int get hashCode => Object.hash(runtimeType,id,newsItemId,title,subTitle1,subTitle2,subTitle3,approveDate,modifyDate,thumbnailUrl,originalImgUrl,aiSummary,plainTextContent,ministerCode);
 
 @override
 String toString() {
-  return 'NewsItemDto(id: $id, newsItemId: $newsItemId, title: $title, subTitle1: $subTitle1, subTitle2: $subTitle2, subTitle3: $subTitle3, approveDate: $approveDate, modifyDate: $modifyDate, thumbnailUrl: $thumbnailUrl, aiSummary: $aiSummary, plainTextContent: $plainTextContent, ministerCode: $ministerCode)';
+  return 'NewsItemDto(id: $id, newsItemId: $newsItemId, title: $title, subTitle1: $subTitle1, subTitle2: $subTitle2, subTitle3: $subTitle3, approveDate: $approveDate, modifyDate: $modifyDate, thumbnailUrl: $thumbnailUrl, originalImgUrl: $originalImgUrl, aiSummary: $aiSummary, plainTextContent: $plainTextContent, ministerCode: $ministerCode)';
 }
 
 
@@ -269,7 +271,7 @@ abstract mixin class _$NewsItemDtoCopyWith<$Res> implements $NewsItemDtoCopyWith
   factory _$NewsItemDtoCopyWith(_NewsItemDto value, $Res Function(_NewsItemDto) _then) = __$NewsItemDtoCopyWithImpl;
 @override @useResult
 $Res call({
- int id, String newsItemId, String title, String subTitle1, String subTitle2, String subTitle3, DateTime approveDate, DateTime modifyDate, String thumbnailUrl, String aiSummary, String plainTextContent, String ministerCode
+ int id, String newsItemId, String title, String subTitle1, String subTitle2, String subTitle3, DateTime approveDate, DateTime modifyDate, String thumbnailUrl, String originalImgUrl, String aiSummary, String plainTextContent, String ministerCode
 });
 
 
@@ -286,7 +288,7 @@ class __$NewsItemDtoCopyWithImpl<$Res>
 
 /// Create a copy of NewsItemDto
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? newsItemId = null,Object? title = null,Object? subTitle1 = null,Object? subTitle2 = null,Object? subTitle3 = null,Object? approveDate = null,Object? modifyDate = null,Object? thumbnailUrl = null,Object? aiSummary = null,Object? plainTextContent = null,Object? ministerCode = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? newsItemId = null,Object? title = null,Object? subTitle1 = null,Object? subTitle2 = null,Object? subTitle3 = null,Object? approveDate = null,Object? modifyDate = null,Object? thumbnailUrl = null,Object? originalImgUrl = null,Object? aiSummary = null,Object? plainTextContent = null,Object? ministerCode = null,}) {
   return _then(_NewsItemDto(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,newsItemId: null == newsItemId ? _self.newsItemId : newsItemId // ignore: cast_nullable_to_non_nullable
@@ -297,6 +299,7 @@ as String,subTitle3: null == subTitle3 ? _self.subTitle3 : subTitle3 // ignore: 
 as String,approveDate: null == approveDate ? _self.approveDate : approveDate // ignore: cast_nullable_to_non_nullable
 as DateTime,modifyDate: null == modifyDate ? _self.modifyDate : modifyDate // ignore: cast_nullable_to_non_nullable
 as DateTime,thumbnailUrl: null == thumbnailUrl ? _self.thumbnailUrl : thumbnailUrl // ignore: cast_nullable_to_non_nullable
+as String,originalImgUrl: null == originalImgUrl ? _self.originalImgUrl : originalImgUrl // ignore: cast_nullable_to_non_nullable
 as String,aiSummary: null == aiSummary ? _self.aiSummary : aiSummary // ignore: cast_nullable_to_non_nullable
 as String,plainTextContent: null == plainTextContent ? _self.plainTextContent : plainTextContent // ignore: cast_nullable_to_non_nullable
 as String,ministerCode: null == ministerCode ? _self.ministerCode : ministerCode // ignore: cast_nullable_to_non_nullable

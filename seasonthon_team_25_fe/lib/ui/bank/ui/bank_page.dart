@@ -59,15 +59,17 @@ class _BankPageState extends ConsumerState<BankPage> {
         // },
       ),
       body: homeState.when(
-        loading: () => SizedBox(
-          width: 200,
-          height: 200,
-          child: Lottie.asset(
-            Assets.lottie.loadingSlow,
-            repeat: true, // 반복 재생
-            animate: true, // 자동 재생
-            fit: BoxFit.contain,
-            frameRate: FrameRate.max,
+        loading: () => Center(
+          child: SizedBox(
+            width: 200,
+            height: 200,
+            child: Lottie.asset(
+              Assets.lottie.loadingSlow,
+              repeat: true, // 반복 재생
+              animate: true, // 자동 재생
+              fit: BoxFit.contain,
+              frameRate: FrameRate.max,
+            ),
           ),
         ),
         error: (err, st) => Center(child: Text("에러: $err")),
@@ -128,13 +130,13 @@ class _BottomSheetContent extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-          height: 5,
-          width: 144,
-          decoration: BoxDecoration(
-            color: AppColors.gr200,
-            borderRadius: BorderRadius.circular(2),
+            height: 5,
+            width: 144,
+            decoration: BoxDecoration(
+              color: AppColors.gr200,
+              borderRadius: BorderRadius.circular(2),
+            ),
           ),
-        ),
           const SizedBox(height: 12),
           Align(
             alignment: Alignment.topLeft,
@@ -145,7 +147,7 @@ class _BottomSheetContent extends StatelessWidget {
             customWidth: double.infinity,
             label: "진행 중인 금융 상품 보러가기",
             onPressed: () {
-              context.go('/bank/in-progress');
+              context.push('/bank/inprogress');
             },
           ),
           const SizedBox(height: 16),
@@ -153,7 +155,7 @@ class _BottomSheetContent extends StatelessWidget {
             customWidth: double.infinity,
             label: "만기된 금융 상품 보러가기",
             onPressed: () {
-              // 추후 구현
+              context.push('/bank/terminated');
             },
           ),
           const SizedBox(height: 16),

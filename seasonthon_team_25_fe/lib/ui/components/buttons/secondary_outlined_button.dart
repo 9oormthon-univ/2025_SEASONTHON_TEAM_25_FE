@@ -31,7 +31,7 @@ class SecondaryOutLinedButton extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       borderRadius: BorderRadius.circular(AppRadius.button),
-      child: InkWell(
+      child: GestureDetector(
         onTap: isLoading ? null : onPressed,
         child: Container(
           constraints: BoxConstraints(minHeight: 44.0),
