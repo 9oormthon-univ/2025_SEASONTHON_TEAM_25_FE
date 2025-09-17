@@ -3,6 +3,7 @@ import 'package:seasonthon_team_25_fe/ui/bank/ui/bank_page.dart';
 import 'package:seasonthon_team_25_fe/ui/bank/ui/financial_product_detail.dart';
 import 'package:seasonthon_team_25_fe/ui/bank/ui/financial_product_list.dart';
 import 'package:seasonthon_team_25_fe/ui/bank/ui/financial_product_sign_up.dart';
+import 'package:seasonthon_team_25_fe/ui/bank/ui/financial_product_sign_up_complete.dart';
 
 final bankRoutes = <RouteBase>[
   GoRoute(path: '/bank', builder: (context, state) => const BankPage()),
@@ -23,5 +24,9 @@ final bankRoutes = <RouteBase>[
       final id = state.pathParameters['id']!;
       return FinancialProductSignUpPage(productId: id);
     },
+  ),
+  GoRoute(
+    path: '/bank/complete',
+    builder: (context, state) => const FinancialProductSignUpCompletePage(),
   ),
 ];

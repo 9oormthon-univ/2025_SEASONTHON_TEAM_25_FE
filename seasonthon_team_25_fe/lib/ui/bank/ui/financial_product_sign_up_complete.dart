@@ -2,19 +2,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lottie/lottie.dart';
 import 'package:seasonthon_team_25_fe/core/theme/colors.dart';
+import 'package:seasonthon_team_25_fe/core/theme/radius.dart';
 import 'package:seasonthon_team_25_fe/core/theme/typography.dart';
 import 'package:seasonthon_team_25_fe/gen/assets.gen.dart';
 import 'package:seasonthon_team_25_fe/ui/components/app_bar/custom_app_bar.dart';
-import 'package:seasonthon_team_25_fe/ui/components/primary_action_dtn.dart';
-import 'package:seasonthon_team_25_fe/ui/components/sk_btn.dart';
+import 'package:seasonthon_team_25_fe/ui/components/buttons/primary_filled_button.dart';
+import 'package:seasonthon_team_25_fe/ui/components/buttons/secondary_filled_button.dart';
+import 'package:seasonthon_team_25_fe/ui/components/speech_bubble/speech_bubble.dart';
 
-class SignUpCompleteArgs {
+class SignUpComplete {
   final String maturityDate;
   final int autoDebitAmount;
   final int termMonths;
 
-  const SignUpCompleteArgs({
+  SignUpComplete({
     required this.maturityDate,
     required this.autoDebitAmount,
     required this.termMonths,
@@ -22,8 +25,7 @@ class SignUpCompleteArgs {
 }
 
 class FinancialProductSignUpCompletePage extends ConsumerStatefulWidget {
-  final SignUpCompleteArgs? args;
-  const FinancialProductSignUpCompletePage({super.key, this.args});
+  const FinancialProductSignUpCompletePage({super.key});
 
   @override
   ConsumerState<FinancialProductSignUpCompletePage> createState() =>
@@ -32,74 +34,119 @@ class FinancialProductSignUpCompletePage extends ConsumerStatefulWidget {
 
 class _FinancialProductSignUpCompletePageState
     extends ConsumerState<FinancialProductSignUpCompletePage> {
-  // final String monthlyBill = "100,000";
-  // final int count = 10;
-  // final String endDate = "2026-6-31";
+  bool _celebrateTime = true;
 
   @override
   void initState() {
     super.initState();
-    // 초기화 로직 필요 시 작성
+    Future.delayed(const Duration(seconds: 3), () {
+      if (mounted) {
+        setState(() => _celebrateTime = false);
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final maturity = widget.args?.maturityDate ?? '-';
-    final amount = widget.args?.autoDebitAmount ?? 0;
-    final months = widget.args?.termMonths ?? 0;
-
     return Scaffold(
       backgroundColor: AppColors.wt,
       appBar: CustomAppBar(
         title: '가입 완료',
         showLeftBtn: false,
         showRightBtn: true,
+        onTapRightBtn: () => context.go("/home"),
       ),
-      body: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Align(
-              alignment: AlignmentGeometry.topLeft,
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.fromLTRB(20, 47, 20, 57),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(
-                    "짝짝짝, 가입이 완료되었어요!",
-                    style: AppTypography.h3.copyWith(color: AppColors.bk),
+                  Align(
+                    alignment: AlignmentGeometry.topLeft,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("짝짝짝, 가입이 완료되었어요!", style: AppTypography.h2),
+                        Text(
+                          "(N,NNN,NNN)원씩 (N)회 자동으로 납입될 예정이며,\n만기 예정일은 (NNNN년 NN년 NN일)이에요.",
+                          style: AppTypography.l500.copyWith(
+                            color: AppColors.gr600,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                  Text(
-                    "$amount원씩 $months회 자동으로 납입될 예정이며,\n만기 예정일은 $maturity일이에요.",
+                  const SizedBox(height: 73),
+                  Stack(
+                    alignment: Alignment.topCenter,
+                    clipBehavior: Clip.none,
+                    children: [
+                      Assets.images.characters.faffLove.image(
+                        width: 166.4,
+                        height: 226.59,
+                        fit: BoxFit.contain,
+                      ),
+                      Positioned(
+                        top: -40,
+                        child: SpeechBubble(
+                          nip: BubbleNip.bottomCenter,
+                          color: AppColors.wt,
+                          radius: AppRadius.button,
+                          elevation: 8,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
+                          child: Text(
+                            "환영해요!",
+                            style: AppTypography.m600.copyWith(
+                              color: AppColors.secondaryBl,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 70),
+                  PrimaryFilledButton(
+                    label: "가입 내역 보러가기",
+                    onPressed: () {
+                      context.go("/bank/in-progress");
+                    },
+                  ),
+                  const SizedBox(height: 12),
+                  SecondaryFilledButton(
+                    label: "홈으로",
+                    onPressed: () {
+                      context.go("/home");
+                    },
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 74),
-            Assets.images.onboarding.faffNocircle.image(
-              width: 120,
-              height: 174.3,
-              fit: BoxFit.contain,
-            ),
-            const SizedBox(height: 100),
-            PrimaryActionButton(
-              isLoading: false,
-              label: "가입 내역 보러가기",
-              onPressed: () {
-                context.go("/bank/in-progress");
-              },
-            ),
-            const SizedBox(height: 12),
-            SkyBlueButton(
-              isLoading: false,
-              label: "홈으로",
-              onPressed: () {
-                context.go("/home");
-              },
+          ),
+          if (_celebrateTime) ...[
+            Center(
+              child: SizedBox(
+                width: 800,
+                height: 800,
+                child: Lottie.asset(
+                  Assets.lottie.confetti,
+                  repeat: true,
+                  onLoaded: (composition) {
+                    Future.delayed(composition.duration, () {
+                      if (mounted) setState(() => _celebrateTime = false);
+                    });
+                  },
+                ),
+              ),
             ),
           ],
-        ),
+        ],
       ),
     );
   }

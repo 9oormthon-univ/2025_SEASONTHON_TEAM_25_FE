@@ -213,7 +213,9 @@ class _FinancialProductSignUpPageState
               const Spacer(),
               PrimaryFilledButton(
                 label: "가입하기",
-                onPressed: () {},
+                onPressed: () {
+                  context.go("/bank/complete");
+                },
                 customWidth: double.infinity,
               ),
 
