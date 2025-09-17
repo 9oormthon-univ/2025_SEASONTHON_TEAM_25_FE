@@ -7,6 +7,7 @@ import 'package:seasonthon_team_25_fe/core/theme/colors.dart';
 import 'package:seasonthon_team_25_fe/core/theme/typography.dart';
 import 'package:seasonthon_team_25_fe/feature/news/domain/entities/new_detail_entity.dart';
 import 'package:seasonthon_team_25_fe/feature/news/presentation/provider/news_detail.controller.dart';
+import 'package:seasonthon_team_25_fe/feature/scrap/presentation/provider/scrap_controller.dart';
 import 'package:seasonthon_team_25_fe/ui/components/app_bar/custom_app_bar.dart';
 import 'package:seasonthon_team_25_fe/ui/components/buttons/primary_filled_button.dart';
 import 'package:seasonthon_team_25_fe/ui/components/chip/sk_filled_chip.dart';
@@ -23,7 +24,7 @@ class NewsDetail extends ConsumerStatefulWidget {
 }
 
 class _NewsDetailState extends ConsumerState<NewsDetail> {
-  bool isScrapped = false;
+  bool _showScrapToast = false;
 
   @override
   void initState() {
@@ -33,9 +34,49 @@ class _NewsDetailState extends ConsumerState<NewsDetail> {
     });
   }
 
+  Future<void> _handleScrapToggle() async {
+    final scrapController = ref.read(scrapControllerProvider.notifier);
+    final response = await scrapController.toggleNewsScrap(widget.newsId);
+    
+    if (response != null && mounted) {
+      // 스크랩 토스트 표시
+      setState(() => _showScrapToast = true);
+      
+      // 업적 생성 시 추가 메시지 표시
+      if (response.achievementCreated && response.achievementType != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('🎉 업적 달성: ${response.achievementType}'),
+            backgroundColor: AppColors.primarySky,
+          ),
+        );
+      }
+      
+      // 토스트 자동 숨김
+      Future.delayed(const Duration(seconds: 2), () {
+        if (mounted) {
+          setState(() => _showScrapToast = false);
+        }
+      });
+    } else if (mounted) {
+      // 에러 처리
+      final error = ref.read(scrapControllerProvider).error;
+      if (error != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(error),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(newsDetailControllerProvider);
+    final scrapState = ref.watch(scrapControllerProvider);
+    final isScraped = scrapState.scrapStatus[widget.newsId] ?? false;
 
     return Scaffold(
       backgroundColor: AppColors.wt,
@@ -138,28 +179,30 @@ class _NewsDetailState extends ConsumerState<NewsDetail> {
               ),
 
               // 토스트(조건부)
-              if (isScrapped)
+              if (_showScrapToast)
                 Positioned(
                   right: 140.5,
                   bottom: 159,
-                  child: Center(child: SkOutlinedChip(label: '스크랩 완료!')),
+                  child: Center(
+                    child: SkOutlinedChip(
+                      label: isScraped ? '스크랩 완료!' : '스크랩 해제!',
+                    ),
+                  ),
                 ),
 
-              // 우하단 스크랩 버튼 (동작은 예시)
+              // 우하단 스크랩 버튼
               Positioned(
                 right: 20,
                 bottom: 20,
                 child: PrimaryFilledButton(
                   widthType: ButtonWidth.small,
-                  isLoading: false,
-                  label: '스크랩',
-                  onPressed: () {
-                    setState(() => isScrapped = true);
-                    Future.delayed(const Duration(seconds: 1), () {
-                      if (!mounted) return;
-                      setState(() => isScrapped = false);
-                    });
-                  },
+                  isLoading: scrapState.isLoading,
+                  label: isScraped ? '스크랩 해제' : '스크랩',
+                  onPressed: scrapState.isLoading 
+                    ? () {} // 로딩 중일 때는 빈 함수
+                    : () {
+                        _handleScrapToggle();
+                      },
                 ),
               ),
             ],
