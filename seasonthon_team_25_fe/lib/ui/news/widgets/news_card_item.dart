@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seasonthon_team_25_fe/core/theme/colors.dart';
 import 'package:seasonthon_team_25_fe/core/theme/radius.dart';
 import 'package:seasonthon_team_25_fe/core/theme/shadows.dart';
 import 'package:seasonthon_team_25_fe/core/theme/typography.dart';
+import 'package:seasonthon_team_25_fe/feature/scrap/presentation/provider/scrap_controller.dart';
 import 'package:seasonthon_team_25_fe/ui/components/chip/sk_filled_chip.dart';
 import 'package:seasonthon_team_25_fe/ui/components/img/html_image.dart';
 
-class NewsCardItem extends StatelessWidget {
+class NewsCardItem extends ConsumerWidget {
+  final int newsId;
   final String title;
   final String date;
   final String aiSummary;
@@ -15,6 +18,7 @@ class NewsCardItem extends StatelessWidget {
 
   const NewsCardItem({
     super.key,
+    required this.newsId,
     required this.title,
     required this.date,
     required this.aiSummary,
@@ -23,9 +27,11 @@ class NewsCardItem extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final radius = BorderRadius.circular(AppRadius.chips);
-    final hasThumb = originalImgUrl.trim().isNotEmpty;
+    final hasThumb = thumbnailUrl.trim().isNotEmpty;
+    final scrapState = ref.watch(scrapControllerProvider);
+    final isScraped = scrapState.scrapStatus[newsId] ?? false;
     //final hasMinister = ministerCode.trim().isNotEmpty;
 
     return Container(
@@ -35,13 +41,15 @@ class NewsCardItem extends StatelessWidget {
         boxShadow: AppShadows.dsDefault,
       ),
       clipBehavior: Clip.antiAlias,
-      child: SizedBox(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 20),
-          physics: const ClampingScrollPhysics(),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
+      child: Stack(
+        children: [
+          SizedBox(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 20),
+              physics: const ClampingScrollPhysics(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
               // 제목
               Text(
                 title,
@@ -100,21 +108,47 @@ class NewsCardItem extends StatelessWidget {
               ),
               const SizedBox(height: 8),
 
-              // 출처/부처 코드
-              Text(
-                "출처: <대한민국 정책 브리핑>",
-                style: AppTypography.s400.copyWith(color: AppColors.gr600),
+                  // 출처/부처 코드
+                  Text(
+                    "출처: <대한민국 정책 브리핑>",
+                    style: AppTypography.s400.copyWith(color: AppColors.gr600),
+                  ),
+                  // if (hasMinister)
+                  //   Text(
+                  //     ministerCode,
+                  //     style: AppTypography.s400.copyWith(color: AppColors.gr600),
+                  //     maxLines: 1,
+                  //     overflow: TextOverflow.ellipsis,
+                  //   ),
+                ],
               ),
-              // if (hasMinister)
-              //   Text(
-              //     ministerCode,
-              //     style: AppTypography.s400.copyWith(color: AppColors.gr600),
-              //     maxLines: 1,
-              //     overflow: TextOverflow.ellipsis,
-              //   ),
-            ],
+            ),
           ),
-        ),
+          
+          // 스크랩 버튼
+          Positioned(
+            top: 12,
+            right: 12,
+            child: GestureDetector(
+              onTap: scrapState.isLoading ? null : () async {
+                await ref.read(scrapControllerProvider.notifier)
+                    .toggleNewsScrap(newsId);
+              },
+              child: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: isScraped ? AppColors.primarySky : AppColors.gr400,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  isScraped ? Icons.bookmark : Icons.bookmark_border,
+                  color: isScraped ? AppColors.wt : AppColors.gr600,
+                  size: 16,
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

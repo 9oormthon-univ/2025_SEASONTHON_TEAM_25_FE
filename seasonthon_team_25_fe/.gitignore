@@ -67,7 +67,6 @@ app.*.map.json
 **/flutter/ephemeral/
 
 # Web – generated registrant
-/lib/generated_plugin_registrant.dart
 
 # Any auto-generated plugin registrant files (do not commit)
 /**/GeneratedPluginRegistrant.*

@@ -115,7 +115,6 @@ class $AssetsImagesAppLogoGen {
 
 class $AssetsImagesBankGen {
   const $AssetsImagesBankGen();
-
   /// File path: assets/images/bank/go_detail_btn.png
   AssetGenImage get goDetailBtn =>
       const AssetGenImage('assets/images/bank/go_detail_btn.png');
@@ -127,14 +126,12 @@ class $AssetsImagesBankGen {
   /// File path: assets/images/bank/status.png
   AssetGenImage get status =>
       const AssetGenImage('assets/images/bank/status.png');
-
   /// File path: assets/images/bank/toggle_btn.svg
   SvgGenImage get toggleBtn =>
       const SvgGenImage('assets/images/bank/toggle_btn.svg');
 
   /// List of all assets
   List<dynamic> get values => [goDetailBtn, settingIcon, status, toggleBtn];
-}
 
 class $AssetsImagesBottomNavigationBarItemGen {
   const $AssetsImagesBottomNavigationBarItemGen();
@@ -211,8 +208,6 @@ class $AssetsImagesCharactersGen {
       const AssetGenImage('assets/images/characters/ff_start.png');
 
   /// List of all assets
-  List<AssetGenImage> get values => [faffLove, ffStart];
-}
 
 class $AssetsImagesComponentsGen {
   const $AssetsImagesComponentsGen();

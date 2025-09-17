@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:seasonthon_team_25_fe/core/theme/button_size.dart';
 import 'package:seasonthon_team_25_fe/core/theme/colors.dart';
@@ -29,34 +30,42 @@ class SecondaryBlurWhiteButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
+    return ClipRRect(
       borderRadius: BorderRadius.circular(AppRadius.button),
-      child: GestureDetector(
-        onTap: isLoading ? null : onPressed,
-        child: Container(
-          constraints: BoxConstraints(minHeight: 44.0),
-          width: _resolveWidth(),
-          alignment: Alignment.center,
-          padding: const EdgeInsets.symmetric(vertical: 10),
-          decoration: BoxDecoration(
-            color: AppColors.wt,
-            borderRadius: BorderRadius.circular(AppRadius.button),
-            boxShadow: AppShadows.dsDefault,
-          ),
-          child: isLoading
-              ? SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(
-                    color: AppColors.wt,
-                    strokeWidth: 2.0,
-                  ),
-                )
-              : Text(
-                  label,
-                  style: AppTypography.h3.copyWith(color: AppColors.primarySky),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: isLoading ? null : onPressed,
+            child: Container(
+              constraints: const BoxConstraints(minHeight: 44.0),
+              width: _resolveWidth(),
+              alignment: Alignment.center,
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              decoration: BoxDecoration(
+                color: AppColors.wt.withValues(alpha: 0.8),
+                borderRadius: BorderRadius.circular(AppRadius.button),
+                border: Border.all(
+                  color: AppColors.wt.withValues(alpha: 0.3),
+                  width: 1,
                 ),
+              ),
+              child: isLoading
+                  ? SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        color: AppColors.primarySky,
+                        strokeWidth: 2.0,
+                      ),
+                    )
+                  : Text(
+                      label,
+                      style: AppTypography.h3.copyWith(color: AppColors.primarySky),
+                    ),
+            ),
+          ),
         ),
       ),
     );

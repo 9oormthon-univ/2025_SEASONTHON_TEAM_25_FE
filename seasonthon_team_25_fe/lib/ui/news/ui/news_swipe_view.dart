@@ -53,6 +53,7 @@ class NewsSwipeView extends StatelessWidget {
               borderRadius: BorderRadius.circular(16),
               onTap: () => onTapItem(item),
               child: NewsCardItem(
+                newsId: item.id,
                 title: item.title,
                 date: _dateOnly(item.approveDate),
                 aiSummary: (item.aiSummary).trim(),
