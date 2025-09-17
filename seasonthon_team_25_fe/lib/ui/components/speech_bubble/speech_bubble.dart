@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:seasonthon_team_25_fe/core/theme/colors.dart';
 
-enum BubbleNip {
-  none,
-  topLeft, topRight, bottomLeft, bottomRight,
-  left, right, // ⬅️ 추가: 좌/우 측면 꼬리
-}
+enum BubbleNip { none, topLeft, topRight, bottomLeft, bottomRight, left, right }
+
+enum BlurType { none, hint }
 
 class SpeechBubble extends StatelessWidget {
   const SpeechBubble({
@@ -16,11 +14,12 @@ class SpeechBubble extends StatelessWidget {
     this.borderWidth = 0,
     this.radius = 24,
     this.nip = BubbleNip.left, // 좌측 꼬리 기본
-    this.nipWidth = 18,        // 꼬리 길이(밖으로 돌출)
-    this.nipHeight = 20,       // 모서리 가장자리에서 차지하는 높이(좌/우 꼬리 기준 세로)
-    this.nipOffset = 40,       // 모서리(위/아래)로부터 떨어진 거리
+    this.nipWidth = 18, // 꼬리 길이(밖으로 돌출)
+    this.nipHeight = 20, // 모서리 가장자리에서 차지하는 높이(좌/우 꼬리 기준 세로)
+    this.nipOffset = 40, // 모서리(위/아래)로부터 떨어진 거리
     this.padding = const EdgeInsets.all(16),
     this.elevation = 6,
+    this.blurType = BlurType.none,
   });
 
   final Widget child;
@@ -36,6 +35,8 @@ class SpeechBubble extends StatelessWidget {
 
   final EdgeInsets padding;
   final double elevation;
+
+  final BlurType blurType;
 
   EdgeInsets get _extraInset {
     switch (nip) {
@@ -67,6 +68,7 @@ class SpeechBubble extends StatelessWidget {
         nipHeight: nipHeight,
         nipOffset: nipOffset,
         elevation: elevation,
+        blurType: blurType,
       ),
       child: Padding(
         // 꼬리 쪽으로 여유를 자동 보정
@@ -88,6 +90,7 @@ class _SpeechBubblePainter extends CustomPainter {
     required this.nipHeight,
     required this.nipOffset,
     required this.elevation,
+    required this.blurType,
   });
 
   final Color color;
@@ -100,6 +103,7 @@ class _SpeechBubblePainter extends CustomPainter {
   final double nipHeight;
   final double nipOffset;
   final double elevation;
+  final BlurType blurType;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -125,79 +129,96 @@ class _SpeechBubblePainter extends CustomPainter {
 
     // 꼬리 그리기
     switch (nip) {
-      case BubbleNip.left: {
-        // 좌측 꼬리: 세로 위치 계산(모서리 라운드를 피해 clamp)
-        final minY = bodyRect.top + radius;
-        final maxY = bodyRect.bottom - radius - nipHeight;
-        final baseY = (bodyRect.top + nipOffset).clamp(minY, maxY);
-        final x = bodyRect.left;
-        path.moveTo(x, baseY);
-        path.lineTo(x, baseY + nipHeight);
-        path.lineTo(x - nipWidth, baseY + nipHeight * 0.5);
-        path.close();
-        break;
-      }
-      case BubbleNip.right: {
-        final minY = bodyRect.top + radius;
-        final maxY = bodyRect.bottom - radius - nipHeight;
-        final baseY = (bodyRect.top + nipOffset).clamp(minY, maxY);
-        final x = bodyRect.right;
-        path.moveTo(x, baseY);
-        path.lineTo(x, baseY + nipHeight);
-        path.lineTo(x + nipWidth, baseY + nipHeight * 0.5);
-        path.close();
-        break;
-      }
-      case BubbleNip.bottomLeft: {
-        final minX = bodyRect.left + radius;
-        final maxX = bodyRect.right - radius - nipWidth;
-        final baseX = (bodyRect.left + nipOffset).clamp(minX, maxX);
-        final y = bodyRect.bottom;
-        path.moveTo(baseX, y);
-        path.lineTo(baseX + nipWidth, y);
-        path.lineTo(baseX + nipWidth * 0.5, y + nipHeight);
-        path.close();
-        break;
-      }
-      case BubbleNip.bottomRight: {
-        final minX = bodyRect.left + radius;
-        final maxX = bodyRect.right - radius - nipWidth;
-        final baseX = (bodyRect.right - nipOffset - nipWidth).clamp(minX, maxX);
-        final y = bodyRect.bottom;
-        path.moveTo(baseX, y);
-        path.lineTo(baseX + nipWidth, y);
-        path.lineTo(baseX + nipWidth * 0.5, y + nipHeight);
-        path.close();
-        break;
-      }
-      case BubbleNip.topLeft: {
-        final minX = bodyRect.left + radius;
-        final maxX = bodyRect.right - radius - nipWidth;
-        final baseX = (bodyRect.left + nipOffset).clamp(minX, maxX);
-        final y = bodyRect.top;
-        path.moveTo(baseX, y);
-        path.lineTo(baseX + nipWidth, y);
-        path.lineTo(baseX + nipWidth * 0.5, y - nipHeight);
-        path.close();
-        break;
-      }
-      case BubbleNip.topRight: {
-        final minX = bodyRect.left + radius;
-        final maxX = bodyRect.right - radius - nipWidth;
-        final baseX = (bodyRect.right - nipOffset - nipWidth).clamp(minX, maxX);
-        final y = bodyRect.top;
-        path.moveTo(baseX, y);
-        path.lineTo(baseX + nipWidth, y);
-        path.lineTo(baseX + nipWidth * 0.5, y - nipHeight);
-        path.close();
-        break;
-      }
+      case BubbleNip.left:
+        {
+          // 좌측 꼬리: 세로 위치 계산(모서리 라운드를 피해 clamp)
+          final minY = bodyRect.top + radius;
+          final maxY = bodyRect.bottom - radius - nipHeight;
+          final baseY = (bodyRect.top + nipOffset).clamp(minY, maxY);
+          final x = bodyRect.left;
+          path.moveTo(x, baseY);
+          path.lineTo(x, baseY + nipHeight);
+          path.lineTo(x - nipWidth, baseY + nipHeight * 0.5);
+          path.close();
+          break;
+        }
+      case BubbleNip.right:
+        {
+          final minY = bodyRect.top + radius;
+          final maxY = bodyRect.bottom - radius - nipHeight;
+          final baseY = (bodyRect.top + nipOffset).clamp(minY, maxY);
+          final x = bodyRect.right;
+          path.moveTo(x, baseY);
+          path.lineTo(x, baseY + nipHeight);
+          path.lineTo(x + nipWidth, baseY + nipHeight * 0.5);
+          path.close();
+          break;
+        }
+      case BubbleNip.bottomLeft:
+        {
+          final minX = bodyRect.left + radius;
+          final maxX = bodyRect.right - radius - nipWidth;
+          final baseX = (bodyRect.left + nipOffset).clamp(minX, maxX);
+          final y = bodyRect.bottom;
+          path.moveTo(baseX, y);
+          path.lineTo(baseX + nipWidth, y);
+          path.lineTo(baseX + nipWidth * 0.5, y + nipHeight);
+          path.close();
+          break;
+        }
+      case BubbleNip.bottomRight:
+        {
+          final minX = bodyRect.left + radius;
+          final maxX = bodyRect.right - radius - nipWidth;
+          final baseX = (bodyRect.right - nipOffset - nipWidth).clamp(
+            minX,
+            maxX,
+          );
+          final y = bodyRect.bottom;
+          path.moveTo(baseX, y);
+          path.lineTo(baseX + nipWidth, y);
+          path.lineTo(baseX + nipWidth * 0.5, y + nipHeight);
+          path.close();
+          break;
+        }
+      case BubbleNip.topLeft:
+        {
+          final minX = bodyRect.left + radius;
+          final maxX = bodyRect.right - radius - nipWidth;
+          final baseX = (bodyRect.left + nipOffset).clamp(minX, maxX);
+          final y = bodyRect.top;
+          path.moveTo(baseX, y);
+          path.lineTo(baseX + nipWidth, y);
+          path.lineTo(baseX + nipWidth * 0.5, y - nipHeight);
+          path.close();
+          break;
+        }
+      case BubbleNip.topRight:
+        {
+          final minX = bodyRect.left + radius;
+          final maxX = bodyRect.right - radius - nipWidth;
+          final baseX = (bodyRect.right - nipOffset - nipWidth).clamp(
+            minX,
+            maxX,
+          );
+          final y = bodyRect.top;
+          path.moveTo(baseX, y);
+          path.lineTo(baseX + nipWidth, y);
+          path.lineTo(baseX + nipWidth * 0.5, y - nipHeight);
+          path.close();
+          break;
+        }
       case BubbleNip.none:
         break;
     }
 
     if (elevation > 0) {
-      canvas.drawShadow(path, AppColors.primarySky.withOpacity(0.35), elevation, true);
+      final glowPaint = Paint()
+        ..color = (blurType == BlurType.hint
+            ? AppColors.hintBk
+            : AppColors.primarySky.withValues(alpha: .5))
+        ..maskFilter = MaskFilter.blur(BlurStyle.normal, elevation); // 블러 효과
+      canvas.drawPath(path, glowPaint);
     }
 
     final fill = Paint()
