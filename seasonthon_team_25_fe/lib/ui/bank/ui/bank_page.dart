@@ -59,15 +59,17 @@ class _BankPageState extends ConsumerState<BankPage> {
         // },
       ),
       body: homeState.when(
-        loading: () => SizedBox(
-          width: 200,
-          height: 200,
-          child: Lottie.asset(
-            Assets.lottie.loadingSlow,
-            repeat: true, // 반복 재생
-            animate: true, // 자동 재생
-            fit: BoxFit.contain,
-            frameRate: FrameRate.max,
+        loading: () => Center(
+          child: SizedBox(
+            width: 200,
+            height: 200,
+            child: Lottie.asset(
+              Assets.lottie.loadingSlow,
+              repeat: true, // 반복 재생
+              animate: true, // 자동 재생
+              fit: BoxFit.contain,
+              frameRate: FrameRate.max,
+            ),
           ),
         ),
         error: (err, st) => Center(child: Text("에러: $err")),
