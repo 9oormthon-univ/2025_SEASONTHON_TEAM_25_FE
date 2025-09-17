@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:seasonthon_team_25_fe/core/network/dio_provider.dart';
+import 'package:lottie/lottie.dart';
 import 'package:seasonthon_team_25_fe/core/theme/colors.dart';
+import 'package:seasonthon_team_25_fe/core/theme/radius.dart';
 import 'package:seasonthon_team_25_fe/core/theme/typography.dart';
 import 'package:seasonthon_team_25_fe/gen/assets.gen.dart';
-import 'package:seasonthon_team_25_fe/ui/components/blur_card.dart';
-import 'package:seasonthon_team_25_fe/ui/components/app_bar/custom_app_bar.dart';
-import 'package:seasonthon_team_25_fe/ui/components/reward_box.dart';
+import 'package:seasonthon_team_25_fe/ui/components/app_bar/custom_white_app_bar.dart';
+import 'package:seasonthon_team_25_fe/ui/components/buttons/secondary_blur_white_button.dart';
+import 'package:seasonthon_team_25_fe/ui/components/chip/coin_balance_chip.dart';
+
+import 'package:seasonthon_team_25_fe/feature/home/presentation/provider/home_controller.dart';
 
 class BankPage extends ConsumerStatefulWidget {
   const BankPage({super.key});
@@ -17,22 +20,20 @@ class BankPage extends ConsumerStatefulWidget {
 }
 
 class _BankPageState extends ConsumerState<BankPage> {
-  //final String reward = "1,234원";
-  int? balance;
-  final String userName = "Username";
-
   @override
   void initState() {
     super.initState();
-    // 초기화 로직 필요 시 작성
-    _loadBalance();
-    // 바텀 시트 띄워야 함
+
+    Future.microtask(() {
+      ref.read(homeControllerProvider.notifier).load();
+    });
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       showModalBottomSheet(
         context: context,
         isScrollControlled: false,
         isDismissible: false,
-        enableDrag: false, // 사용자가 바텀시트를 드래그로 내릴 수 없게 설정
+        enableDrag: false,
         barrierColor: Colors.transparent,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
@@ -44,63 +45,64 @@ class _BankPageState extends ConsumerState<BankPage> {
     });
   }
 
-  Future<void> _loadBalance() async {
-    try {
-      final dio = ref.read(dioProvider);
-      final res = await dio.get('/api/wallet/balance');
-      setState(() {
-        balance = res.data['balance'] as int;
-        debugPrint('잔액 조회 성공: $balance');
-        //isLoadingBalance = false;
-      });
-    } catch (e) {
-      debugPrint('잔액 조회 실패: $e');
-      //setState(() => isLoadingBalance = false);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
+    final homeState = ref.watch(homeControllerProvider);
+
     return Scaffold(
       extendBodyBehindAppBar: true,
-      appBar: CustomAppBar(
+      appBar: CustomWhiteAppBar(
         title: "나만의 뱅크",
-        showLeftBtn: false,
-        showRightBtn: false,
-        // onTapLeft: () {
+        // showLeftBtn: true,
+        // onTapLeftBtn: () {
         //   context.go("/home");
         // },
       ),
-      body: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.fromLTRB(0, 80, 0, 0),
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [AppColors.primarySky, AppColors.wt],
+      body: homeState.when(
+        loading: () => SizedBox(
+          width: 200,
+          height: 200,
+          child: Lottie.asset(
+            Assets.lottie.loadingSlow,
+            repeat: true, // 반복 재생
+            animate: true, // 자동 재생
+            fit: BoxFit.contain,
+            frameRate: FrameRate.max,
           ),
         ),
-        child: Column(
-          spacing: 16,
-          children: [
-            Assets.images.onboarding.faffNocircle.image(
-              width: 191.25,
-              height: 234.26,
-              fit: BoxFit.contain,
+        error: (err, st) => Center(child: Text("에러: $err")),
+        data: (data) {
+          return Container(
+            width: double.infinity,
+            padding: const EdgeInsets.fromLTRB(0, 60, 0, 0),
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [Color(0xff2a94ea), Color(0xfffafafa)],
+              ),
             ),
-            Text(
-              "반가워요 $userName님!",
-              style: AppTypography.h2.copyWith(color: AppColors.wt),
+            child: Column(
+              spacing: 8,
+              children: [
+                Assets.images.characters.ffStart.image(
+                  width: 150,
+                  height: 217.87,
+                  fit: BoxFit.contain,
+                ),
+                Text(
+                  "반가워요 ${data.characterName}님!",
+                  style: AppTypography.h2.copyWith(color: AppColors.wt),
+                ),
+                CoinBalanceChip(
+                  balance: data.balance,
+                  backgroundColor: AppColors.wt_50,
+                  textColor: AppColors.primarySky,
+                ),
+              ],
             ),
-
-            RewardBox(
-              text: balance?.toString() ?? '-원',
-              textColor: AppColors.wt,
-              backgroundColor: AppColors.secondarySk.withValues(alpha: .25),
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
@@ -115,54 +117,53 @@ class _BottomSheetContent extends StatelessWidget {
       decoration: const BoxDecoration(
         color: AppColors.wt,
         borderRadius: BorderRadius.vertical(
-          top: Radius.circular(24),
-          bottom: Radius.circular(24),
+          top: Radius.circular(AppRadius.bottomSheet),
+          bottom: Radius.circular(AppRadius.bottomSheet),
         ),
       ),
-      padding: const EdgeInsets.fromLTRB(20, 40, 20, 0),
+      padding: const EdgeInsets.fromLTRB(20, 12, 20, 30),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          Container(
+          height: 5,
+          width: 144,
+          decoration: BoxDecoration(
+            color: AppColors.gr200,
+            borderRadius: BorderRadius.circular(2),
+          ),
+        ),
+          const SizedBox(height: 12),
           Align(
             alignment: Alignment.topLeft,
-            child: Text(
-              "뱅크 모드 선택",
-              style: AppTypography.h3.copyWith(color: AppColors.bk),
-            ),
+            child: Text("뱅크 모드 선택", style: AppTypography.h3),
           ),
-          const SizedBox(height: 16),
-          GestureDetector(
-            onTap: () {
+          const SizedBox(height: 24),
+          SecondaryBlurWhiteButton(
+            customWidth: double.infinity,
+            label: "진행 중인 금융 상품 보러가기",
+            onPressed: () {
               context.go('/bank/in-progress');
             },
-            child: BlurredCard(
-              height: 44,
-              child: Center(child: Text("진행 중인 금융 상품 보러가기")),
-            ),
           ),
           const SizedBox(height: 16),
-          GestureDetector(
-            onTap: () {
-              context.go('/bank/in-progress');
+          SecondaryBlurWhiteButton(
+            customWidth: double.infinity,
+            label: "만기된 금융 상품 보러가기",
+            onPressed: () {
+              // 추후 구현
             },
-            child: BlurredCard(
-              height: 44,
-              child: Center(child: Text("만기된 금융 상품 보러가기")),
-            ),
           ),
           const SizedBox(height: 16),
-          GestureDetector(
-            onTap: () {
+          SecondaryBlurWhiteButton(
+            customWidth: double.infinity,
+            label: "새로운 금융 상품 보러가기",
+            onPressed: () {
               context.go('/bank/list');
             },
-            child: BlurredCard(
-              height: 44,
-              child: Center(child: Text("새로운 금융 상품 보러가기")),
-            ),
           ),
-          const SizedBox(height: 32),
         ],
       ),
     );
