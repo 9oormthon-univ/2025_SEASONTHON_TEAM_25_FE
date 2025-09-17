@@ -191,9 +191,12 @@ class _NewsDetailState extends ConsumerState<NewsDetail> {
           child: ClipRRect(
             borderRadius: BorderRadius.circular(10),
             child: SizedBox(
+              width: double.infinity,
               height: 160,
               child: HtmlImage(
                 url: url,
+                width: double.infinity,
+                height: 160,
                 fit: BoxFit.cover,
                 borderRadius: BorderRadius.circular(10),
               ),
