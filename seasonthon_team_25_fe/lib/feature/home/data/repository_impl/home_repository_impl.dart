@@ -1,4 +1,5 @@
-import 'package:seasonthon_team_25_fe/feature/home/data/home_api.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:seasonthon_team_25_fe/feature/home/data/datasources/remote/home_api.dart';
 import 'package:seasonthon_team_25_fe/feature/home/data/models/home_response.dart';
 import 'package:seasonthon_team_25_fe/feature/home/domain/repository/home_repository.dart';
 

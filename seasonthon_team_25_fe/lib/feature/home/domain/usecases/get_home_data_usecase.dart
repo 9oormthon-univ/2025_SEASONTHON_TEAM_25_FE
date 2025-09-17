@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seasonthon_team_25_fe/feature/home/data/models/home_response.dart';
-import 'package:seasonthon_team_25_fe/feature/home/data/repository_impl/home_repository_impl';
+import 'package:seasonthon_team_25_fe/feature/home/data/repository_impl/home_repository_impl.dart';
 import 'package:seasonthon_team_25_fe/feature/home/domain/repository/home_repository.dart';
 
 class GetHomeDataUseCase {
