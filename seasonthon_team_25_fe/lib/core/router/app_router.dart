@@ -30,7 +30,10 @@ final routerProvider = Provider<GoRouter>((ref) {
             bottomNavigationBar: CustomBottomNavBar(
               selectedIndex: navigationShell.currentIndex,
               onTap: (index) {
-                navigationShell.goBranch(index);
+                navigationShell.goBranch(
+                  index,
+                  initialLocation: true, // 항상 루트로 이동
+                );
               },
               items: [
                 NavItemData(
