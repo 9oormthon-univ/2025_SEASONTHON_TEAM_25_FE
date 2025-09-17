@@ -1,7 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:seasonthon_team_25_fe/core/theme/colors.dart';
 
-enum BubbleNip { none, topLeft, topRight, bottomLeft, bottomRight, left, right }
+enum BubbleNip {
+  none,
+  topLeft,
+  topRight,
+  bottomLeft,
+  bottomRight,
+  left,
+  right,
+  topCenter, // 추가
+  bottomCenter, // 추가
+  centerLeft, // 추가
+  centerRight, // 추가
+}
 
 enum BlurType { none, hint }
 
@@ -13,10 +25,10 @@ class SpeechBubble extends StatelessWidget {
     this.borderColor,
     this.borderWidth = 0,
     this.radius = 24,
-    this.nip = BubbleNip.left, // 좌측 꼬리 기본
-    this.nipWidth = 18, // 꼬리 길이(밖으로 돌출)
-    this.nipHeight = 20, // 모서리 가장자리에서 차지하는 높이(좌/우 꼬리 기준 세로)
-    this.nipOffset = 40, // 모서리(위/아래)로부터 떨어진 거리
+    this.nip = BubbleNip.left,
+    this.nipWidth = 18,
+    this.nipHeight = 20,
+    this.nipOffset = 40,
     this.padding = const EdgeInsets.all(16),
     this.elevation = 6,
     this.blurType = BlurType.none,
@@ -42,13 +54,17 @@ class SpeechBubble extends StatelessWidget {
     switch (nip) {
       case BubbleNip.bottomLeft:
       case BubbleNip.bottomRight:
+      case BubbleNip.bottomCenter:
         return EdgeInsets.only(bottom: nipHeight);
       case BubbleNip.topLeft:
       case BubbleNip.topRight:
+      case BubbleNip.topCenter:
         return EdgeInsets.only(top: nipHeight);
       case BubbleNip.left:
+      case BubbleNip.centerLeft:
         return EdgeInsets.only(left: nipWidth);
       case BubbleNip.right:
+      case BubbleNip.centerRight:
         return EdgeInsets.only(right: nipWidth);
       case BubbleNip.none:
         return EdgeInsets.zero;
@@ -70,11 +86,7 @@ class SpeechBubble extends StatelessWidget {
         elevation: elevation,
         blurType: blurType,
       ),
-      child: Padding(
-        // 꼬리 쪽으로 여유를 자동 보정
-        padding: padding + _extraInset,
-        child: child,
-      ),
+      child: Padding(padding: padding + _extraInset, child: child),
     );
   }
 }
@@ -109,29 +121,29 @@ class _SpeechBubblePainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final r = Radius.circular(radius);
 
-    // 꼬리 방향에 따라 본문 영역(Rect)을 줄여 꼬리 그릴 공간 확보
     double left = 0, top = 0, right = size.width, bottom = size.height;
-    if (nip == BubbleNip.bottomLeft || nip == BubbleNip.bottomRight) {
+    if (nip == BubbleNip.bottomLeft ||
+        nip == BubbleNip.bottomRight ||
+        nip == BubbleNip.bottomCenter) {
       bottom -= nipHeight;
-    } else if (nip == BubbleNip.topLeft || nip == BubbleNip.topRight) {
+    } else if (nip == BubbleNip.topLeft ||
+        nip == BubbleNip.topRight ||
+        nip == BubbleNip.topCenter) {
       top += nipHeight;
-    } else if (nip == BubbleNip.left) {
+    } else if (nip == BubbleNip.left || nip == BubbleNip.centerLeft) {
       left += nipWidth;
-    } else if (nip == BubbleNip.right) {
+    } else if (nip == BubbleNip.right || nip == BubbleNip.centerRight) {
       right -= nipWidth;
     }
 
     final bodyRect = Rect.fromLTRB(left, top, right, bottom);
     final body = RRect.fromRectAndRadius(bodyRect, r);
 
-    // 하나의 Path에 본문 + 꼬리
     final path = Path()..addRRect(body);
 
-    // 꼬리 그리기
     switch (nip) {
       case BubbleNip.left:
         {
-          // 좌측 꼬리: 세로 위치 계산(모서리 라운드를 피해 clamp)
           final minY = bodyRect.top + radius;
           final maxY = bodyRect.bottom - radius - nipHeight;
           final baseY = (bodyRect.top + nipOffset).clamp(minY, maxY);
@@ -208,6 +220,46 @@ class _SpeechBubblePainter extends CustomPainter {
           path.close();
           break;
         }
+      case BubbleNip.topCenter:
+        {
+          final centerX = bodyRect.left + bodyRect.width / 2;
+          final y = bodyRect.top;
+          path.moveTo(centerX - nipWidth / 2, y);
+          path.lineTo(centerX + nipWidth / 2, y);
+          path.lineTo(centerX, y - nipHeight);
+          path.close();
+          break;
+        }
+      case BubbleNip.bottomCenter:
+        {
+          final centerX = bodyRect.left + bodyRect.width / 2;
+          final y = bodyRect.bottom;
+          path.moveTo(centerX - nipWidth / 2, y);
+          path.lineTo(centerX + nipWidth / 2, y);
+          path.lineTo(centerX, y + nipHeight);
+          path.close();
+          break;
+        }
+      case BubbleNip.centerLeft:
+        {
+          final centerY = bodyRect.top + bodyRect.height / 2;
+          final x = bodyRect.left;
+          path.moveTo(x, centerY - nipHeight / 2);
+          path.lineTo(x, centerY + nipHeight / 2);
+          path.lineTo(x - nipWidth, centerY);
+          path.close();
+          break;
+        }
+      case BubbleNip.centerRight:
+        {
+          final centerY = bodyRect.top + bodyRect.height / 2;
+          final x = bodyRect.right;
+          path.moveTo(x, centerY - nipHeight / 2);
+          path.lineTo(x, centerY + nipHeight / 2);
+          path.lineTo(x + nipWidth, centerY);
+          path.close();
+          break;
+        }
       case BubbleNip.none:
         break;
     }
@@ -217,7 +269,7 @@ class _SpeechBubblePainter extends CustomPainter {
         ..color = (blurType == BlurType.hint
             ? AppColors.hintBk
             : AppColors.primarySky.withValues(alpha: .5))
-        ..maskFilter = MaskFilter.blur(BlurStyle.normal, elevation); // 블러 효과
+        ..maskFilter = MaskFilter.blur(BlurStyle.normal, elevation);
       canvas.drawPath(path, glowPaint);
     }
 
