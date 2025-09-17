@@ -53,6 +53,9 @@ class _QuizRunPageState extends ConsumerState<QuizRunPage> {
       }
     }
 
+    final bool isNumericHint =
+        result != null && int.tryParse(result.hint) != null;
+
     return Scaffold(
       backgroundColor: AppColors.secondarySk,
       appBar: CustomWhiteAppBar(
@@ -141,7 +144,8 @@ class _QuizRunPageState extends ConsumerState<QuizRunPage> {
                     if (showResult) ...[
                       const SizedBox(height: 30),
                       // isCorrect||hintClicked == true
-                      if (isCorrect || hintClicked == true) ...[
+                      if (isCorrect ||
+                          (hintClicked == true && !isNumericHint)) ...[
                         Center(
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -201,6 +205,10 @@ class _QuizRunPageState extends ConsumerState<QuizRunPage> {
                               setState(() {
                                 hintClicked = true;
                               });
+                              if (isNumericHint) {
+                                // 정답이 숫자형 힌트인 경우 - 뉴스로 이동
+                                context.push('/news/${result.hint}');
+                              }
                             },
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,

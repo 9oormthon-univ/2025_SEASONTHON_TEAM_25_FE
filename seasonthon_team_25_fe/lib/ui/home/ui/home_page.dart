@@ -32,6 +32,8 @@ class _HomePageState extends ConsumerState<HomePage> {
   bool isAchievementCheckNeeded = true;
   bool isQuestCheckNeeded = true;
 
+  bool isCheckedIn = false;
+
   @override
   void initState() {
     super.initState();
@@ -45,7 +47,7 @@ class _HomePageState extends ConsumerState<HomePage> {
   @override
   Widget build(BuildContext context) {
     final homeState = ref.watch(homeControllerProvider);
-    bool isCheckedIn = false;
+    
     return Scaffold(
       body: homeState.when(
         loading: () => Center(

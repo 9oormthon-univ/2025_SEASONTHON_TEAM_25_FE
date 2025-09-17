@@ -44,7 +44,7 @@ class _NewsDetailState extends ConsumerState<NewsDetail> {
         showLeftBtn: true,
         showRightBtn: true,
         onTapLeftBtn: () => context.go("/news"),
-        onTapRightBtn: () => context.go("/news"),
+        onTapRightBtn: () => context.pop(),
       ),
       body: state.detail.when(
         loading: () => const Center(child: CircularProgressIndicator()),
