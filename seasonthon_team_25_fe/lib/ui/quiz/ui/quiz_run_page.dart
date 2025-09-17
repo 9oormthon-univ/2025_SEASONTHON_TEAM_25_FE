@@ -283,7 +283,7 @@ class _QuizRunPageState extends ConsumerState<QuizRunPage> {
                                     Positioned(
                                       top: -40, // 말풍선 위로 띄우기
                                       left: 0,
-                                      right: -90,
+                                      right: -120,
                                       child: SizedBox(
                                         width: 246,
                                         height: 74,
