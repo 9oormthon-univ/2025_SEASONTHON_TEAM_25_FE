@@ -74,7 +74,7 @@ class _BankPageState extends ConsumerState<BankPage> {
         data: (data) {
           return Container(
             width: double.infinity,
-            padding: const EdgeInsets.fromLTRB(0, 60, 0, 0),
+            padding: const EdgeInsets.fromLTRB(0, 50, 0, 0),
             decoration: const BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
@@ -91,7 +91,7 @@ class _BankPageState extends ConsumerState<BankPage> {
                   fit: BoxFit.contain,
                 ),
                 Text(
-                  "반가워요 ${data.characterName}님!",
+                  "반가워요, ${data.characterName}님!",
                   style: AppTypography.h2.copyWith(color: AppColors.wt),
                 ),
                 CoinBalanceChip(
