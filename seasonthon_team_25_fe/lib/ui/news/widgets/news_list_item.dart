@@ -16,7 +16,7 @@ class NewsListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final dateText = item.approveDate.ymdSlashHmOr('');
 
-    final thumb = (item.thumbnailUrl).trim();
+    final thumb = (item.originalImgUrl).trim();
 
     return Container(
       decoration: const BoxDecoration(
@@ -29,17 +29,21 @@ class NewsListItem extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // 왼쪽 썸네일
+              // 왼쪽 썸네일 (반응형 크기)
               ClipRRect(
                 borderRadius: BorderRadius.circular(AppRadius.bottomSheet),
-                child: SizedBox(
-                  width: 84,
-                  height: 84,
+                child: Container(
+                  width: MediaQuery.of(context).size.width > 600 ? 120 : 100,
+                  height: MediaQuery.of(context).size.width > 600 ? 120 : 100,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(AppRadius.bottomSheet),
+                    color: AppColors.gr100,
+                  ),
                   child: thumb.isNotEmpty
                       ? HtmlImage(
                           url: thumb,
-                          width: 84,
-                          height: 84,
+                          width: MediaQuery.of(context).size.width > 600 ? 120 : 100,
+                          height: MediaQuery.of(context).size.width > 600 ? 120 : 100,
                           fit: BoxFit.cover,
                           borderRadius: BorderRadius.circular(
                             AppRadius.bottomSheet,
