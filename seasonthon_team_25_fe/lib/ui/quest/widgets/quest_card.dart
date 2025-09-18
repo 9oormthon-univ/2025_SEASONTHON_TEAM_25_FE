@@ -41,105 +41,199 @@ class QuestCard extends ConsumerWidget {
       ),
       child: Padding(
         padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Row(
           children: [
-            // 퀘스트 제목 + 코인 아이콘
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    quest.title,
-                    style: AppTypography.h3.copyWith(color: AppColors.bk),
-                  ),
-                ),
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: AppColors.secondaryIv,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Image.asset(
-                    Assets.images.home.coin.path,
-                    width: 24,
-                    height: 24,
-                  ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 8),
-
-            // 퀘스트 설명
-            Text(
-              quest.description,
-              style: AppTypography.m500.copyWith(color: AppColors.primarySky),
-            ),
-
-            const SizedBox(height: 16),
-
-            // 진행도 바
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // 진행도 숫자 + 완료 텍스트
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      '${quest.progressCount}/${quest.requirementCount}',
-                      style: AppTypography.m600.copyWith(color: AppColors.bk),
-                    ),
-                    if (isCompleted && !quest.claimed)
-                      Text(
-                        '완료!',
-                        style: AppTypography.m600.copyWith(
-                          color: AppColors.primarySky,
+            // 왼쪽: 퀘스트 정보
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // 퀘스트 제목 + 시간 표시 (미달성일 때)
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          quest.title,
+                          style: AppTypography.h3.copyWith(color: AppColors.bk),
                         ),
                       ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-
-                // 테두리 있는 진행도 바
-                Container(
-                  height: 12,
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: isCompleted
-                          ? AppColors.primarySky
-                          : AppColors.gr200,
-                      width: 2,
-                    ),
-                    borderRadius: BorderRadius.circular(6),
+                      if (!isCompleted)
+                        Text(
+                          '3일 2시간 30분 남음',
+                          style: AppTypography.s400.copyWith(
+                            color: AppColors.secondaryRd,
+                          ),
+                        ),
+                    ],
                   ),
-                  child: Stack(
+
+                  const SizedBox(height: 8),
+
+                  // 퀘스트 설명
+                  Text(
+                    quest.description,
+                    style: AppTypography.m500.copyWith(color: AppColors.primarySky),
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // 진행도 바
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      FractionallySizedBox(
-                        alignment: Alignment.centerLeft,
-                        widthFactor: progress,
-                        child: Container(
-                          decoration: BoxDecoration(
+                      // 진행도 바
+                      Container(
+                        height: 16,
+                        decoration: BoxDecoration(
+                          color: isCompleted
+                              ? AppColors.primarySky
+                              : AppColors.wt,
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(
                             color: isCompleted
                                 ? AppColors.primarySky
-                                : AppColors.primarySky.withOpacity(0.6),
-                            borderRadius: BorderRadius.circular(4),
+                                : AppColors.gr200,
+                            width: 1,
                           ),
+                        ),
+                        child: Stack(
+                          children: [
+                            FractionallySizedBox(
+                              alignment: Alignment.centerLeft,
+                              widthFactor: progress,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: isCompleted
+                                      ? AppColors.primarySky
+                                      : AppColors.secondaryRd,
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                              ),
+                            ),
+                            // 진행도 숫자 중앙에 표시
+                            Center(
+                              child: Text(
+                                '${quest.progressCount}/${quest.requirementCount}',
+                                style: AppTypography.s500.copyWith(
+                                  color: isCompleted
+                                      ? Colors.white
+                                      : progress > 0.3  // 진행률이 30% 이상이면 흰색, 아니면 빨간색
+                                          ? Colors.white
+                                          : AppColors.secondaryRd,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
 
-            const SizedBox(height: 16),
+            const SizedBox(width: 16),
 
-            // 보상 버튼
-            Align(
-              alignment: Alignment.centerRight,
-              child: _buildRewardButton(isCompleted, isClaimingReward),
+            // 오른쪽: 통합된 보상 버튼 (동전 + 텍스트)
+            _buildIntegratedRewardButton(isCompleted, isClaimingReward),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildIntegratedRewardButton(bool isCompleted, bool isClaimingReward) {
+    if (quest.claimed) {
+      // 이미 수령
+      return Container(
+        width: 80,
+        height: 80,
+        decoration: BoxDecoration(
+          color: AppColors.gr200,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Assets.images.home.coin.image(
+              width: 30,
+              height: 30,
+              fit: BoxFit.contain,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              '수령 완료',
+              style: AppTypography.s400.copyWith(color: AppColors.gr600),
+            ),
+          ],
+        ),
+      );
+    }
+
+    if (!isCompleted) {
+      // 진행 중 (비활성화된 상태)
+      return Container(
+        width: 80,
+        height: 80,
+        decoration: BoxDecoration(
+          color: AppColors.gr200,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Assets.images.home.coin.image(
+              width: 30,
+              height: 30,
+              fit: BoxFit.contain,
+              color: AppColors.gr400,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              '보상 받기',
+              style: AppTypography.s400.copyWith(color: AppColors.gr400),
+            ),
+          ],
+        ),
+      );
+    }
+
+    // 완료 → 수령 가능 (활성화된 상태)
+    return GestureDetector(
+      onTap: isClaimingReward ? null : onClaimReward,
+      child: Container(
+        width: 80,
+        height: 80,
+        decoration: BoxDecoration(
+          color: isClaimingReward ? AppColors.gr400 : AppColors.primarySky,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (isClaimingReward)
+              SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: AppColors.wt,
+                ),
+              )
+            else
+              Assets.images.home.coin.image(
+                width: 30,
+                height: 30,
+                fit: BoxFit.contain,
+              ),
+            const SizedBox(height: 4),
+            Text(
+              isClaimingReward ? '수령 중...' : '보상 받기',
+              style: AppTypography.s400.copyWith(
+                color: AppColors.wt,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ],
         ),
@@ -151,59 +245,62 @@ class QuestCard extends ConsumerWidget {
     if (quest.claimed) {
       // 이미 수령
       return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
           color: AppColors.gr200,
-          borderRadius: BorderRadius.circular(AppRadius.chips),
+          borderRadius: BorderRadius.circular(8),
         ),
         child: Text(
           '수령 완료',
-          style: AppTypography.m500.copyWith(color: AppColors.gr600),
+          style: AppTypography.s400.copyWith(color: AppColors.gr600),
         ),
       );
     }
 
     if (!isCompleted) {
-      // 진행 중
+      // 진행 중 (비활성화된 상태)
       return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
           color: AppColors.gr100,
-          borderRadius: BorderRadius.circular(AppRadius.chips),
+          borderRadius: BorderRadius.circular(8),
         ),
         child: Text(
-          '진행 중',
-          style: AppTypography.m500.copyWith(color: AppColors.gr600),
+          '보상 받기',
+          style: AppTypography.s400.copyWith(color: AppColors.gr400),
         ),
       );
     }
 
-    // 완료 → 수령 가능
+    // 완료 → 수령 가능 (활성화된 상태)
     return GestureDetector(
       onTap: isClaimingReward ? null : onClaimReward,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
           color: isClaimingReward ? AppColors.gr400 : AppColors.primarySky,
-          borderRadius: BorderRadius.circular(AppRadius.chips),
+          borderRadius: BorderRadius.circular(8),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             if (isClaimingReward) ...[
               SizedBox(
-                width: 12,
-                height: 12,
+                width: 10,
+                height: 10,
                 child: CircularProgressIndicator(
-                  strokeWidth: 2,
+                  strokeWidth: 1.5,
                   color: AppColors.wt,
                 ),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: 6),
             ],
             Text(
               isClaimingReward ? '수령 중...' : '보상 받기',
-              style: AppTypography.m500.copyWith(color: AppColors.wt),
+              style: AppTypography.s400.copyWith(
+                color: AppColors.wt,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ],
         ),

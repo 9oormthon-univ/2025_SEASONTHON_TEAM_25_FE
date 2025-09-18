@@ -120,7 +120,8 @@ class _QuestPageState extends ConsumerState<QuestPage> {
 
                 // 성공한 경우 잔액 새로고침
                 if (response.completed) {
-                  ref.read(coinProvider.notifier).loadBalance();
+                  ref.read(walletControllerProvider.notifier).fetchBalance();
+                  ref.read(questControllerProvider.notifier).loadCurrentQuests();
                 }
               } else if (mounted) {
                 // 에러 처리
