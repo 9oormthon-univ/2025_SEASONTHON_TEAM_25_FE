@@ -16,3 +16,4 @@ final getActiveSavingsUseCaseProvider = Provider<GetActiveSavingsUseCase>((ref) 
   final repository = ref.watch(savingsProductRepositoryProvider);
   return GetActiveSavingsUseCase(repository);
 });
+

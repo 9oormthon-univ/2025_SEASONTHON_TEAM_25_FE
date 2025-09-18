@@ -21,3 +21,4 @@ abstract class ActiveSavingsListEntity with _$ActiveSavingsListEntity {
     required List<ActiveSavingsEntity> activeSavings,
   }) = _ActiveSavingsListEntity;
 }
+

@@ -21,3 +21,4 @@ abstract class SavingsSubscriptionRequestEntity with _$SavingsSubscriptionReques
     required String reserveType,
   }) = _SavingsSubscriptionRequestEntity;
 }
+

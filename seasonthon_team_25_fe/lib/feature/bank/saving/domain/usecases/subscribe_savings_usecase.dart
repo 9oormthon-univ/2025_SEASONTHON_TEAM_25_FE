@@ -18,3 +18,4 @@ final subscribeSavingsUseCaseProvider = Provider<SubscribeSavingsUseCase>((ref) 
   final repository = ref.watch(savingsProductRepositoryProvider);
   return SubscribeSavingsUseCase(repository);
 });
+

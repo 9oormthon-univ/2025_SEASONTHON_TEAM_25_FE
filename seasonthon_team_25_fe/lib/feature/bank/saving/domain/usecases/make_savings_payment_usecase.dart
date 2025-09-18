@@ -16,3 +16,4 @@ final makeSavingsPaymentUseCaseProvider = Provider<MakeSavingsPaymentUseCase>((r
   final repository = ref.watch(savingsProductRepositoryProvider);
   return MakeSavingsPaymentUseCase(repository);
 });
+

@@ -10,3 +10,4 @@ abstract class SavingsPaymentEntity with _$SavingsPaymentEntity {
     required String timestamp,
   }) = _SavingsPaymentEntity;
 }
+
