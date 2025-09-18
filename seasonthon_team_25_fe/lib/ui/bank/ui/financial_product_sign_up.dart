@@ -104,160 +104,164 @@ class _FinancialProductSignUpPageState
   Widget _buildStep1(double balance, productDetail) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 23, 20, 35),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          CoinBalanceChip(
-            balance: balance,
-            backgroundColor: AppColors.sk_25,
-            textColor: AppColors.primarySky,
-          ),
-          const SizedBox(height: 24),
-
-          // 적금 이름과 기간 선택 카드
-          Container(
-            padding: const EdgeInsets.all(20),
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: AppColors.wt,
-              borderRadius: BorderRadius.circular(AppRadius.bottomSheet),
-              boxShadow: AppShadows.dsDefault,
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            CoinBalanceChip(
+              balance: balance.toInt(),
+              backgroundColor: AppColors.sk_25,
+              textColor: AppColors.primarySky,
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  productDetail?.productName ?? "적금 이름",
-                  style: AppTypography.h3.copyWith(color: AppColors.primarySky),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _isPeriodDropdownOpen = !_isPeriodDropdownOpen;
-                    });
-                  },
-                  child: Row(
-                    children: [
-                      Text(
-                        "기간 선택",
-                        style: AppTypography.h3.copyWith(
-                          color: AppColors.primarySky,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Transform.rotate(
-                        angle: _isPeriodDropdownOpen ? 3.14159 : 0,
-                        child: SvgPicture.asset(
-                          Assets.images.bank.primaryToggleBtn.path,
-                          height: 5,
-                          width: 10,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
+            const SizedBox(height: 24),
 
-          // 기간 선택 드롭다운
-          if (_isPeriodDropdownOpen && productDetail != null)
+            // 적금 이름과 기간 선택 카드
             Container(
-              margin: const EdgeInsets.only(top: 8),
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(20),
               width: double.infinity,
               decoration: BoxDecoration(
                 color: AppColors.wt,
-                borderRadius: BorderRadius.circular(AppRadius.button),
+                borderRadius: BorderRadius.circular(AppRadius.bottomSheet),
                 boxShadow: AppShadows.dsDefault,
               ),
-              child: Column(
-                children: productDetail.saveTrm.map<Widget>((period) {
-                  return GestureDetector(
-                    behavior: HitTestBehavior.opaque,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    productDetail?.productName ?? "적금 이름",
+                    style: AppTypography.h3.copyWith(
+                      color: AppColors.primarySky,
+                    ),
+                  ),
+                  GestureDetector(
                     onTap: () {
-                      print("기간 선택: $period개월"); // 디버깅 로그
                       setState(() {
-                        _selectedPeriod = "$period개월";
-                        _selectedPeriodMonths = period;
-                        _isPeriodDropdownOpen = false;
+                        _isPeriodDropdownOpen = !_isPeriodDropdownOpen;
                       });
                     },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 12,
-                        horizontal: 8,
-                      ),
-                      width: double.infinity,
-                      child: Text(
-                        "$period개월",
-                        style: AppTypography.m600.copyWith(
-                          color: AppColors.gr800,
+                    child: Row(
+                      children: [
+                        Text(
+                          "기간 선택",
+                          style: AppTypography.h3.copyWith(
+                            color: AppColors.primarySky,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Transform.rotate(
+                          angle: _isPeriodDropdownOpen ? 3.14159 : 0,
+                          child: SvgPicture.asset(
+                            Assets.images.bank.primaryToggleBtn.path,
+                            height: 5,
+                            width: 10,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // 기간 선택 드롭다운
+            if (_isPeriodDropdownOpen && productDetail != null)
+              Container(
+                margin: const EdgeInsets.only(top: 8),
+                padding: const EdgeInsets.all(16),
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: AppColors.wt,
+                  borderRadius: BorderRadius.circular(AppRadius.button),
+                  boxShadow: AppShadows.dsDefault,
+                ),
+                child: Column(
+                  children: productDetail.saveTrm.map<Widget>((period) {
+                    return GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () {
+                        print("기간 선택: $period개월"); // 디버깅 로그
+                        setState(() {
+                          _selectedPeriod = "$period개월";
+                          _selectedPeriodMonths = period;
+                          _isPeriodDropdownOpen = false;
+                        });
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 12,
+                          horizontal: 8,
+                        ),
+                        width: double.infinity,
+                        child: Text(
+                          "$period개월",
+                          style: AppTypography.m600.copyWith(
+                            color: AppColors.gr800,
+                          ),
                         ),
                       ),
-                    ),
-                  );
-                }).toList(),
+                    );
+                  }).toList(),
+                ),
+              ),
+
+            const SizedBox(height: 36),
+            const Divider(color: AppColors.gr200, thickness: 1),
+            const SizedBox(height: 24),
+
+            Text("회당 얼마를 입금할까요?", style: AppTypography.h2),
+            const SizedBox(height: 4),
+            Text(
+              productDetail?.maxLimit != null
+                  ? "해당 상품의 1회 최대 납입 금액은 ${_formatCurrency(productDetail.maxLimit)}이에요"
+                  : "해당 상품의 1회 납입 금액 제한이 없어요",
+              style: AppTypography.m400.copyWith(color: AppColors.gr600),
+            ),
+            const SizedBox(height: 16),
+
+            Text(
+              "1회당",
+              style: AppTypography.m600.copyWith(color: AppColors.secondaryBl),
+            ),
+            const SizedBox(height: 4),
+            Container(
+              width: double.infinity,
+              constraints: const BoxConstraints(minHeight: 48),
+              child: TextFormField(
+                controller: _amountController,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: AppColors.sk_25,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(AppRadius.bottomSheet),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(AppRadius.bottomSheet),
+                    borderSide: BorderSide.none,
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 16,
+                  ),
+                  hintText: "금액을 입력하세요",
+                  suffixText: "원",
+                ),
               ),
             ),
 
-          const SizedBox(height: 36),
-          const Divider(color: AppColors.gr200, thickness: 1),
-          const SizedBox(height: 24),
-
-          Text("회당 얼마를 입금할까요?", style: AppTypography.h2),
-          const SizedBox(height: 4),
-          Text(
-            productDetail?.maxLimit != null
-                ? "해당 상품의 1회 최대 납입 금액은 ${_formatCurrency(productDetail.maxLimit)}이에요"
-                : "해당 상품의 1회 납입 금액 제한이 없어요",
-            style: AppTypography.m400.copyWith(color: AppColors.gr600),
-          ),
-          const SizedBox(height: 16),
-
-          Text(
-            "1회당",
-            style: AppTypography.m600.copyWith(color: AppColors.secondaryBl),
-          ),
-          const SizedBox(height: 4),
-          Container(
-            width: double.infinity,
-            constraints: const BoxConstraints(minHeight: 48),
-            child: TextFormField(
-              controller: _amountController,
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: AppColors.sk_25,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppRadius.bottomSheet),
-                  borderSide: BorderSide.none,
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppRadius.bottomSheet),
-                  borderSide: BorderSide.none,
-                ),
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 16,
-                ),
-                hintText: "금액을 입력하세요",
-                suffixText: "원",
-              ),
+            const SizedBox(height: 36),
+            PrimaryFilledButton(
+              label: _isLoading ? "가입 중..." : "가입하기",
+              onPressed: () {
+                if (!_isLoading && _canProceedToNext()) {
+                  _showSubscriptionConfirmModal();
+                }
+              },
+              customWidth: double.infinity,
             ),
-          ),
-
-          const Spacer(),
-          PrimaryFilledButton(
-            label: _isLoading ? "가입 중..." : "가입하기",
-            onPressed: () {
-              if (!_isLoading && _canProceedToNext()) {
-                _showSubscriptionConfirmModal();
-              }
-            },
-            customWidth: double.infinity,
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -284,7 +288,7 @@ class _FinancialProductSignUpPageState
           const SizedBox(height: 8),
           Text(
             _subscriptionResult != null
-                ? "${_formatCurrency(int.parse(_amountController.text))}씩 $_selectedPeriodMonths회 차곡으로 넘어가며,\n마지막 예정일은 ${_subscriptionResult!.maturityDate}이에요"
+                ? "${_formatCurrency(int.parse(_amountController.text))}씩 $_selectedPeriodMonths회 자동으로 납입될 예정이며,\n만기 예정일은 ${_subscriptionResult!.maturityDate}이에요"
                 : "가입 정보를 불러오는 중이에요",
             style: AppTypography.m400.copyWith(color: AppColors.gr600),
             textAlign: TextAlign.center,
