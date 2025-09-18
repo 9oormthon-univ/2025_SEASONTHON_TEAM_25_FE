@@ -10,7 +10,7 @@ import 'package:seasonthon_team_25_fe/ui/onboarding/widget/onboarding_card.dart'
 class OnboardingData {
   final String title;
   final String description;
-  final Widget visual; // 🔹 에셋 대신 위젯 전체를 받음
+  final Widget visual;
 
   const OnboardingData({
     required this.title,
@@ -89,24 +89,25 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
   Widget _buildOnboardingPage(OnboardingData data) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // 🔹 각자 다른 이미지+로티 조합
-          data.visual,
-          const SizedBox(height: 32),
-          Text(
-            data.title,
-            style: AppTypography.h2,
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 6),
-          Text(
-            data.description,
-            style: AppTypography.l500.copyWith(color: AppColors.gr600),
-            textAlign: TextAlign.center,
-          ),
-        ],
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            data.visual,
+            const SizedBox(height: 32),
+            Text(
+              data.title,
+              style: AppTypography.h2,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 6),
+            Text(
+              data.description,
+              style: AppTypography.l500.copyWith(color: AppColors.gr600),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
       ),
     );
   }

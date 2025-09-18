@@ -1,13 +1,32 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:seasonthon_team_25_fe/core/theme/colors.dart';
 import 'package:seasonthon_team_25_fe/core/theme/radius.dart';
-import 'package:seasonthon_team_25_fe/core/theme/shadows.dart';
 import 'package:seasonthon_team_25_fe/core/theme/typography.dart';
-import 'package:seasonthon_team_25_fe/gen/assets.gen.dart';
 
-class ProductPeriodBottomSheet extends StatelessWidget {
-  const ProductPeriodBottomSheet({super.key});
+class ProductPeriodBottomSheet extends StatefulWidget {
+  final List<int> availablePeriods;
+  final int initialPeriod;
+  final Function(int) onPeriodSelected;
+  
+  const ProductPeriodBottomSheet({
+    super.key,
+    required this.availablePeriods,
+    required this.initialPeriod,
+    required this.onPeriodSelected,
+  });
+
+  @override
+  State<ProductPeriodBottomSheet> createState() => _ProductPeriodBottomSheetState();
+}
+
+class _ProductPeriodBottomSheetState extends State<ProductPeriodBottomSheet> {
+  late int selectedPeriod;
+
+  @override
+  void initState() {
+    super.initState();
+    selectedPeriod = widget.initialPeriod;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,61 +57,44 @@ class ProductPeriodBottomSheet extends StatelessWidget {
           Text("상품 기간 선택", style: AppTypography.h3),
           const SizedBox(height: 7),
           Text(
-            "12, 24, 36개월 중 선택 가능해요",
+            "${widget.availablePeriods.join(', ')}개월 중 선택 가능해요",
             style: AppTypography.m500.copyWith(color: AppColors.gr600),
           ),
           const SizedBox(height: 20),
-          Align(
-            alignment: Alignment.topLeft,
-            child: Text(
-              "총",
-              style: AppTypography.m600.copyWith(color: AppColors.secondaryBl),
-            ),
-          ),
-          const SizedBox(height: 4),
-          GestureDetector(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              width: double.infinity,
-              constraints: BoxConstraints(minHeight: 48),
-              decoration: BoxDecoration(
-                color: AppColors.sk_25,
-                borderRadius: BorderRadius.all(
-                  Radius.circular(AppRadius.bottomSheet),
+          ...widget.availablePeriods.map((period) => 
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    selectedPeriod = period;
+                  });
+                  widget.onPeriodSelected(period);
+                  Navigator.pop(context);
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: selectedPeriod == period ? AppColors.primarySky : AppColors.gr100,
+                    borderRadius: BorderRadius.circular(AppRadius.button),
+                    border: Border.all(
+                      color: selectedPeriod == period ? AppColors.primarySky : AppColors.gr200,
+                      width: 1,
+                    ),
+                  ),
+                  child: Text(
+                    "$period개월",
+                    style: AppTypography.m600.copyWith(
+                      color: selectedPeriod == period ? AppColors.wt : AppColors.gr800,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Text(
-                    "개월",
-                    style: AppTypography.h2.copyWith(
-                      color: AppColors.secondaryBl,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 9.5,
-                      horizontal: 7,
-                    ),
-                    child: SvgPicture.asset(
-                      Assets.images.bank.primaryToggleBtn.path,
-                      width: 5,
-                      height: 10,
-                    ),
-                  ),
-                ],
-              ),
             ),
           ),
-          const SizedBox(height: 40),
-          // PrimaryFilledButton(
-          //   label: "적용하기",
-          //   onPressed: () {
-          //     Navigator.pop(context);
-          //   },
-          // ),
+          const SizedBox(height: 20),
         ],
       ),
     );
