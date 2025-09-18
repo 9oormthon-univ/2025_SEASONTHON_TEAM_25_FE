@@ -196,3 +196,16 @@ Map<String, dynamic> _$SavingsPaymentResponseToJson(
   'message': instance.message,
   'timestamp': instance.timestamp,
 };
+
+_SavingsTermResponse _$SavingsTermResponseFromJson(Map<String, dynamic> json) =>
+    _SavingsTermResponse(
+      term: json['term'] as String,
+      description: json['description'] as String,
+    );
+
+Map<String, dynamic> _$SavingsTermResponseToJson(
+  _SavingsTermResponse instance,
+) => <String, dynamic>{
+  'term': instance.term,
+  'description': instance.description,
+};

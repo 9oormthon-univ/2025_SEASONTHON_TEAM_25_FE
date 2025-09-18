@@ -2552,4 +2552,270 @@ as String,
 
 }
 
+
+/// @nodoc
+mixin _$SavingsTermResponse {
+
+ String get term; String get description;
+/// Create a copy of SavingsTermResponse
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$SavingsTermResponseCopyWith<SavingsTermResponse> get copyWith => _$SavingsTermResponseCopyWithImpl<SavingsTermResponse>(this as SavingsTermResponse, _$identity);
+
+  /// Serializes this SavingsTermResponse to a JSON map.
+  Map<String, dynamic> toJson();
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SavingsTermResponse&&(identical(other.term, term) || other.term == term)&&(identical(other.description, description) || other.description == description));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,term,description);
+
+@override
+String toString() {
+  return 'SavingsTermResponse(term: $term, description: $description)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $SavingsTermResponseCopyWith<$Res>  {
+  factory $SavingsTermResponseCopyWith(SavingsTermResponse value, $Res Function(SavingsTermResponse) _then) = _$SavingsTermResponseCopyWithImpl;
+@useResult
+$Res call({
+ String term, String description
+});
+
+
+
+
+}
+/// @nodoc
+class _$SavingsTermResponseCopyWithImpl<$Res>
+    implements $SavingsTermResponseCopyWith<$Res> {
+  _$SavingsTermResponseCopyWithImpl(this._self, this._then);
+
+  final SavingsTermResponse _self;
+  final $Res Function(SavingsTermResponse) _then;
+
+/// Create a copy of SavingsTermResponse
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? term = null,Object? description = null,}) {
+  return _then(_self.copyWith(
+term: null == term ? _self.term : term // ignore: cast_nullable_to_non_nullable
+as String,description: null == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [SavingsTermResponse].
+extension SavingsTermResponsePatterns on SavingsTermResponse {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _SavingsTermResponse value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _SavingsTermResponse() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _SavingsTermResponse value)  $default,){
+final _that = this;
+switch (_that) {
+case _SavingsTermResponse():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _SavingsTermResponse value)?  $default,){
+final _that = this;
+switch (_that) {
+case _SavingsTermResponse() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String term,  String description)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _SavingsTermResponse() when $default != null:
+return $default(_that.term,_that.description);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String term,  String description)  $default,) {final _that = this;
+switch (_that) {
+case _SavingsTermResponse():
+return $default(_that.term,_that.description);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String term,  String description)?  $default,) {final _that = this;
+switch (_that) {
+case _SavingsTermResponse() when $default != null:
+return $default(_that.term,_that.description);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+@JsonSerializable()
+
+class _SavingsTermResponse implements SavingsTermResponse {
+  const _SavingsTermResponse({required this.term, required this.description});
+  factory _SavingsTermResponse.fromJson(Map<String, dynamic> json) => _$SavingsTermResponseFromJson(json);
+
+@override final  String term;
+@override final  String description;
+
+/// Create a copy of SavingsTermResponse
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$SavingsTermResponseCopyWith<_SavingsTermResponse> get copyWith => __$SavingsTermResponseCopyWithImpl<_SavingsTermResponse>(this, _$identity);
+
+@override
+Map<String, dynamic> toJson() {
+  return _$SavingsTermResponseToJson(this, );
+}
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SavingsTermResponse&&(identical(other.term, term) || other.term == term)&&(identical(other.description, description) || other.description == description));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,term,description);
+
+@override
+String toString() {
+  return 'SavingsTermResponse(term: $term, description: $description)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$SavingsTermResponseCopyWith<$Res> implements $SavingsTermResponseCopyWith<$Res> {
+  factory _$SavingsTermResponseCopyWith(_SavingsTermResponse value, $Res Function(_SavingsTermResponse) _then) = __$SavingsTermResponseCopyWithImpl;
+@override @useResult
+$Res call({
+ String term, String description
+});
+
+
+
+
+}
+/// @nodoc
+class __$SavingsTermResponseCopyWithImpl<$Res>
+    implements _$SavingsTermResponseCopyWith<$Res> {
+  __$SavingsTermResponseCopyWithImpl(this._self, this._then);
+
+  final _SavingsTermResponse _self;
+  final $Res Function(_SavingsTermResponse) _then;
+
+/// Create a copy of SavingsTermResponse
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? term = null,Object? description = null,}) {
+  return _then(_SavingsTermResponse(
+term: null == term ? _self.term : term // ignore: cast_nullable_to_non_nullable
+as String,description: null == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
 // dart format on

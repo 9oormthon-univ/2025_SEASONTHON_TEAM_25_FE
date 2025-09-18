@@ -64,4 +64,9 @@ class SavingsProductApi {
     final res = await _dio.post('/api/savings/subscriptions/$subscriptionId/payments');
     return SavingsPaymentResponse.fromJson(res.data);
   }
+
+  Future<SavingsTermResponse> getSavingsTerm(String termName) async {
+    final res = await _dio.get('/api/savings/terms/$termName');
+    return SavingsTermResponse.fromJson(res.data);
+  }
 }

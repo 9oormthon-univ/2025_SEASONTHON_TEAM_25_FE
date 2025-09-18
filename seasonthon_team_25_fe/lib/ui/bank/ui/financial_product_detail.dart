@@ -10,6 +10,7 @@ import 'package:seasonthon_team_25_fe/core/theme/typography.dart';
 import 'package:seasonthon_team_25_fe/feature/bank/saving/presentation/provider/savings_product_detail_controller.dart';
 import 'package:seasonthon_team_25_fe/gen/assets.gen.dart';
 import 'package:seasonthon_team_25_fe/ui/bank/widget/detail_card_info.dart';
+import 'package:seasonthon_team_25_fe/ui/bank/widget/clickable_detail_card_info.dart';
 import 'package:seasonthon_team_25_fe/ui/bank/widget/edit_btn.dart';
 import 'package:seasonthon_team_25_fe/ui/bank/widget/product_period_bottom_sheet.dart';
 import 'package:seasonthon_team_25_fe/ui/bank/widget/select_deposit_amount_bottom_sheet.dart';
@@ -17,6 +18,10 @@ import 'package:seasonthon_team_25_fe/ui/bank/widget/simulation_card_info.dart';
 import 'package:seasonthon_team_25_fe/ui/components/app_bar/custom_white_app_bar.dart';
 import 'package:seasonthon_team_25_fe/ui/components/buttons/primary_filled_button.dart';
 import 'package:seasonthon_team_25_fe/ui/components/modal/base_modal.dart';
+import 'package:seasonthon_team_25_fe/ui/components/modal/savings_term_explanation_modal.dart';
+import 'package:seasonthon_team_25_fe/feature/bank/saving/domain/usecases/get_savings_term_usecase.dart';
+import 'package:seasonthon_team_25_fe/ui/components/text/highlightable_text.dart';
+import 'package:seasonthon_team_25_fe/utils/financial_terms.dart';
 
 class FinancialProductDetailPage extends ConsumerStatefulWidget {
   final String productId;
@@ -48,6 +53,40 @@ class _FinancialProductDetailPageState
   String _formatNumber(int number) {
     final formatter = NumberFormat('#,###');
     return "${formatter.format(number)}원";
+  }
+
+  Future<void> _showTermExplanation(String termName) async {
+    try {
+      final termUseCase = ref.read(getSavingsTermUseCaseProvider);
+      final termData = await termUseCase(termName);
+      
+      if (mounted) {
+        showDialog(
+          context: context,
+          builder: (context) => SavingsTermExplanationModal(
+            term: termData.term,
+            description: termData.description,
+            onClose: () => Navigator.of(context).pop(),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text("오류"),
+            content: Text("용어 설명을 불러올 수 없습니다: ${e.toString()}"),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text("확인"),
+              ),
+            ],
+          ),
+        );
+      }
+    }
   }
 
   String _getInterestRateRange(List<double> rates) {
@@ -179,21 +218,33 @@ class _FinancialProductDetailPageState
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        DetailCardInfo(
+                        ClickableDetailCardInfo(
                           label: "금리",
                           value: _getInterestRateRange(productDetail.intrRate),
+                          onLabelTap: () {
+                            print("금리 라벨 터치됨!"); // 디버깅 로그
+                            _showTermExplanation("금리");
+                          },
                         ),
                         const SizedBox(height: 32),
-                        DetailCardInfo(
+                        ClickableDetailCardInfo(
                           label: "기간",
                           value: _getPeriodOptions(productDetail.saveTrm),
+                          onLabelTap: () {
+                            print("기간 라벨 터치됨!"); // 디버깅 로그
+                            _showTermExplanation("기간");
+                          },
                         ),
                         const SizedBox(height: 32),
-                        DetailCardInfo(
+                        ClickableDetailCardInfo(
                           label: "금액",
                           value: productDetail.maxLimit != null 
                               ? "회당 최대 ${_formatNumber(productDetail.maxLimit!)}"
                               : "제한없음",
+                          onLabelTap: () {
+                            print("금액 라벨 터치됨!"); // 디버깅 로그
+                            _showTermExplanation("최고한도");
+                          },
                         ),
                       ],
                     ),
@@ -488,9 +539,10 @@ class _FinancialProductDetailPageState
         ),
         const SizedBox(width: 12),
         Expanded(
-          child: Text(
-            value,
+          child: HighlightableText(
+            text: value,
             style: AppTypography.m400.copyWith(color: AppColors.gr800),
+            onTermTap: (term) => _showTermExplanation(FinancialTerms.getApiKey(term)),
           ),
         ),
       ],

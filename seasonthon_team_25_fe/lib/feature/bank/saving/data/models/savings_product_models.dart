@@ -6,6 +6,7 @@ import 'package:seasonthon_team_25_fe/feature/bank/saving/domain/entities/saving
 import 'package:seasonthon_team_25_fe/feature/bank/saving/domain/entities/savings_subscription_entity.dart';
 import 'package:seasonthon_team_25_fe/feature/bank/saving/domain/entities/active_savings_entity.dart';
 import 'package:seasonthon_team_25_fe/feature/bank/saving/domain/entities/savings_payment_entity.dart';
+import 'package:seasonthon_team_25_fe/feature/bank/saving/domain/entities/savings_term_entity.dart';
 
 part 'savings_product_models.freezed.dart';
 part 'savings_product_models.g.dart';
@@ -229,5 +230,23 @@ extension SavingsPaymentResponseX on SavingsPaymentResponse {
         code: code,
         message: message,
         timestamp: timestamp,
+      );
+}
+
+@freezed
+abstract class SavingsTermResponse with _$SavingsTermResponse {
+  const factory SavingsTermResponse({
+    required String term,
+    required String description,
+  }) = _SavingsTermResponse;
+
+  factory SavingsTermResponse.fromJson(Map<String, dynamic> json) =>
+      _$SavingsTermResponseFromJson(json);
+}
+
+extension SavingsTermResponseX on SavingsTermResponse {
+  SavingsTermEntity toEntity() => SavingsTermEntity(
+        term: term,
+        description: description,
       );
 }
