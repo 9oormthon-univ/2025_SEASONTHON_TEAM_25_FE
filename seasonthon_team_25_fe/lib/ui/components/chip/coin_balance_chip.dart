@@ -11,7 +11,7 @@ class CoinBalanceChip extends StatelessWidget {
     required this.textColor,
   });
 
-  final double balance;
+  final int balance;
   final Color backgroundColor;
   final Color textColor;
 

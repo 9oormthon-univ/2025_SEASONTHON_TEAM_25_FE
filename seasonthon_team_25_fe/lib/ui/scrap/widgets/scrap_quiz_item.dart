@@ -9,11 +9,7 @@ class ScrapQuizItemWidget extends ConsumerWidget {
   final ScrapQuizItem quizItem;
   final VoidCallback? onTap;
 
-  const ScrapQuizItemWidget({
-    super.key,
-    required this.quizItem,
-    this.onTap,
-  });
+  const ScrapQuizItemWidget({super.key, required this.quizItem, this.onTap});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -32,62 +28,23 @@ class ScrapQuizItemWidget extends ConsumerWidget {
                 // 문제 텍스트
                 Text(
                   quizItem.question,
-                  style: AppTypography.m600.copyWith(
-                    color: AppColors.bk,
-                  ),
+                  style: AppTypography.m600.copyWith(color: AppColors.bk),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
-                
+
                 const SizedBox(height: 4),
-                
-                // 퀴즈 날짜와 카테고리
-                Row(
-                  children: [
-                    Text(
-                      quizItem.quizDate,
-                      style: AppTypography.s400.copyWith(
-                        color: AppColors.gr600,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      '•',
-                      style: AppTypography.s400.copyWith(
-                        color: AppColors.gr600,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      quizItem.category.toUpperCase(),
-                      style: AppTypography.s400.copyWith(
-                        color: AppColors.gr600,
-                      ),
-                    ),
-                    if (quizItem.quizId != null) ...[
-                      const SizedBox(width: 8),
-                      Text(
-                        '•',
-                        style: AppTypography.s400.copyWith(
-                          color: AppColors.gr600,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        'ID: ${quizItem.quizId}',
-                        style: AppTypography.s400.copyWith(
-                          color: AppColors.gr600,
-                        ),
-                      ),
-                    ],
-                  ],
+
+                Text(
+                  quizItem.category.toUpperCase(),
+                  style: AppTypography.s400.copyWith(color: AppColors.gr600),
                 ),
               ],
             ),
           ),
-          
+
           const SizedBox(width: 12),
-          
+
           // 정답/오답 상태 버튼
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -97,9 +54,7 @@ class ScrapQuizItemWidget extends ConsumerWidget {
             ),
             child: Text(
               isCorrect ? '정답' : '오답',
-              style: AppTypography.s500.copyWith(
-                color: AppColors.wt,
-              ),
+              style: AppTypography.s500.copyWith(color: AppColors.wt),
             ),
           ),
         ],

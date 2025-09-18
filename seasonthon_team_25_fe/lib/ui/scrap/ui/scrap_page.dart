@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lottie/lottie.dart';
 import 'package:seasonthon_team_25_fe/core/theme/colors.dart';
-import 'package:seasonthon_team_25_fe/core/theme/radius.dart';
 import 'package:seasonthon_team_25_fe/core/theme/typography.dart';
 import 'package:seasonthon_team_25_fe/feature/scrap/data/models/scrap_models.dart';
 import 'package:seasonthon_team_25_fe/feature/scrap/presentation/provider/scrap_controller.dart';
-import 'package:seasonthon_team_25_fe/gen/assets.gen.dart';
 import 'package:seasonthon_team_25_fe/ui/components/app_bar/custom_app_bar.dart';
 import 'package:seasonthon_team_25_fe/ui/components/img/html_image.dart';
+import 'package:seasonthon_team_25_fe/ui/components/tab_bar/custom_tab_bar.dart';
 import 'package:seasonthon_team_25_fe/ui/scrap/widgets/scrap_quiz_item.dart';
 
 class ScrapPage extends ConsumerStatefulWidget {
@@ -27,13 +25,13 @@ class _ScrapPageState extends ConsumerState<ScrapPage>
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
-    
+
     // 페이지 로드 시 스크랩 목록 조회
     Future.microtask(() {
       ref.read(scrapControllerProvider.notifier).loadScrapNews();
       ref.read(scrapControllerProvider.notifier).loadScrapQuiz();
     });
-    
+
     // 탭 변경 리스너 추가
     _tabController.addListener(() {
       if (_tabController.index == 1) {
@@ -62,36 +60,24 @@ class _ScrapPageState extends ConsumerState<ScrapPage>
         title: '스크랩',
         showLeftBtn: true,
         showRightBtn: true,
-        onTapLeftBtn: () => context.pop(),
-        onTapRightBtn: () => context.pop(),
+        onTapLeftBtn: () => context.go("/home"),
+        onTapRightBtn: () => context.go("/home"),
       ),
       body: Column(
         children: [
-          // 탭 바
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-            decoration: BoxDecoration(
-              color: AppColors.gr100,
-              borderRadius: BorderRadius.circular(AppRadius.chips),
-            ),
-            child: TabBar(
-              controller: _tabController,
-              indicator: BoxDecoration(
-                color: AppColors.primarySky,
-                borderRadius: BorderRadius.circular(AppRadius.chips),
-              ),
-              indicatorSize: TabBarIndicatorSize.tab,
-              labelColor: AppColors.wt,
-              unselectedLabelColor: AppColors.gr600,
-              labelStyle: AppTypography.m600,
-              unselectedLabelStyle: AppTypography.m400,
-              tabs: const [
-                Tab(text: '스크랩한 뉴스'),
-                Tab(text: '스크랩한 퀴즈'),
-              ],
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            child: CustomTabBar(
+              labels: const ['스크랩한 뉴스', '스크랩한 퀴즈'],
+              selectedIndex: _tabController.index,
+              onChanged: (i) {
+                setState(() {
+                  _tabController.index = i;
+                });
+              },
             ),
           ),
-          
+
           // 탭 뷰
           Expanded(
             child: TabBarView(
@@ -155,18 +141,6 @@ class _ScrapPageState extends ConsumerState<ScrapPage>
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          SizedBox(
-            width: 150,
-            height: 150,
-            child: Lottie.asset(
-              Assets.lottie.scrap,
-              repeat: true,
-              animate: true,
-              fit: BoxFit.contain,
-              frameRate: FrameRate.max,
-            ),
-          ),
-          const SizedBox(height: 24),
           Text(
             message,
             style: AppTypography.h3.copyWith(color: AppColors.gr600),
@@ -186,11 +160,7 @@ class _ScrapPageState extends ConsumerState<ScrapPage>
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(
-            Icons.error_outline,
-            size: 64,
-            color: AppColors.gr400,
-          ),
+          const Icon(Icons.error_outline, size: 64, color: AppColors.gr400),
           const SizedBox(height: 16),
           Text(
             '오류가 발생했습니다',
@@ -219,10 +189,7 @@ class _ScrapPageState extends ConsumerState<ScrapPage>
     final Map<String, List<ScrapNewsItem>> groupedNews = {};
     for (final item in scrapNewsPage.content) {
       final date = item.scrappedDate;
-      if (groupedNews[date] == null) {
-        groupedNews[date] = [];
-      }
-      groupedNews[date]!.add(item);
+      groupedNews.putIfAbsent(date, () => []).add(item);
     }
 
     return RefreshIndicator(
@@ -235,7 +202,7 @@ class _ScrapPageState extends ConsumerState<ScrapPage>
         itemBuilder: (context, index) {
           final date = groupedNews.keys.elementAt(index);
           final newsItems = groupedNews[date]!;
-          
+
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -244,15 +211,13 @@ class _ScrapPageState extends ConsumerState<ScrapPage>
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 child: Text(
                   date,
-                  style: AppTypography.h3.copyWith(
-                    color: AppColors.primarySky,
-                  ),
+                  style: AppTypography.h3.copyWith(color: AppColors.primarySky),
                 ),
               ),
-              
+
               // 해당 날짜의 뉴스 아이템들
               ...newsItems.map((item) => _buildSimpleNewsItem(item)),
-              
+
               const SizedBox(height: 8),
             ],
           );
@@ -291,9 +256,9 @@ class _ScrapPageState extends ConsumerState<ScrapPage>
                     ),
             ),
           ),
-          
+
           const SizedBox(width: 12),
-          
+
           // 텍스트 영역
           Expanded(
             child: Column(
@@ -302,25 +267,21 @@ class _ScrapPageState extends ConsumerState<ScrapPage>
                 // 제목
                 Text(
                   item.title,
-                  style: AppTypography.m600.copyWith(
-                    color: AppColors.bk,
-                  ),
+                  style: AppTypography.m600.copyWith(color: AppColors.bk),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
-                
+
                 const SizedBox(height: 4),
-                
+
                 // 날짜
                 Text(
                   item.approveDate.replaceAll('/', '.'),
-                  style: AppTypography.s400.copyWith(
-                    color: AppColors.gr600,
-                  ),
+                  style: AppTypography.s400.copyWith(color: AppColors.gr600),
                 ),
-                
+
                 const SizedBox(height: 8),
-                
+
                 // AI 요약
                 if (item.aiSummary.trim().isNotEmpty) ...[
                   Text(
@@ -333,7 +294,7 @@ class _ScrapPageState extends ConsumerState<ScrapPage>
                   ),
                   const SizedBox(height: 8),
                 ],
-                
+
                 // 더보기 링크
                 GestureDetector(
                   onTap: () {
@@ -360,10 +321,7 @@ class _ScrapPageState extends ConsumerState<ScrapPage>
     final Map<String, List<ScrapQuizItem>> groupedQuiz = {};
     for (final item in scrapQuizPage.content) {
       final date = item.scrappedDate;
-      if (groupedQuiz[date] == null) {
-        groupedQuiz[date] = [];
-      }
-      groupedQuiz[date]!.add(item);
+      groupedQuiz.putIfAbsent(date, () => []).add(item);
     }
 
     return RefreshIndicator(
@@ -376,7 +334,7 @@ class _ScrapPageState extends ConsumerState<ScrapPage>
         itemBuilder: (context, index) {
           final date = groupedQuiz.keys.elementAt(index);
           final quizItems = groupedQuiz[date]!;
-          
+
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -385,15 +343,13 @@ class _ScrapPageState extends ConsumerState<ScrapPage>
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 child: Text(
                   date,
-                  style: AppTypography.h3.copyWith(
-                    color: AppColors.primarySky,
-                  ),
+                  style: AppTypography.h3.copyWith(color: AppColors.primarySky),
                 ),
               ),
-              
+
               // 해당 날짜의 퀴즈 아이템들
               ...quizItems.map((item) => ScrapQuizItemWidget(quizItem: item)),
-              
+
               const SizedBox(height: 8),
             ],
           );

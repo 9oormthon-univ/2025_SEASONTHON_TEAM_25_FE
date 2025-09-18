@@ -4,7 +4,6 @@ import 'package:seasonthon_team_25_fe/ui/auth/ui/sign_up_page.dart';
 //import 'package:seasonthon_team_25_fe/ui/splash/splash.dart';
 
 final authRoutes = <RouteBase>[
-  //GoRoute(path: '/splash', builder: (context, state) => const SplashPage()),
   GoRoute(path: '/login', builder: (context, state) => const LoginPage()),
   GoRoute(path: '/sign-up', builder: (context, state) => const SignUpPage()),
 ];

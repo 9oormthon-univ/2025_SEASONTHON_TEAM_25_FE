@@ -8,6 +8,7 @@ import 'package:seasonthon_team_25_fe/core/theme/gradients.dart';
 import 'package:seasonthon_team_25_fe/core/theme/radius.dart';
 import 'package:seasonthon_team_25_fe/core/theme/typography.dart';
 import 'package:seasonthon_team_25_fe/feature/home/presentation/provider/home_controller.dart';
+import 'package:seasonthon_team_25_fe/feature/attendance/presentation/provider/attendance_controller.dart';
 import 'package:seasonthon_team_25_fe/gen/assets.gen.dart';
 import 'package:seasonthon_team_25_fe/ui/components/chip/coin_balance_chip.dart';
 import 'package:seasonthon_team_25_fe/ui/components/speech_bubble/speech_bubble.dart';
@@ -32,8 +33,6 @@ class _HomePageState extends ConsumerState<HomePage> {
   bool isAchievementCheckNeeded = true;
   bool isQuestCheckNeeded = true;
 
-  bool isCheckedIn = false;
-
   @override
   void initState() {
     super.initState();
@@ -44,9 +43,36 @@ class _HomePageState extends ConsumerState<HomePage> {
     });
   }
 
+  String _getSpeechBubbleText(AttendanceState attendanceState, bool homeAttendanceStatus) {
+    // 출석체크 중일 때
+    if (attendanceState.isLoading) {
+      return "출석체크 중이에요...\n잠시만 기다려주세요!";
+    }
+    
+    // 출석체크 결과가 있고, 홈 데이터가 아직 출석 안한 상태일 때만 결과 메시지 표시
+    if (attendanceState.lastCheckResult != null && !homeAttendanceStatus) {
+      final result = attendanceState.lastCheckResult!;
+      if (result.success) {
+        if (result.achievementCreated && result.achievementType != null) {
+          return "출석체크 완료! 🎉\n새로운 업적을 달성했어요!";
+        } else {
+          return "출석체크 완료! ✅\n오늘도 파프와 함께해요!";
+        }
+      } else {
+        return "오늘 이미 출석하셨어요! 😊\n내일 다시 만나요!";
+      }
+    }
+    
+    // 기본 상태: 홈 API의 실제 출석 상태 사용
+    return homeAttendanceStatus
+        ? "오늘의 뉴스를 확인하셨나요?\n새로운 소식을 확인해 보세요!"
+        : "저를 누르시면 출석이 기록돼요!\n오늘도 파프할 준비 되셨나요?";
+  }
+
   @override
   Widget build(BuildContext context) {
     final homeState = ref.watch(homeControllerProvider);
+    final attendanceState = ref.watch(attendanceControllerProvider);
     
     return Scaffold(
       body: homeState.when(
@@ -84,7 +110,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                     Align(
                       alignment: AlignmentGeometry.topLeft,
                       child: CoinBalanceChip(
-                        balance: data.balance,
+                        balance: data.balance.toInt(),
                         backgroundColor: AppColors.wt_50,
                         textColor: AppColors.primarySky,
                       ),
@@ -169,13 +195,18 @@ class _HomePageState extends ConsumerState<HomePage> {
                     const SizedBox(height: 20),
                     GestureDetector(
                       behavior: HitTestBehavior.opaque,
-                      onTap: () {
-                        if (!isCheckedIn) {
-                          debugPrint('출석 체크 버튼 클릭');
-                          setState(() {
-                            isCheckedIn = true;
-                          });
+                      onTap: () async {
+                        // 홈 데이터에서 실제 출석 상태 확인
+                        final homeData = homeState.valueOrNull;
+                        final actualAttendanceStatus = homeData?.attendance ?? false;
+                        
+                        if (!actualAttendanceStatus) {
+                          // 출석체크 API 호출
+                          await ref.read(attendanceControllerProvider.notifier).checkAttendance();
+                          // 출석체크 후 홈 데이터 새로고침
+                          ref.read(homeControllerProvider.notifier).load();
                         } else {
+                          // 이미 출석했으면 뉴스로 이동
                           context.go("/news");
                         }
                       },
@@ -222,9 +253,10 @@ class _HomePageState extends ConsumerState<HomePage> {
                                   vertical: 12,
                                 ),
                                 child: Text(
-                                  isCheckedIn
-                                      ? "오늘의 뉴스를 확인하셨나요?\n새로운 소식을 확인해 보세요!"
-                                      : "저를 누르시면 출석이 기록돼요!\n오늘도 파프할 준비 되셨나요?",
+                                  _getSpeechBubbleText(
+                                    attendanceState, 
+                                    homeState.valueOrNull?.attendance ?? false
+                                  ),
                                   style: AppTypography.m600.copyWith(
                                     color: AppColors.secondaryBl,
                                   ),

@@ -52,18 +52,31 @@ abstract class ClaimAchievementResponse with _$ClaimAchievementResponse {
 enum AchievementType {
   @JsonValue('BEGINNERS_LUCK')
   beginnersLuck('BEGINNERS_LUCK', '초심자의 행운', '최초 가입 완료시 획득'),
-  
+
   @JsonValue('MORNING_SUNSHINE')
   morningSunshine('MORNING_SUNSHINE', '아침 햇살', '30일 연속 출석시 획득'),
-  
+
   @JsonValue('NEWS_ADDICT')
   newsAddict('NEWS_ADDICT', '속보 중독', '상세 뉴스 50회 열람시 획득'),
-  
+
   @JsonValue('NEWS_COLLECTOR')
   newsCollector('NEWS_COLLECTOR', '소식좌', '뉴스 50회 스크랩시 획득'),
-  
+
   @JsonValue('QUIZ_CURATOR')
-  quizCurator('QUIZ_CURATOR', '퀴즈 큐레이터', '퀴즈 50회 스크랩시 획득');
+  quizCurator('QUIZ_CURATOR', '퀴즈 큐레이터', '퀴즈 50회 스크랩시 획득'),
+
+  // 추가 업적 타입들 (이미지에 보이는 것들)
+  @JsonValue('MONEY_MAKER')
+  moneyMaker('MONEY_MAKER', '머니 메이커', '수익률 10% 달성시 획득'),
+
+  @JsonValue('MATURITY_EXPERT')
+  maturityExpert('MATURITY_EXPERT', '만기의 달인', '만기 상품 5개 구매시 획득'),
+
+  @JsonValue('ROYAL_FINANCER')
+  royalFinancer('ROYAL_FINANCER', '로얄 파이낸서', 'VIP 등급 달성시 획득'),
+
+  @JsonValue('ANTI_FRAGILE')
+  antiFragile('ANTI_FRAGILE', '안티 프레자일', '리스크 관리 마스터시 획득');
 
   const AchievementType(this.value, this.title, this.description);
 

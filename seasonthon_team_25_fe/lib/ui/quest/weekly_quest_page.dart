@@ -62,7 +62,7 @@ class _WeeklyQuestPageState extends ConsumerState<WeeklyQuestPage> {
                   textColor: AppColors.primarySky,
                 ),
                 data: (balance) => CoinBalanceChip(
-                  balance: balance,
+                  balance: balance.toInt(),
                   backgroundColor: AppColors.sk_25,
                   textColor: AppColors.primarySky,
                 ),
