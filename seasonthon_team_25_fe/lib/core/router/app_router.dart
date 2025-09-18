@@ -17,7 +17,7 @@ final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     debugLogDiagnostics: true,
     // /splash
-    initialLocation: '/bank/signup/1',
+    initialLocation: '/splash',
     routes: [
       ...splashRoutes,
       ...authRoutes,

@@ -6,6 +6,8 @@ abstract class NicknameStorage {
   Future<void> saveNickname(String nickname);
   String? getNickname(); // sync로 즉시 꺼내기
   Future<void> clearNickname();
+
+  Future<void> clearIfExists(); // 추가
 }
 
 class NicknameStoragePrefs implements NicknameStorage {
@@ -25,6 +27,13 @@ class NicknameStoragePrefs implements NicknameStorage {
   @override
   Future<void> clearNickname() async {
     await _prefs.remove(_kNickname);
+  }
+
+  @override
+  Future<void> clearIfExists() async {
+    if (getNickname() != null) {
+      await clearNickname();
+    }
   }
 }
 

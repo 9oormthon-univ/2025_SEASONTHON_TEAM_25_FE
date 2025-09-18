@@ -5,6 +5,7 @@ import 'package:seasonthon_team_25_fe/core/theme/colors.dart';
 import 'package:seasonthon_team_25_fe/core/theme/radius.dart';
 import 'package:seasonthon_team_25_fe/core/theme/typography.dart';
 import 'package:seasonthon_team_25_fe/feature/auth/presentation/providers/auth_controller.dart';
+import 'package:seasonthon_team_25_fe/feature/onboarding/data/datasources/local/nickname_storage_prefs.dart';
 import 'package:seasonthon_team_25_fe/ui/components/buttons/primary_filled_button.dart';
 import 'package:seasonthon_team_25_fe/ui/components/buttons/secondary_outlined_button.dart';
 import 'package:seasonthon_team_25_fe/utils/toasts.dart';
@@ -41,6 +42,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
   Widget build(BuildContext context) {
     final state = ref.watch(authControllerProvider);
     final isLoading = state.signUp.isLoading;
+    final nicknameStorage = ref.read(nicknameStorageProvider);
 
     ref.listen<AuthState>(authControllerProvider, (prev, next) async {
       next.signUp.when(
@@ -240,6 +242,10 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                     await ref
                         .read(authControllerProvider.notifier)
                         .signUp(email, password);
+                    final current = nicknameStorage.getNickname();
+                    if (current != null) {
+                      await nicknameStorage.clearNickname();
+                    }
                   },
                 ),
 
