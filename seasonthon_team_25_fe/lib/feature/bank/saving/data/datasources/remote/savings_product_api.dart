@@ -22,4 +22,24 @@ class SavingsProductApi {
     );
     return SavingsProductResponse.fromJson(res.data);
   }
+
+  Future<SavingsProductDetailResponse> getSavingsProductDetail(int productId) async {
+    final res = await _dio.get('/api/savings/products/$productId');
+    return SavingsProductDetailResponse.fromJson(res.data);
+  }
+
+  Future<SavingsMaturityPreviewResponse> getSavingsMaturityPreview(
+    int productId, {
+    required int monthlyAmount,
+    required int termMonths,
+  }) async {
+    final res = await _dio.post(
+      '/api/savings/products/$productId/maturity-preview',
+      data: {
+        'monthlyAmount': monthlyAmount,
+        'termMonths': termMonths,
+      },
+    );
+    return SavingsMaturityPreviewResponse.fromJson(res.data);
+  }
 }

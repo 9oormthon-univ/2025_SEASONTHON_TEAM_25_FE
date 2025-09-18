@@ -40,3 +40,85 @@ Map<String, dynamic> _$SavingsProductModelToJson(
   'bankName': instance.bankName,
   'aiSummary': instance.aiSummary,
 };
+
+_SavingsProductDetailResponse _$SavingsProductDetailResponseFromJson(
+  Map<String, dynamic> json,
+) => _SavingsProductDetailResponse(
+  productName: json['productName'] as String,
+  bankName: json['bankName'] as String,
+  maturityInterest: json['maturityInterest'] as String,
+  specialCondition: json['specialCondition'] as String,
+  joinDeny: json['joinDeny'] as String,
+  joinMember: json['joinMember'] as String,
+  maxLimit: (json['maxLimit'] as num?)?.toInt(),
+  intrRateType: json['intrRateType'] as String,
+  intrRateTypeNm: json['intrRateTypeNm'] as String,
+  rsrvType: json['rsrvType'] as String,
+  rsrvTypeNm: json['rsrvTypeNm'] as String,
+  saveTrm: (json['saveTrm'] as List<dynamic>)
+      .map((e) => (e as num).toInt())
+      .toList(),
+  intrRate: (json['intrRate'] as List<dynamic>)
+      .map((e) => (e as num).toDouble())
+      .toList(),
+  intrRate2: (json['intrRate2'] as List<dynamic>)
+      .map((e) => (e as num).toDouble())
+      .toList(),
+);
+
+Map<String, dynamic> _$SavingsProductDetailResponseToJson(
+  _SavingsProductDetailResponse instance,
+) => <String, dynamic>{
+  'productName': instance.productName,
+  'bankName': instance.bankName,
+  'maturityInterest': instance.maturityInterest,
+  'specialCondition': instance.specialCondition,
+  'joinDeny': instance.joinDeny,
+  'joinMember': instance.joinMember,
+  'maxLimit': instance.maxLimit,
+  'intrRateType': instance.intrRateType,
+  'intrRateTypeNm': instance.intrRateTypeNm,
+  'rsrvType': instance.rsrvType,
+  'rsrvTypeNm': instance.rsrvTypeNm,
+  'saveTrm': instance.saveTrm,
+  'intrRate': instance.intrRate,
+  'intrRate2': instance.intrRate2,
+};
+
+_SavingsMaturityPreviewResponse _$SavingsMaturityPreviewResponseFromJson(
+  Map<String, dynamic> json,
+) => _SavingsMaturityPreviewResponse(
+  ourService: SavingsMaturityInfoModel.fromJson(
+    json['ourService'] as Map<String, dynamic>,
+  ),
+  preferentialRate: SavingsMaturityInfoModel.fromJson(
+    json['preferentialRate'] as Map<String, dynamic>,
+  ),
+);
+
+Map<String, dynamic> _$SavingsMaturityPreviewResponseToJson(
+  _SavingsMaturityPreviewResponse instance,
+) => <String, dynamic>{
+  'ourService': instance.ourService,
+  'preferentialRate': instance.preferentialRate,
+};
+
+_SavingsMaturityInfoModel _$SavingsMaturityInfoModelFromJson(
+  Map<String, dynamic> json,
+) => _SavingsMaturityInfoModel(
+  principal: (json['principal'] as num).toInt(),
+  interest: (json['interest'] as num).toInt(),
+  tax: (json['tax'] as num).toInt(),
+  totalAmount: (json['totalAmount'] as num).toDouble(),
+  interestRate: (json['interestRate'] as num).toDouble(),
+);
+
+Map<String, dynamic> _$SavingsMaturityInfoModelToJson(
+  _SavingsMaturityInfoModel instance,
+) => <String, dynamic>{
+  'principal': instance.principal,
+  'interest': instance.interest,
+  'tax': instance.tax,
+  'totalAmount': instance.totalAmount,
+  'interestRate': instance.interestRate,
+};

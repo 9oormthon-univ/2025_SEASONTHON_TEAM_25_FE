@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 import 'package:seasonthon_team_25_fe/core/theme/colors.dart';
 import 'package:seasonthon_team_25_fe/core/theme/radius.dart';
 import 'package:seasonthon_team_25_fe/core/theme/shadows.dart';
 import 'package:seasonthon_team_25_fe/core/theme/typography.dart';
+import 'package:seasonthon_team_25_fe/feature/bank/saving/presentation/provider/savings_product_detail_controller.dart';
+import 'package:seasonthon_team_25_fe/gen/assets.gen.dart';
 import 'package:seasonthon_team_25_fe/ui/bank/widget/detail_card_info.dart';
 import 'package:seasonthon_team_25_fe/ui/bank/widget/edit_btn.dart';
 import 'package:seasonthon_team_25_fe/ui/bank/widget/product_period_bottom_sheet.dart';
@@ -28,10 +32,99 @@ class _FinancialProductDetailPageState
   @override
   void initState() {
     super.initState();
+    final productId = int.tryParse(widget.productId);
+    if (productId != null) {
+      Future.microtask(() {
+        ref.read(savingsProductDetailControllerProvider.notifier)
+            .loadProductDetail(productId);
+      });
+    }
+  }
+
+  String _formatCurrency(int amount) {
+    return "${(amount / 10000).toStringAsFixed(0)}만원";
+  }
+
+  String _formatNumber(int number) {
+    final formatter = NumberFormat('#,###');
+    return "${formatter.format(number)}원";
+  }
+
+  String _getInterestRateRange(List<double> rates) {
+    if (rates.isEmpty) return "정보 없음";
+    final min = rates.reduce((a, b) => a < b ? a : b);
+    final max = rates.reduce((a, b) => a > b ? a : b);
+    return "연 ${min.toStringAsFixed(2)}%~${max.toStringAsFixed(2)}%";
+  }
+
+  String _getPeriodOptions(List<int> periods) {
+    if (periods.isEmpty) return "정보 없음";
+    return "${periods.join('/')}개월 중 선택";
   }
 
   @override
   Widget build(BuildContext context) {
+    final state = ref.watch(savingsProductDetailControllerProvider);
+    final productId = int.tryParse(widget.productId);
+    
+
+    if (state.isLoadingDetail) {
+      return Scaffold(
+        backgroundColor: AppColors.wt,
+        body: Center(
+          child: SizedBox(
+            width: 200,
+            height: 200,
+            child: Lottie.asset(
+              Assets.lottie.loadingSlow,
+              repeat: true,
+              animate: true,
+              fit: BoxFit.contain,
+              frameRate: FrameRate.max,
+            ),
+          ),
+        ),
+      );
+    }
+
+    if (state.errorMessage != null) {
+      return Scaffold(
+        backgroundColor: AppColors.wt,
+        appBar: CustomWhiteAppBar(
+          title: '',
+          showLeftBtn: true,
+          showRightBtn: false,
+          onTapLeftBtn: () => context.pop(),
+        ),
+        body: Center(
+          child: SelectableText.rich(
+            TextSpan(
+              text: "오류가 발생했습니다: ${state.errorMessage}",
+              style: AppTypography.m600.copyWith(color: Colors.red),
+            ),
+          ),
+        ),
+      );
+    }
+
+    final productDetail = state.productDetail;
+    final maturityPreview = state.maturityPreview;
+
+    if (productDetail == null) {
+      return Scaffold(
+        backgroundColor: AppColors.wt,
+        appBar: CustomWhiteAppBar(
+          title: '',
+          showLeftBtn: true,
+          showRightBtn: false,
+          onTapLeftBtn: () => context.pop(),
+        ),
+        body: const Center(
+          child: Text("상품 정보를 찾을 수 없습니다."),
+        ),
+      );
+    }
+
     return Scaffold(
       extendBodyBehindAppBar: true,
       backgroundColor: AppColors.wt,
@@ -39,12 +132,8 @@ class _FinancialProductDetailPageState
         title: '',
         showLeftBtn: true,
         showRightBtn: true,
-        onTapLeftBtn: () {
-          context.pop();
-        },
-        onTapRightBtn: () {
-          context.pop();
-        },
+        onTapLeftBtn: () => context.pop(),
+        onTapRightBtn: () => context.pop(),
       ),
       body: Stack(
         children: [
@@ -66,7 +155,7 @@ class _FinancialProductDetailPageState
                   Align(
                     alignment: Alignment.topCenter,
                     child: Text(
-                      "은행",
+                      productDetail.bankName,
                       style: AppTypography.xl500.copyWith(color: AppColors.wt),
                     ),
                   ),
@@ -74,7 +163,7 @@ class _FinancialProductDetailPageState
                   Align(
                     alignment: Alignment.topCenter,
                     child: Text(
-                      "xx적금",
+                      productDetail.productName,
                       style: AppTypography.h1.copyWith(color: AppColors.wt),
                     ),
                   ),
@@ -90,26 +179,38 @@ class _FinancialProductDetailPageState
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        DetailCardInfo(label: "금리", value: "연 2.25%~3.55%"),
+                        DetailCardInfo(
+                          label: "금리",
+                          value: _getInterestRateRange(productDetail.intrRate),
+                        ),
                         const SizedBox(height: 32),
-                        DetailCardInfo(label: "기간", value: "12/24/36개월 중 선택"),
+                        DetailCardInfo(
+                          label: "기간",
+                          value: _getPeriodOptions(productDetail.saveTrm),
+                        ),
                         const SizedBox(height: 32),
-                        DetailCardInfo(label: "금액", value: "회당 최대 N,NNN,NNN원"),
+                        DetailCardInfo(
+                          label: "금액",
+                          value: productDetail.maxLimit != null 
+                              ? "회당 최대 ${_formatNumber(productDetail.maxLimit!)}"
+                              : "제한없음",
+                        ),
                       ],
                     ),
                   ),
                   const SizedBox(height: 63),
                   Text("상품 정보 자세히 보기", style: AppTypography.h2),
-                  // 상품 정보 자세히 보기
+                  const SizedBox(height: 16),
+                  _buildProductDetailInfo(productDetail),
                   const SizedBox(height: 48),
                   Text("만기 금액 미리보기", style: AppTypography.h2),
                   const SizedBox(height: 18),
-                  // 시뮬레이션
+                  // 시뮬레이션 설정
                   Row(
                     spacing: 12,
                     children: [
                       EditBtn(
-                        text: "12개월 간",
+                        text: "${state.selectedPeriod}개월 간",
                         onTap: () {
                           showModalBottomSheet(
                             context: context,
@@ -120,13 +221,22 @@ class _FinancialProductDetailPageState
                               ),
                             ),
                             builder: (context) {
-                              return ProductPeriodBottomSheet();
+                              return ProductPeriodBottomSheet(
+                                availablePeriods: productDetail.saveTrm,
+                                initialPeriod: state.selectedPeriod,
+                                onPeriodSelected: (period) {
+                                  if (productId != null) {
+                                    ref.read(savingsProductDetailControllerProvider.notifier)
+                                        .updatePeriod(period, productId);
+                                  }
+                                },
+                              );
                             },
                           );
                         },
                       ),
                       EditBtn(
-                        text: "100만원",
+                        text: _formatCurrency(state.selectedAmount),
                         onTap: () {
                           showModalBottomSheet(
                             context: context,
@@ -138,7 +248,14 @@ class _FinancialProductDetailPageState
                             ),
                             builder: (context) {
                               return SelectDepositAmountBottomSheet(
-                                maxAmount: 1000000,
+                                maxAmount: productDetail.maxLimit,
+                                initialAmount: state.selectedAmount,
+                                onAmountSelected: (amount) {
+                                  if (productId != null) {
+                                    ref.read(savingsProductDetailControllerProvider.notifier)
+                                        .updateAmount(amount, productId);
+                                  }
+                                },
                               );
                             },
                           );
@@ -153,110 +270,139 @@ class _FinancialProductDetailPageState
                     ],
                   ),
                   const SizedBox(height: 16),
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
-                    decoration: BoxDecoration(
-                      color: AppColors.wt,
-                      borderRadius: BorderRadius.circular(AppRadius.button),
-                      border: Border.all(
-                        color: AppColors.secondarySk,
-                        width: 1,
+                  if (state.isLoadingPreview)
+                    Center(
+                      child: SizedBox(
+                        width: 100,
+                        height: 100,
+                        child: Lottie.asset(
+                          Assets.lottie.loading,
+                          repeat: true,
+                          animate: true,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    )
+                  else if (maturityPreview != null) ...[
+                    // 파프 서비스 결과
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
+                      decoration: BoxDecoration(
+                        color: AppColors.wt,
+                        borderRadius: BorderRadius.circular(AppRadius.button),
+                        border: Border.all(
+                          color: AppColors.secondarySk,
+                          width: 1,
+                        ),
+                      ),
+                      child: Column(
+                        children: [
+                          Align(
+                            alignment: Alignment.topLeft,
+                            child: Text(
+                              "파프에서는 총",
+                              style: AppTypography.l600.copyWith(
+                                color: AppColors.gr600,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 3),
+                          Align(
+                            alignment: Alignment.topLeft,
+                            child: Text(
+                              _formatNumber(maturityPreview.ourService.totalAmount.round()),
+                              style: AppTypography.h2.copyWith(
+                                color: AppColors.primarySky,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          Column(
+                            children: [
+                              SimulationCardInfo(
+                                label: "원금",
+                                value: _formatNumber(maturityPreview.ourService.principal),
+                              ),
+                              const SizedBox(height: 8),
+                              SimulationCardInfo(
+                                label: "예상 이자",
+                                value: _formatNumber(maturityPreview.ourService.interest),
+                              ),
+                              const SizedBox(height: 8),
+                              SimulationCardInfo(
+                                label: "세금",
+                                value: _formatNumber(maturityPreview.ourService.tax),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
-                    child: Column(
-                      children: [
-                        Align(
-                          alignment: Alignment.topLeft,
-                          child: Text(
-                            "파프에서는 총",
-                            style: AppTypography.l600.copyWith(
-                              color: AppColors.gr600,
+                    const SizedBox(height: 16),
+                    // 우대금리 결과
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
+                      decoration: BoxDecoration(
+                        color: AppColors.wt,
+                        borderRadius: BorderRadius.circular(AppRadius.button),
+                        border: Border.all(
+                          color: AppColors.secondarySk,
+                          width: 1,
+                        ),
+                      ),
+                      child: Column(
+                        children: [
+                          Align(
+                            alignment: Alignment.topLeft,
+                            child: Text(
+                              "우대금리 적용시 총",
+                              style: AppTypography.l600.copyWith(
+                                color: AppColors.gr600,
+                              ),
                             ),
                           ),
-                        ),
-                        const SizedBox(height: 3),
-                        Align(
-                          alignment: Alignment.topLeft,
-                          child: Text(
-                            "N,NNN,NNN원",
-                            style: AppTypography.h2.copyWith(
-                              color: AppColors.primarySky,
+                          const SizedBox(height: 3),
+                          Align(
+                            alignment: Alignment.topLeft,
+                            child: Text(
+                              _formatNumber(maturityPreview.preferentialRate.totalAmount.round()),
+                              style: AppTypography.h2.copyWith(
+                                color: AppColors.primarySky,
+                              ),
                             ),
                           ),
-                        ),
-                        const SizedBox(height: 16),
-                        Column(
-                          children: [
-                            SimulationCardInfo(
-                              label: "원금",
-                              value: "N,NNN,NNN원",
-                            ),
-                            const SizedBox(height: 8),
-                            SimulationCardInfo(label: "예상 이자", value: "N,NNN원"),
-                            const SizedBox(height: 8),
-                            SimulationCardInfo(label: "세금", value: "N,NNN원"),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
-                    decoration: BoxDecoration(
-                      color: AppColors.wt,
-                      borderRadius: BorderRadius.circular(AppRadius.button),
-                      border: Border.all(
-                        color: AppColors.secondarySk,
-                        width: 1,
+                          const SizedBox(height: 16),
+                          Column(
+                            children: [
+                              SimulationCardInfo(
+                                label: "원금",
+                                value: _formatNumber(maturityPreview.preferentialRate.principal),
+                              ),
+                              const SizedBox(height: 8),
+                              SimulationCardInfo(
+                                label: "예상 이자",
+                                value: _formatNumber(maturityPreview.preferentialRate.interest),
+                              ),
+                              const SizedBox(height: 8),
+                              SimulationCardInfo(
+                                label: "세금",
+                                value: _formatNumber(maturityPreview.preferentialRate.tax),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
-                    child: Column(
-                      children: [
-                        Align(
-                          alignment: Alignment.topLeft,
-                          child: Text(
-                            "현실에서는 총",
-                            style: AppTypography.l600.copyWith(
-                              color: AppColors.gr600,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 3),
-                        Align(
-                          alignment: Alignment.topLeft,
-                          child: Text(
-                            "N,NNN,NNN원",
-                            style: AppTypography.h2.copyWith(
-                              color: AppColors.primarySky,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        Column(
-                          children: [
-                            SimulationCardInfo(
-                              label: "원금",
-                              value: "N,NNN,NNN원",
-                            ),
-                            const SizedBox(height: 8),
-                            SimulationCardInfo(label: "예상 이자", value: "N,NNN원"),
-                            const SizedBox(height: 8),
-                            SimulationCardInfo(label: "세금", value: "N,NNN원"),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
+                  ],
                   const SizedBox(height: 16),
                   Align(
                     child: GestureDetector(
                       onTap: () {
                         showDialog(
                           context: context,
-                          barrierDismissible: true, // 모달 바깥 영역 터치 시 닫기
+                          barrierDismissible: true,
                           builder: (context) {
                             return const BaseModal(
                               text: "파프에서 알려드려요",
@@ -271,9 +417,9 @@ class _FinancialProductDetailPageState
                         "왜 이런 차이가 생기나요?",
                         style: AppTypography.m600.copyWith(
                           color: AppColors.gr400,
-                          decoration: TextDecoration.underline, // 밑줄
-                          decorationColor: AppColors.gr400, // 밑줄 색상 (옵션)
-                          decorationThickness: 1, // 밑줄 두께 (옵션)
+                          decoration: TextDecoration.underline,
+                          decorationColor: AppColors.gr400,
+                          decorationThickness: 1,
                         ),
                       ),
                     ),
@@ -292,8 +438,7 @@ class _FinancialProductDetailPageState
               padding: const EdgeInsets.fromLTRB(20, 30, 20, 30),
               child: PrimaryFilledButton(
                 onPressed: () {
-                  // 1 -> id로 수정
-                  context.push("/bank/signup/1");
+                  context.push("/bank/signup/${widget.productId}");
                 },
                 label: "가입하기",
               ),
@@ -301,6 +446,54 @@ class _FinancialProductDetailPageState
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildProductDetailInfo(productDetail) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: AppColors.wt,
+        borderRadius: BorderRadius.circular(AppRadius.button),
+        border: Border.all(color: AppColors.gr200),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildInfoRow("우대조건", productDetail.specialCondition),
+          const SizedBox(height: 12),
+          _buildInfoRow("가입제한", productDetail.joinDeny),
+          const SizedBox(height: 12),
+          _buildInfoRow("가입대상", productDetail.joinMember),
+          const SizedBox(height: 12),
+          _buildInfoRow("금리유형", productDetail.intrRateTypeNm),
+          const SizedBox(height: 12),
+          _buildInfoRow("적립유형", productDetail.rsrvTypeNm),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoRow(String label, String value) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          width: 80,
+          child: Text(
+            label,
+            style: AppTypography.m600.copyWith(color: AppColors.gr600),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Text(
+            value,
+            style: AppTypography.m400.copyWith(color: AppColors.gr800),
+          ),
+        ),
+      ],
     );
   }
 }
