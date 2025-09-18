@@ -133,8 +133,8 @@ class _AchievementPageState extends ConsumerState<AchievementPage> {
         padding: const EdgeInsets.symmetric(horizontal: 20),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 3,
-          crossAxisSpacing: 16,
-          mainAxisSpacing: 16,
+          crossAxisSpacing: 20,
+          mainAxisSpacing: 20,
           childAspectRatio: 0.65,
         ),
         itemCount: 9, // 고정된 9개 업적
