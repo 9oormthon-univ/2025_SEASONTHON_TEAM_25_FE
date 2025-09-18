@@ -37,6 +37,8 @@ class _AttendancePageState extends ConsumerState<AttendancePage> {
   @override
   Widget build(BuildContext context) {
     final attendanceState = ref.watch(attendanceControllerProvider);
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isWeb = screenWidth > 600;
 
     return Scaffold(
       backgroundColor: AppColors.wt,
@@ -46,160 +48,181 @@ class _AttendancePageState extends ConsumerState<AttendancePage> {
         showRightBtn: false,
         onTapLeftBtn: () => context.go("/home"),
       ),
-      body: Column(
-        children: [
-          // 상단 정보 섹션
-          Container(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              children: [
-                // 날짜 선택 (독립적으로 위쪽에 위치)
-                GestureDetector(
-                  onTap: _showMonthYearPicker,
-                  child: Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                    decoration: BoxDecoration(
-                      color: AppColors.wt,
-                      borderRadius: BorderRadius.circular(AppRadius.button),
-                    ),
-                    child: Row(
-                      children: [
-                        Text(
-                          '${_currentYear}년 ${_currentMonth}월',
-                          style: AppTypography.h3.copyWith(color: AppColors.primarySky),
-                        ),
-                        const SizedBox(width: 8),
-                        Icon(
-                          Icons.keyboard_arrow_down,
-                          color: AppColors.primarySky,
-                          size: 24,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                
-                // 누적 출석 일수 카드
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                  decoration: BoxDecoration(
-                    color: AppColors.wt,
-                    borderRadius: BorderRadius.circular(AppRadius.button),
-                    border: Border.all(
-                      color: AppColors.primarySky,
-                      width: 2,
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        '누적 출석 일수',
-                        style: AppTypography.m500.copyWith(color: AppColors.primarySky),
-                      ),
-                      Text(
-                        '${attendanceState.calendarData?.attendanceCount ?? 0}일',
-                        style: AppTypography.h2.copyWith(color: AppColors.primarySky),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+      body: Center(
+        child: Container(
+          constraints: BoxConstraints(
+            maxWidth: isWeb ? 600 : double.infinity,
           ),
-          
-          // 캘린더 섹션
-          Expanded(
-            child: attendanceState.isLoading
-                ? Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        CircularProgressIndicator(
-                          color: AppColors.primarySky,
+          child: Column(
+            children: [
+              // 상단 정보 섹션
+              Container(
+                padding: EdgeInsets.all(isWeb ? 24 : 20),
+                child: Column(
+                  children: [
+                    // 날짜 선택 (독립적으로 위쪽에 위치)
+                    GestureDetector(
+                      onTap: _showMonthYearPicker,
+                      child: Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: isWeb ? 20 : 16, 
+                          vertical: isWeb ? 20 : 16,
                         ),
-                        const SizedBox(height: 16),
-                        Text(
-                          '캘린더를 불러오는 중...',
-                          style: AppTypography.m500.copyWith(color: AppColors.gr600),
+                        decoration: BoxDecoration(
+                          color: AppColors.wt,
+                          borderRadius: BorderRadius.circular(AppRadius.button),
                         ),
-                      ],
-                    ),
-                  )
-                : attendanceState.calendarData != null
-                    ? _buildCalendar(attendanceState.calendarData!)
-                    : Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                        child: Row(
                           children: [
-                            Icon(
-                              Icons.error_outline,
-                              color: AppColors.secondaryRd,
-                              size: 48,
-                            ),
-                            const SizedBox(height: 16),
                             Text(
-                              '캘린더를 불러올 수 없습니다.',
-                              style: AppTypography.m500.copyWith(color: AppColors.gr600),
+                              '${_currentYear}년 ${_currentMonth}월',
+                              style: (isWeb ? AppTypography.h2 : AppTypography.h3).copyWith(color: AppColors.primarySky),
                             ),
-                            const SizedBox(height: 8),
-                            ElevatedButton(
-                              onPressed: _loadCalendar,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.primarySky,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(AppRadius.button),
-                                ),
-                              ),
-                              child: Text(
-                                '다시 시도',
-                                style: AppTypography.m500.copyWith(color: AppColors.wt),
-                              ),
+                            const SizedBox(width: 8),
+                            Icon(
+                              Icons.keyboard_arrow_down,
+                              color: AppColors.primarySky,
+                              size: isWeb ? 28 : 24,
                             ),
                           ],
                         ),
                       ),
+                    ),
+                    SizedBox(height: isWeb ? 24 : 20),
+                    
+                    // 누적 출석 일수 카드
+                    Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isWeb ? 24 : 20, 
+                        vertical: isWeb ? 20 : 16,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.wt,
+                        borderRadius: BorderRadius.circular(AppRadius.button),
+                        border: Border.all(
+                          color: AppColors.primarySky,
+                          width: 2,
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            '누적 출석 일수',
+                            style: (isWeb ? AppTypography.h3 : AppTypography.m500).copyWith(color: AppColors.primarySky),
+                          ),
+                          Text(
+                            '${attendanceState.calendarData?.attendanceCount ?? 0}일',
+                            style: (isWeb ? AppTypography.h1 : AppTypography.h2).copyWith(color: AppColors.primarySky),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              
+              // 캘린더 섹션
+              Expanded(
+                child: attendanceState.isLoading
+                    ? Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              width: isWeb ? 32 : 24,
+                              height: isWeb ? 32 : 24,
+                              child: CircularProgressIndicator(
+                                color: AppColors.primarySky,
+                              ),
+                            ),
+                            SizedBox(height: isWeb ? 20 : 16),
+                            Text(
+                              '캘린더를 불러오는 중...',
+                              style: (isWeb ? AppTypography.h3 : AppTypography.m500).copyWith(color: AppColors.gr600),
+                            ),
+                          ],
+                        ),
+                      )
+                    : attendanceState.calendarData != null
+                        ? _buildCalendar(attendanceState.calendarData!, isWeb)
+                        : Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.error_outline,
+                                  color: AppColors.secondaryRd,
+                                  size: isWeb ? 64 : 48,
+                                ),
+                                SizedBox(height: isWeb ? 20 : 16),
+                                Text(
+                                  '캘린더를 불러올 수 없습니다.',
+                                  style: (isWeb ? AppTypography.h3 : AppTypography.m500).copyWith(color: AppColors.gr600),
+                                ),
+                                SizedBox(height: isWeb ? 12 : 8),
+                                ElevatedButton(
+                                  onPressed: _loadCalendar,
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColors.primarySky,
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: isWeb ? 24 : 16,
+                                      vertical: isWeb ? 16 : 12,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(AppRadius.button),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    '다시 시도',
+                                    style: (isWeb ? AppTypography.h3 : AppTypography.m500).copyWith(color: AppColors.wt),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
 
-  Widget _buildCalendar(calendarData) {
+  Widget _buildCalendar(calendarData, bool isWeb) {
     final daysInMonth = calendarData.totalDays;
     final startDayOfWeek = calendarData.startDayOfWeek;
     final attendanceMap = calendarData.attendanceMap;
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: EdgeInsets.symmetric(horizontal: isWeb ? 24 : 20),
       child: Column(
         children: [
           // 요일 헤더
           Row(
             children: [
-              _buildDayHeader('Sun', isSunday: true),
-              _buildDayHeader('Mon'),
-              _buildDayHeader('Tue'),
-              _buildDayHeader('Wed'),
-              _buildDayHeader('Thu'),
-              _buildDayHeader('Fri'),
-              _buildDayHeader('Sat'),
+              _buildDayHeader('Sun', isSunday: true, isWeb: isWeb),
+              _buildDayHeader('Mon', isWeb: isWeb),
+              _buildDayHeader('Tue', isWeb: isWeb),
+              _buildDayHeader('Wed', isWeb: isWeb),
+              _buildDayHeader('Thu', isWeb: isWeb),
+              _buildDayHeader('Fri', isWeb: isWeb),
+              _buildDayHeader('Sat', isWeb: isWeb),
             ],
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: isWeb ? 20 : 16),
           
           // 캘린더 그리드
           Expanded(
             child: GridView.builder(
               physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 7,
                 childAspectRatio: 1,
-                crossAxisSpacing: 8,
-                mainAxisSpacing: 8,
+                crossAxisSpacing: isWeb ? 12 : 8,
+                mainAxisSpacing: isWeb ? 12 : 8,
               ),
               itemCount: 35, // 5주 * 7일
               itemBuilder: (context, index) {
@@ -213,7 +236,7 @@ class _AttendancePageState extends ConsumerState<AttendancePage> {
                     ? attendanceMap[dayNumber - 1] 
                     : false;
                 
-                return _buildDayCell(dayNumber.toInt(), isAttended);
+                return _buildDayCell(dayNumber.toInt(), isAttended, isWeb);
               },
             ),
           ),
@@ -222,19 +245,19 @@ class _AttendancePageState extends ConsumerState<AttendancePage> {
     );
   }
 
-  Widget _buildDayHeader(String day, {bool isSunday = false}) {
+  Widget _buildDayHeader(String day, {bool isSunday = false, required bool isWeb}) {
     return Expanded(
       child: Text(
         day,
         textAlign: TextAlign.center,
-        style: AppTypography.s500.copyWith(
+        style: (isWeb ? AppTypography.m500 : AppTypography.s500).copyWith(
           color: isSunday ? AppColors.secondaryRd : AppColors.secondaryBl,
         ),
       ),
     );
   }
 
-  Widget _buildDayCell(int dayNumber, bool isAttended) {
+  Widget _buildDayCell(int dayNumber, bool isAttended, bool isWeb) {
     final isToday = dayNumber == DateTime.now().day && _currentMonth == DateTime.now().month && _currentYear == DateTime.now().year;
     final isFutureDay = (_currentYear > DateTime.now().year) || 
                         (_currentYear == DateTime.now().year && _currentMonth > DateTime.now().month) ||
@@ -250,11 +273,11 @@ class _AttendancePageState extends ConsumerState<AttendancePage> {
       textColor = AppColors.gr600;
     } else if (isAttended) {
       backgroundColor = AppColors.primarySky;
-      icon = Icon(Icons.check, color: AppColors.wt, size: 16);
+      icon = Icon(Icons.check, color: AppColors.wt, size: isWeb ? 20 : 16);
       textColor = AppColors.wt;
     } else {
       backgroundColor = AppColors.gr400;
-      icon = Icon(Icons.close, color: AppColors.wt, size: 16);
+      icon = Icon(Icons.close, color: AppColors.wt, size: isWeb ? 20 : 16);
       textColor = AppColors.wt;
     }
 
@@ -262,17 +285,17 @@ class _AttendancePageState extends ConsumerState<AttendancePage> {
       decoration: BoxDecoration(
         color: backgroundColor,
         shape: BoxShape.circle,
-        border: isToday ? Border.all(color: AppColors.secondaryRd, width: 2) : null,
+        border: isToday ? Border.all(color: AppColors.secondaryRd, width: isWeb ? 3 : 2) : null,
       ),
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             icon,
-            const SizedBox(height: 2),
+            SizedBox(height: isWeb ? 4 : 2),
             Text(
               '$dayNumber',
-              style: AppTypography.s400.copyWith(color: textColor),
+              style: (isWeb ? AppTypography.m500 : AppTypography.s400).copyWith(color: textColor),
             ),
           ],
         ),
@@ -281,6 +304,9 @@ class _AttendancePageState extends ConsumerState<AttendancePage> {
   }
 
   void _showMonthYearPicker() {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isWeb = screenWidth > 600;
+    
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -289,7 +315,7 @@ class _AttendancePageState extends ConsumerState<AttendancePage> {
         ),
         title: Text(
           '년월 선택',
-          style: AppTypography.h3.copyWith(color: AppColors.secondaryBl),
+          style: (isWeb ? AppTypography.h2 : AppTypography.h3).copyWith(color: AppColors.secondaryBl),
           textAlign: TextAlign.center,
         ),
         content: Container(
@@ -299,7 +325,10 @@ class _AttendancePageState extends ConsumerState<AttendancePage> {
             children: [
               // 년도 선택
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding: EdgeInsets.symmetric(
+                  horizontal: isWeb ? 16 : 12, 
+                  vertical: isWeb ? 12 : 8,
+                ),
                 decoration: BoxDecoration(
                   color: AppColors.gr100,
                   borderRadius: BorderRadius.circular(AppRadius.button),
@@ -307,19 +336,19 @@ class _AttendancePageState extends ConsumerState<AttendancePage> {
                 ),
                 child: Row(
                   children: [
-                    Icon(Icons.calendar_today, color: AppColors.primarySky, size: 20),
-                    const SizedBox(width: 8),
+                    Icon(Icons.calendar_today, color: AppColors.primarySky, size: isWeb ? 24 : 20),
+                    SizedBox(width: isWeb ? 12 : 8),
                     Text(
                       '년도',
-                      style: AppTypography.m500.copyWith(color: AppColors.secondaryBl),
+                      style: (isWeb ? AppTypography.h3 : AppTypography.m500).copyWith(color: AppColors.secondaryBl),
                     ),
-                    const SizedBox(width: 12),
+                    SizedBox(width: isWeb ? 16 : 12),
                     Expanded(
                       child: DropdownButton<int>(
                         value: _currentYear,
                         isExpanded: true,
                         underline: const SizedBox(),
-                        style: AppTypography.m500.copyWith(color: AppColors.secondaryBl),
+                        style: (isWeb ? AppTypography.h3 : AppTypography.m500).copyWith(color: AppColors.secondaryBl),
                         items: List.generate(DateTime.now().year - 2025 + 1, (index) {
                           final year = 2025 + index;
                           return DropdownMenuItem(
@@ -339,10 +368,13 @@ class _AttendancePageState extends ConsumerState<AttendancePage> {
                   ],
                 ),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: isWeb ? 20 : 16),
               // 월 선택
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding: EdgeInsets.symmetric(
+                  horizontal: isWeb ? 16 : 12, 
+                  vertical: isWeb ? 12 : 8,
+                ),
                 decoration: BoxDecoration(
                   color: AppColors.gr100,
                   borderRadius: BorderRadius.circular(AppRadius.button),
@@ -350,19 +382,19 @@ class _AttendancePageState extends ConsumerState<AttendancePage> {
                 ),
                 child: Row(
                   children: [
-                    Icon(Icons.date_range, color: AppColors.primarySky, size: 20),
-                    const SizedBox(width: 8),
+                    Icon(Icons.date_range, color: AppColors.primarySky, size: isWeb ? 24 : 20),
+                    SizedBox(width: isWeb ? 12 : 8),
                     Text(
                       '월',
-                      style: AppTypography.m500.copyWith(color: AppColors.secondaryBl),
+                      style: (isWeb ? AppTypography.h3 : AppTypography.m500).copyWith(color: AppColors.secondaryBl),
                     ),
-                    const SizedBox(width: 12),
+                    SizedBox(width: isWeb ? 16 : 12),
                     Expanded(
                       child: DropdownButton<int>(
                         value: _currentMonth,
                         isExpanded: true,
                         underline: const SizedBox(),
-                        style: AppTypography.m500.copyWith(color: AppColors.secondaryBl),
+                        style: (isWeb ? AppTypography.h3 : AppTypography.m500).copyWith(color: AppColors.secondaryBl),
                         items: List.generate(DateTime.now().month, (index) {
                           final month = index + 1;
                           return DropdownMenuItem(
@@ -392,18 +424,18 @@ class _AttendancePageState extends ConsumerState<AttendancePage> {
                 child: TextButton(
                   onPressed: () => Navigator.pop(context),
                   style: TextButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    padding: EdgeInsets.symmetric(vertical: isWeb ? 16 : 12),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(AppRadius.button),
                     ),
                   ),
                   child: Text(
                     '취소',
-                    style: AppTypography.m500.copyWith(color: AppColors.gr600),
+                    style: (isWeb ? AppTypography.h3 : AppTypography.m500).copyWith(color: AppColors.gr600),
                   ),
                 ),
               ),
-              const SizedBox(width: 12),
+              SizedBox(width: isWeb ? 16 : 12),
               Expanded(
                 child: ElevatedButton(
                   onPressed: () {
@@ -412,14 +444,14 @@ class _AttendancePageState extends ConsumerState<AttendancePage> {
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primarySky,
-                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    padding: EdgeInsets.symmetric(vertical: isWeb ? 16 : 12),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(AppRadius.button),
                     ),
                   ),
                   child: Text(
                     '확인',
-                    style: AppTypography.m500.copyWith(color: AppColors.wt),
+                    style: (isWeb ? AppTypography.h3 : AppTypography.m500).copyWith(color: AppColors.wt),
                   ),
                 ),
               ),
