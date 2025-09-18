@@ -8,6 +8,7 @@ import 'package:seasonthon_team_25_fe/core/theme/colors.dart';
 import 'package:seasonthon_team_25_fe/core/theme/radius.dart';
 import 'package:seasonthon_team_25_fe/core/theme/shadows.dart';
 import 'package:seasonthon_team_25_fe/core/theme/typography.dart';
+import 'package:seasonthon_team_25_fe/feature/bank/saving/domain/usecases/make_savings_payment_usecase.dart';
 import 'package:seasonthon_team_25_fe/feature/bank/saving/presentation/provider/active_savings_controller.dart';
 import 'package:seasonthon_team_25_fe/feature/home/presentation/provider/coin_controller.dart';
 import 'package:seasonthon_team_25_fe/gen/assets.gen.dart';
@@ -30,6 +31,7 @@ class FinancialProductInProgressPage extends ConsumerStatefulWidget {
 class _FinancialProductInProgressPageState
     extends ConsumerState<FinancialProductInProgressPage> {
   int _currentIndex = 0;
+  bool _isPaymentLoading = false;
 
   void _goNext(int maxLength) {
     setState(() {
@@ -49,6 +51,74 @@ class _FinancialProductInProgressPageState
 
   String _formatCurrency(int amount) {
     return "${(amount / 10000).toStringAsFixed(0)}만원";
+  }
+
+  Future<void> _makePayment(int subscriptionId) async {
+    setState(() {
+      _isPaymentLoading = true;
+    });
+
+    try {
+      final paymentUseCase = ref.read(makeSavingsPaymentUseCaseProvider);
+      final result = await paymentUseCase(subscriptionId);
+      
+      // 납입 성공 시 적금 목록 새로고침
+      await ref.read(activeSavingsControllerProvider.notifier).load();
+      
+      if (mounted) {
+        _showSuccessDialog(result.message);
+      }
+    } catch (e) {
+      if (mounted) {
+        _showErrorDialog(e.toString());
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isPaymentLoading = false;
+        });
+      }
+    }
+  }
+
+  void _showSuccessDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("납입 완료"),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text("확인"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showErrorDialog(String error) {
+    String message = "납입에 실패했습니다.";
+    
+    if (error.contains("SAV010")) {
+      message = "오늘 납입 가능한 회차가 없습니다.";
+    } else if (error.contains("WALLET001")) {
+      message = "잔액이 부족합니다.";
+    }
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("납입 실패"),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text("확인"),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -350,10 +420,11 @@ class _FinancialProductInProgressPageState
                       Expanded(
                         flex: 3,
                         child: PrimaryFilledButton(
-                          label: "입금하기",
+                          label: _isPaymentLoading ? "입금 중..." : "입금하기",
                           onPressed: () {
-                            debugPrint("입금하기 버튼 클릭!");
-                            // 입금 로직
+                            if (!_isPaymentLoading) {
+                              _makePayment(currentSaving.subscriptionId);
+                            }
                           },
                         ),
                       ),

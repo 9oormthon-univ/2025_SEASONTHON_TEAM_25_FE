@@ -59,4 +59,9 @@ class SavingsProductApi {
         .map((json) => ActiveSavingsModel.fromJson(json))
         .toList();
   }
+
+  Future<SavingsPaymentResponse> makePayment(int subscriptionId) async {
+    final res = await _dio.post('/api/savings/subscriptions/$subscriptionId/payments');
+    return SavingsPaymentResponse.fromJson(res.data);
+  }
 }

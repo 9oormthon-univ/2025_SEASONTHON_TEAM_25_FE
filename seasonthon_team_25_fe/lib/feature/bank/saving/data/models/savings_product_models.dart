@@ -5,6 +5,7 @@ import 'package:seasonthon_team_25_fe/feature/bank/saving/domain/entities/saving
 import 'package:seasonthon_team_25_fe/feature/bank/saving/domain/entities/savings_maturity_preview_entity.dart';
 import 'package:seasonthon_team_25_fe/feature/bank/saving/domain/entities/savings_subscription_entity.dart';
 import 'package:seasonthon_team_25_fe/feature/bank/saving/domain/entities/active_savings_entity.dart';
+import 'package:seasonthon_team_25_fe/feature/bank/saving/domain/entities/savings_payment_entity.dart';
 
 part 'savings_product_models.freezed.dart';
 part 'savings_product_models.g.dart';
@@ -208,5 +209,25 @@ extension ActiveSavingsModelX on ActiveSavingsModel {
 extension ActiveSavingsListX on List<ActiveSavingsModel> {
   ActiveSavingsListEntity toEntity() => ActiveSavingsListEntity(
         activeSavings: map((model) => model.toEntity()).toList(),
+      );
+}
+
+@freezed
+abstract class SavingsPaymentResponse with _$SavingsPaymentResponse {
+  const factory SavingsPaymentResponse({
+    required String code,
+    required String message,
+    required String timestamp,
+  }) = _SavingsPaymentResponse;
+
+  factory SavingsPaymentResponse.fromJson(Map<String, dynamic> json) =>
+      _$SavingsPaymentResponseFromJson(json);
+}
+
+extension SavingsPaymentResponseX on SavingsPaymentResponse {
+  SavingsPaymentEntity toEntity() => SavingsPaymentEntity(
+        code: code,
+        message: message,
+        timestamp: timestamp,
       );
 }

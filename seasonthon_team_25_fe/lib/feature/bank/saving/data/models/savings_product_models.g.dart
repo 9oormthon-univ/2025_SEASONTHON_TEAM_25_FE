@@ -180,3 +180,19 @@ Map<String, dynamic> _$ActiveSavingsModelToJson(_ActiveSavingsModel instance) =>
       'maturityDate': instance.maturityDate,
       'remainingPayments': instance.remainingPayments,
     };
+
+_SavingsPaymentResponse _$SavingsPaymentResponseFromJson(
+  Map<String, dynamic> json,
+) => _SavingsPaymentResponse(
+  code: json['code'] as String,
+  message: json['message'] as String,
+  timestamp: json['timestamp'] as String,
+);
+
+Map<String, dynamic> _$SavingsPaymentResponseToJson(
+  _SavingsPaymentResponse instance,
+) => <String, dynamic>{
+  'code': instance.code,
+  'message': instance.message,
+  'timestamp': instance.timestamp,
+};
