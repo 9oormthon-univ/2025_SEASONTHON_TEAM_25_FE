@@ -38,7 +38,7 @@ class _NicknamePageState extends ConsumerState<NicknamePage> {
           if (res == null || !mounted) return;
           // 로컬 저장 성공 여부
           if (next.savedLocally) {
-            context.go('/home');
+            context.go('/welcome');
           } else {
             ToastUtils.showErrorToast(context, '닉네임 로컬 저장에 실패했어요. 다시 시도해 주세요.');
           }
