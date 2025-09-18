@@ -1,0 +1,72 @@
+# === Dart / Flutter ===
+.metadata
+.dart_tool/
+.packages
+.pub-cache/
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+.melos_tool/
+.flutter-versions
+.fvm/
+
+# IDE
+.idea/
+.vscode/
+
+# Logs/Coverage
+*.log
+*.lock.hard
+coverage/
+.dart_tool/**/flutter_build/**
+
+# === Android ===
+.android/
+android/.gradle/
+android/captures/
+android/local.properties
+android/**/build/
+android/app/**/outputs/
+android/**/GeneratedPluginRegistrant.java  # Android는 생성물, 무시
+
+# Keystore & signing
+key.properties
+**/*.keystore
+**/*.jks
+
+# === iOS ===
+ios/.symlinks/
+ios/Flutter/Generated.xcconfig
+ios/Flutter/flutter_export_environment.sh
+ios/Pods/
+# iOS GeneratedPluginRegistrant는 보통 커밋 (무시하지 않음)
+
+# === macOS ===
+macos/Flutter/ephemeral/
+macos/Pods/
+# macOS GeneratedPluginRegistrant.swift도 보통 커밋
+
+# Xcode user data
+**/*.xcuserdata/
+**/*.xcuserstate
+DerivedData/
+
+# === Windows / Linux / Web ===
+windows/flutter/ephemeral/
+linux/flutter/ephemeral/
+web/.dart_tool/
+
+# === Firebase (secrets) ===
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
+macos/Runner/GoogleService-Info.plist
+
+# === Env / secrets ===
+.env
+.env.*
+*.env
+
+# === Others ===
+.cxx/
+.DS_Store
+Thumbs.db
