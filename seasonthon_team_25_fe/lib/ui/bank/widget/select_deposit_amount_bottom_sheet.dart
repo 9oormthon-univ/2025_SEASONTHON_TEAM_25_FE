@@ -5,10 +5,42 @@ import 'package:seasonthon_team_25_fe/core/theme/shadows.dart';
 import 'package:seasonthon_team_25_fe/core/theme/typography.dart';
 import 'package:seasonthon_team_25_fe/ui/components/buttons/primary_filled_button.dart';
 
-class SelectDepositAmountBottomSheet extends StatelessWidget {
-  final double maxAmount;
+class SelectDepositAmountBottomSheet extends StatefulWidget {
+  final int? maxAmount;
+  final int initialAmount;
+  final Function(int) onAmountSelected;
 
-  const SelectDepositAmountBottomSheet({super.key, required this.maxAmount});
+  const SelectDepositAmountBottomSheet({
+    super.key, 
+    required this.maxAmount,
+    required this.initialAmount,
+    required this.onAmountSelected,
+  });
+
+  @override
+  State<SelectDepositAmountBottomSheet> createState() => _SelectDepositAmountBottomSheetState();
+}
+
+class _SelectDepositAmountBottomSheetState extends State<SelectDepositAmountBottomSheet> {
+  late TextEditingController _controller;
+  late int selectedAmount;
+
+  @override
+  void initState() {
+    super.initState();
+    selectedAmount = widget.initialAmount;
+    _controller = TextEditingController(text: selectedAmount.toString());
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  String _formatCurrency(int amount) {
+    return "${(amount / 10000).toStringAsFixed(0)}만원";
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +78,9 @@ class SelectDepositAmountBottomSheet extends StatelessWidget {
           Text("입금 금액 선택", style: AppTypography.h3),
           const SizedBox(height: 7),
           Text(
-            "최소 예치 금액은 $maxAmount원이에요",
+            widget.maxAmount != null 
+                ? "최대 예치 금액은 ${_formatCurrency(widget.maxAmount!)}이에요"
+                : "예치 금액 제한없음",
             style: AppTypography.m500.copyWith(color: AppColors.gr600),
           ),
           const SizedBox(height: 20),
@@ -63,13 +97,19 @@ class SelectDepositAmountBottomSheet extends StatelessWidget {
             constraints: BoxConstraints(minHeight: 48),
             decoration: BoxDecoration(
               color: AppColors.wt,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(AppRadius.bottomSheet),
-                topRight: Radius.circular(AppRadius.bottomSheet),
-              ),
+              borderRadius: BorderRadius.circular(AppRadius.bottomSheet),
               boxShadow: AppShadows.dsBS,
             ),
             child: TextFormField(
+              controller: _controller,
+              keyboardType: TextInputType.number,
+              textInputAction: TextInputAction.done,
+              onChanged: (value) {
+                final amount = int.tryParse(value.replaceAll(',', ''));
+                if (amount != null && (widget.maxAmount == null || amount <= widget.maxAmount!)) {
+                  selectedAmount = amount;
+                }
+              },
               decoration: InputDecoration(
                 filled: true,
                 fillColor: AppColors.sk_25,
@@ -82,20 +122,70 @@ class SelectDepositAmountBottomSheet extends StatelessWidget {
                   borderSide: BorderSide.none,
                 ),
                 contentPadding: EdgeInsets.symmetric(
-                  horizontal: 5,
-                  vertical: 5,
+                  horizontal: 16,
+                  vertical: 16,
                 ),
+                hintText: "금액을 입력하세요",
+                suffixText: "원",
               ),
             ),
           ),
-          const SizedBox(height: 40),
+          const SizedBox(height: 20),
+          // 빠른 선택 옵션들
+          Row(
+            children: [
+              Expanded(
+                child: _buildQuickSelectButton("10만원", 100000),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: _buildQuickSelectButton("50만원", 500000),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: _buildQuickSelectButton("100만원", 1000000),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
           PrimaryFilledButton(
             label: "적용하기",
             onPressed: () {
+              widget.onAmountSelected(selectedAmount);
               Navigator.pop(context);
             },
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildQuickSelectButton(String label, int amount) {
+    final isSelected = selectedAmount == amount;
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          selectedAmount = amount;
+          _controller.text = amount.toString();
+        });
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        decoration: BoxDecoration(
+          color: isSelected ? AppColors.primarySky : AppColors.gr100,
+          borderRadius: BorderRadius.circular(AppRadius.button),
+          border: Border.all(
+            color: isSelected ? AppColors.primarySky : AppColors.gr200,
+            width: 1,
+          ),
+        ),
+        child: Text(
+          label,
+          style: AppTypography.m600.copyWith(
+            color: isSelected ? AppColors.wt : AppColors.gr800,
+          ),
+          textAlign: TextAlign.center,
+        ),
       ),
     );
   }

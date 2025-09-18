@@ -100,7 +100,7 @@ class QuestController extends StateNotifier<QuestState> {
       state = state.copyWith(claimingQuestIds: finalClaimingIds);
 
       return response;
-    } catch (e, st) {
+    } catch (e) {
       final finalClaimingIds = Set<int>.from(state.claimingQuestIds);
       finalClaimingIds.remove(userQuestId);
 
