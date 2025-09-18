@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:seasonthon_team_25_fe/core/theme/colors.dart';
+import 'package:seasonthon_team_25_fe/core/theme/radius.dart';
 import 'package:seasonthon_team_25_fe/core/theme/typography.dart';
 import 'package:seasonthon_team_25_fe/feature/achievement/presentation/provider/achievement_controller.dart';
 import 'package:seasonthon_team_25_fe/feature/home/presentation/provider/coin_controller.dart';
@@ -44,7 +45,7 @@ class _AchievementPageState extends ConsumerState<AchievementPage> {
           behavior: SnackBarBehavior.floating,
         ),
       );
-      
+
       // 코인 잔액 새로고침
       ref.read(coinProvider.notifier).loadBalance();
     }
@@ -68,45 +69,44 @@ class _AchievementPageState extends ConsumerState<AchievementPage> {
       ),
       body: Column(
         children: [
-          // 코인 잔액 표시
+          // 달성한 업적 개수 표시 (출석체크 스타일)
           Padding(
             padding: const EdgeInsets.all(20),
-            child: Row(
-              children: [
-                coinState.when(
-                  loading: () => CoinBalanceChip(
-                    balance: 0,
-                    backgroundColor: AppColors.sk_25,
-                    textColor: AppColors.primarySky,
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              decoration: BoxDecoration(
+                color: AppColors.wt,
+                borderRadius: BorderRadius.circular(AppRadius.chips),
+                border: Border.all(color: AppColors.primarySky, width: 2),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.primarySky.withOpacity(0.1),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
                   ),
-                  error: (_, __) => CoinBalanceChip(
-                    balance: 0,
-                    backgroundColor: AppColors.sk_25,
-                    textColor: AppColors.primarySky,
+                ],
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    '달성한 업적',
+                    style: AppTypography.h3.copyWith(
+                      color: AppColors.primarySky,
+                    ),
                   ),
-                  data: (balance) => CoinBalanceChip(
-                    balance: balance,
-                    backgroundColor: AppColors.sk_25,
-                    textColor: AppColors.primarySky,
+                  Text(
+                    '${achievements.where((a) => a.claimed).length}개',
+                    style: AppTypography.h2.copyWith(
+                      color: AppColors.primarySky,
+                    ),
                   ),
-                ),
-                const Spacer(),
-                // 달성한 업적 개수 표시
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: AppColors.primarySky,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                child: Text(
-                  '달성한 업적 ${achievements.where((a) => a.claimed).length}개',
-                  style: AppTypography.m500.copyWith(color: AppColors.wt),
-                ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
-          
+
           // 업적 목록
           Expanded(
             child: _buildAchievementList(isLoading, error, achievements),
@@ -125,10 +125,6 @@ class _AchievementPageState extends ConsumerState<AchievementPage> {
       return const Center(child: CircularProgressIndicator());
     }
 
-    if (achievements.isEmpty) {
-      return _buildEmptyState();
-    }
-
     return RefreshIndicator(
       onRefresh: () async {
         await ref.read(achievementControllerProvider.notifier).loadAchievements();
@@ -139,17 +135,53 @@ class _AchievementPageState extends ConsumerState<AchievementPage> {
           crossAxisCount: 3,
           crossAxisSpacing: 16,
           mainAxisSpacing: 16,
-          childAspectRatio: 0.8,
+          childAspectRatio: 0.65,
         ),
-        itemCount: achievements.length,
+        itemCount: 9, // 고정된 9개 업적
         itemBuilder: (context, index) {
-          final achievement = achievements[index];
+          final achievementType = _getAchievementTypeByIndex(index);
+          final userAchievement = achievements.firstWhere(
+            (a) => a.type == achievementType.value,
+            orElse: () => _createDefaultAchievement(achievementType),
+          );
+          
+          // API에서 받아온 업적인지 확인
+          final isFromApi = achievements.any((a) => a.type == achievementType.value);
+          
           return AchievementCard(
-            achievement: achievement,
-            onTap: () => _handleAchievementTap(achievement),
+            achievement: userAchievement,
+            onTap: isFromApi ? () => _handleAchievementTap(userAchievement) : null,
+            isFromApi: isFromApi,
           );
         },
       ),
+    );
+  }
+
+  AchievementType _getAchievementTypeByIndex(int index) {
+    const types = [
+      AchievementType.beginnersLuck,    // 초심자의 행운
+      AchievementType.moneyMaker,       // 머니 메이커
+      AchievementType.newsAddict,       // 속보 중독
+      AchievementType.quizCurator,      // 퀴즈 큐레이터
+      AchievementType.maturityExpert,   // 만기의 달인
+      AchievementType.royalFinancer,    // 로얄 파이낸서
+      AchievementType.antiFragile,      // 안티 프레자일
+      AchievementType.morningSunshine,  // 아침 햇살
+      AchievementType.newsCollector,     // 소식좌
+    ];
+    return types[index];
+  }
+
+  AchievementItem _createDefaultAchievement(AchievementType type) {
+    return AchievementItem(
+      achievementId: 0,
+      type: type.value,
+      title: type.title,
+      description: type.description,
+      iconUrl: '',
+      requirementCount: 0,
+      claimed: false,
     );
   }
 
