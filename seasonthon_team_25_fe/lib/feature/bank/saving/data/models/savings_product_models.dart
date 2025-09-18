@@ -4,6 +4,7 @@ import 'package:seasonthon_team_25_fe/feature/bank/saving/domain/entities/saving
 import 'package:seasonthon_team_25_fe/feature/bank/saving/domain/entities/savings_product_detail_entity.dart';
 import 'package:seasonthon_team_25_fe/feature/bank/saving/domain/entities/savings_maturity_preview_entity.dart';
 import 'package:seasonthon_team_25_fe/feature/bank/saving/domain/entities/savings_subscription_entity.dart';
+import 'package:seasonthon_team_25_fe/feature/bank/saving/domain/entities/active_savings_entity.dart';
 
 part 'savings_product_models.freezed.dart';
 part 'savings_product_models.g.dart';
@@ -173,5 +174,39 @@ extension SavingsSubscriptionResponseX on SavingsSubscriptionResponse {
         startDate: startDate,
         maturityDate: maturityDate,
         message: message,
+      );
+}
+
+@freezed
+abstract class ActiveSavingsModel with _$ActiveSavingsModel {
+  const factory ActiveSavingsModel({
+    required int subscriptionId,
+    required String productName,
+    required int currentAmount,
+    required int progressPercentage,
+    required String joinDate,
+    required String maturityDate,
+    required int remainingPayments,
+  }) = _ActiveSavingsModel;
+
+  factory ActiveSavingsModel.fromJson(Map<String, dynamic> json) =>
+      _$ActiveSavingsModelFromJson(json);
+}
+
+extension ActiveSavingsModelX on ActiveSavingsModel {
+  ActiveSavingsEntity toEntity() => ActiveSavingsEntity(
+        subscriptionId: subscriptionId,
+        productName: productName,
+        currentAmount: currentAmount,
+        progressPercentage: progressPercentage,
+        joinDate: joinDate,
+        maturityDate: maturityDate,
+        remainingPayments: remainingPayments,
+      );
+}
+
+extension ActiveSavingsListX on List<ActiveSavingsModel> {
+  ActiveSavingsListEntity toEntity() => ActiveSavingsListEntity(
+        activeSavings: map((model) => model.toEntity()).toList(),
       );
 }

@@ -2002,4 +2002,285 @@ as String,
 
 }
 
+
+/// @nodoc
+mixin _$ActiveSavingsModel {
+
+ int get subscriptionId; String get productName; int get currentAmount; int get progressPercentage; String get joinDate; String get maturityDate; int get remainingPayments;
+/// Create a copy of ActiveSavingsModel
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$ActiveSavingsModelCopyWith<ActiveSavingsModel> get copyWith => _$ActiveSavingsModelCopyWithImpl<ActiveSavingsModel>(this as ActiveSavingsModel, _$identity);
+
+  /// Serializes this ActiveSavingsModel to a JSON map.
+  Map<String, dynamic> toJson();
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ActiveSavingsModel&&(identical(other.subscriptionId, subscriptionId) || other.subscriptionId == subscriptionId)&&(identical(other.productName, productName) || other.productName == productName)&&(identical(other.currentAmount, currentAmount) || other.currentAmount == currentAmount)&&(identical(other.progressPercentage, progressPercentage) || other.progressPercentage == progressPercentage)&&(identical(other.joinDate, joinDate) || other.joinDate == joinDate)&&(identical(other.maturityDate, maturityDate) || other.maturityDate == maturityDate)&&(identical(other.remainingPayments, remainingPayments) || other.remainingPayments == remainingPayments));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,subscriptionId,productName,currentAmount,progressPercentage,joinDate,maturityDate,remainingPayments);
+
+@override
+String toString() {
+  return 'ActiveSavingsModel(subscriptionId: $subscriptionId, productName: $productName, currentAmount: $currentAmount, progressPercentage: $progressPercentage, joinDate: $joinDate, maturityDate: $maturityDate, remainingPayments: $remainingPayments)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $ActiveSavingsModelCopyWith<$Res>  {
+  factory $ActiveSavingsModelCopyWith(ActiveSavingsModel value, $Res Function(ActiveSavingsModel) _then) = _$ActiveSavingsModelCopyWithImpl;
+@useResult
+$Res call({
+ int subscriptionId, String productName, int currentAmount, int progressPercentage, String joinDate, String maturityDate, int remainingPayments
+});
+
+
+
+
+}
+/// @nodoc
+class _$ActiveSavingsModelCopyWithImpl<$Res>
+    implements $ActiveSavingsModelCopyWith<$Res> {
+  _$ActiveSavingsModelCopyWithImpl(this._self, this._then);
+
+  final ActiveSavingsModel _self;
+  final $Res Function(ActiveSavingsModel) _then;
+
+/// Create a copy of ActiveSavingsModel
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? subscriptionId = null,Object? productName = null,Object? currentAmount = null,Object? progressPercentage = null,Object? joinDate = null,Object? maturityDate = null,Object? remainingPayments = null,}) {
+  return _then(_self.copyWith(
+subscriptionId: null == subscriptionId ? _self.subscriptionId : subscriptionId // ignore: cast_nullable_to_non_nullable
+as int,productName: null == productName ? _self.productName : productName // ignore: cast_nullable_to_non_nullable
+as String,currentAmount: null == currentAmount ? _self.currentAmount : currentAmount // ignore: cast_nullable_to_non_nullable
+as int,progressPercentage: null == progressPercentage ? _self.progressPercentage : progressPercentage // ignore: cast_nullable_to_non_nullable
+as int,joinDate: null == joinDate ? _self.joinDate : joinDate // ignore: cast_nullable_to_non_nullable
+as String,maturityDate: null == maturityDate ? _self.maturityDate : maturityDate // ignore: cast_nullable_to_non_nullable
+as String,remainingPayments: null == remainingPayments ? _self.remainingPayments : remainingPayments // ignore: cast_nullable_to_non_nullable
+as int,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [ActiveSavingsModel].
+extension ActiveSavingsModelPatterns on ActiveSavingsModel {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _ActiveSavingsModel value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _ActiveSavingsModel() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _ActiveSavingsModel value)  $default,){
+final _that = this;
+switch (_that) {
+case _ActiveSavingsModel():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _ActiveSavingsModel value)?  $default,){
+final _that = this;
+switch (_that) {
+case _ActiveSavingsModel() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int subscriptionId,  String productName,  int currentAmount,  int progressPercentage,  String joinDate,  String maturityDate,  int remainingPayments)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _ActiveSavingsModel() when $default != null:
+return $default(_that.subscriptionId,_that.productName,_that.currentAmount,_that.progressPercentage,_that.joinDate,_that.maturityDate,_that.remainingPayments);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int subscriptionId,  String productName,  int currentAmount,  int progressPercentage,  String joinDate,  String maturityDate,  int remainingPayments)  $default,) {final _that = this;
+switch (_that) {
+case _ActiveSavingsModel():
+return $default(_that.subscriptionId,_that.productName,_that.currentAmount,_that.progressPercentage,_that.joinDate,_that.maturityDate,_that.remainingPayments);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int subscriptionId,  String productName,  int currentAmount,  int progressPercentage,  String joinDate,  String maturityDate,  int remainingPayments)?  $default,) {final _that = this;
+switch (_that) {
+case _ActiveSavingsModel() when $default != null:
+return $default(_that.subscriptionId,_that.productName,_that.currentAmount,_that.progressPercentage,_that.joinDate,_that.maturityDate,_that.remainingPayments);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+@JsonSerializable()
+
+class _ActiveSavingsModel implements ActiveSavingsModel {
+  const _ActiveSavingsModel({required this.subscriptionId, required this.productName, required this.currentAmount, required this.progressPercentage, required this.joinDate, required this.maturityDate, required this.remainingPayments});
+  factory _ActiveSavingsModel.fromJson(Map<String, dynamic> json) => _$ActiveSavingsModelFromJson(json);
+
+@override final  int subscriptionId;
+@override final  String productName;
+@override final  int currentAmount;
+@override final  int progressPercentage;
+@override final  String joinDate;
+@override final  String maturityDate;
+@override final  int remainingPayments;
+
+/// Create a copy of ActiveSavingsModel
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$ActiveSavingsModelCopyWith<_ActiveSavingsModel> get copyWith => __$ActiveSavingsModelCopyWithImpl<_ActiveSavingsModel>(this, _$identity);
+
+@override
+Map<String, dynamic> toJson() {
+  return _$ActiveSavingsModelToJson(this, );
+}
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ActiveSavingsModel&&(identical(other.subscriptionId, subscriptionId) || other.subscriptionId == subscriptionId)&&(identical(other.productName, productName) || other.productName == productName)&&(identical(other.currentAmount, currentAmount) || other.currentAmount == currentAmount)&&(identical(other.progressPercentage, progressPercentage) || other.progressPercentage == progressPercentage)&&(identical(other.joinDate, joinDate) || other.joinDate == joinDate)&&(identical(other.maturityDate, maturityDate) || other.maturityDate == maturityDate)&&(identical(other.remainingPayments, remainingPayments) || other.remainingPayments == remainingPayments));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,subscriptionId,productName,currentAmount,progressPercentage,joinDate,maturityDate,remainingPayments);
+
+@override
+String toString() {
+  return 'ActiveSavingsModel(subscriptionId: $subscriptionId, productName: $productName, currentAmount: $currentAmount, progressPercentage: $progressPercentage, joinDate: $joinDate, maturityDate: $maturityDate, remainingPayments: $remainingPayments)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$ActiveSavingsModelCopyWith<$Res> implements $ActiveSavingsModelCopyWith<$Res> {
+  factory _$ActiveSavingsModelCopyWith(_ActiveSavingsModel value, $Res Function(_ActiveSavingsModel) _then) = __$ActiveSavingsModelCopyWithImpl;
+@override @useResult
+$Res call({
+ int subscriptionId, String productName, int currentAmount, int progressPercentage, String joinDate, String maturityDate, int remainingPayments
+});
+
+
+
+
+}
+/// @nodoc
+class __$ActiveSavingsModelCopyWithImpl<$Res>
+    implements _$ActiveSavingsModelCopyWith<$Res> {
+  __$ActiveSavingsModelCopyWithImpl(this._self, this._then);
+
+  final _ActiveSavingsModel _self;
+  final $Res Function(_ActiveSavingsModel) _then;
+
+/// Create a copy of ActiveSavingsModel
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? subscriptionId = null,Object? productName = null,Object? currentAmount = null,Object? progressPercentage = null,Object? joinDate = null,Object? maturityDate = null,Object? remainingPayments = null,}) {
+  return _then(_ActiveSavingsModel(
+subscriptionId: null == subscriptionId ? _self.subscriptionId : subscriptionId // ignore: cast_nullable_to_non_nullable
+as int,productName: null == productName ? _self.productName : productName // ignore: cast_nullable_to_non_nullable
+as String,currentAmount: null == currentAmount ? _self.currentAmount : currentAmount // ignore: cast_nullable_to_non_nullable
+as int,progressPercentage: null == progressPercentage ? _self.progressPercentage : progressPercentage // ignore: cast_nullable_to_non_nullable
+as int,joinDate: null == joinDate ? _self.joinDate : joinDate // ignore: cast_nullable_to_non_nullable
+as String,maturityDate: null == maturityDate ? _self.maturityDate : maturityDate // ignore: cast_nullable_to_non_nullable
+as String,remainingPayments: null == remainingPayments ? _self.remainingPayments : remainingPayments // ignore: cast_nullable_to_non_nullable
+as int,
+  ));
+}
+
+
+}
+
 // dart format on

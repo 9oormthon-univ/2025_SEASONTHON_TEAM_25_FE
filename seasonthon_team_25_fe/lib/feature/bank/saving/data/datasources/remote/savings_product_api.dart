@@ -52,4 +52,11 @@ class SavingsProductApi {
     );
     return SavingsSubscriptionResponse.fromJson(res.data);
   }
+
+  Future<List<ActiveSavingsModel>> getActiveSavings() async {
+    final res = await _dio.get('/api/savings/subscriptions/active');
+    return (res.data as List)
+        .map((json) => ActiveSavingsModel.fromJson(json))
+        .toList();
+  }
 }

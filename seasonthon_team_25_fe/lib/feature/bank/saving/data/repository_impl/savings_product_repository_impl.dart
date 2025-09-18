@@ -6,6 +6,7 @@ import 'package:seasonthon_team_25_fe/feature/bank/saving/domain/entities/saving
 import 'package:seasonthon_team_25_fe/feature/bank/saving/domain/entities/savings_product_detail_entity.dart';
 import 'package:seasonthon_team_25_fe/feature/bank/saving/domain/entities/savings_maturity_preview_entity.dart';
 import 'package:seasonthon_team_25_fe/feature/bank/saving/domain/entities/savings_subscription_entity.dart';
+import 'package:seasonthon_team_25_fe/feature/bank/saving/domain/entities/active_savings_entity.dart';
 import 'package:seasonthon_team_25_fe/feature/bank/saving/domain/repository/savings_product_repository.dart';
 
 class SavingsProductRepositoryImpl implements SavingsProductRepository {
@@ -51,6 +52,12 @@ class SavingsProductRepositoryImpl implements SavingsProductRepository {
     SavingsSubscriptionRequestEntity request,
   ) async {
     final res = await _api.subscribeSavings(request.toModel());
+    return res.toEntity();
+  }
+
+  @override
+  Future<ActiveSavingsListEntity> getActiveSavings() async {
+    final res = await _api.getActiveSavings();
     return res.toEntity();
   }
 }

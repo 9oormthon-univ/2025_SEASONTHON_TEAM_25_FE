@@ -158,3 +158,25 @@ Map<String, dynamic> _$SavingsSubscriptionResponseToJson(
   'maturityDate': instance.maturityDate,
   'message': instance.message,
 };
+
+_ActiveSavingsModel _$ActiveSavingsModelFromJson(Map<String, dynamic> json) =>
+    _ActiveSavingsModel(
+      subscriptionId: (json['subscriptionId'] as num).toInt(),
+      productName: json['productName'] as String,
+      currentAmount: (json['currentAmount'] as num).toInt(),
+      progressPercentage: (json['progressPercentage'] as num).toInt(),
+      joinDate: json['joinDate'] as String,
+      maturityDate: json['maturityDate'] as String,
+      remainingPayments: (json['remainingPayments'] as num).toInt(),
+    );
+
+Map<String, dynamic> _$ActiveSavingsModelToJson(_ActiveSavingsModel instance) =>
+    <String, dynamic>{
+      'subscriptionId': instance.subscriptionId,
+      'productName': instance.productName,
+      'currentAmount': instance.currentAmount,
+      'progressPercentage': instance.progressPercentage,
+      'joinDate': instance.joinDate,
+      'maturityDate': instance.maturityDate,
+      'remainingPayments': instance.remainingPayments,
+    };
