@@ -3,14 +3,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:seasonthon_team_25_fe/core/theme/colors.dart';
 import 'package:seasonthon_team_25_fe/core/theme/radius.dart';
 import 'package:seasonthon_team_25_fe/core/theme/shadows.dart';
 import 'package:seasonthon_team_25_fe/core/theme/typography.dart';
+import 'package:seasonthon_team_25_fe/feature/bank/saving/domain/entities/savings_subscription_entity.dart';
+import 'package:seasonthon_team_25_fe/feature/bank/saving/domain/usecases/subscribe_savings_usecase.dart';
+import 'package:seasonthon_team_25_fe/feature/bank/saving/presentation/provider/savings_product_detail_controller.dart';
 import 'package:seasonthon_team_25_fe/feature/home/presentation/provider/coin_controller.dart';
 import 'package:seasonthon_team_25_fe/gen/assets.gen.dart';
 import 'package:seasonthon_team_25_fe/ui/components/app_bar/custom_app_bar.dart';
 import 'package:seasonthon_team_25_fe/ui/components/buttons/primary_filled_button.dart';
+import 'package:seasonthon_team_25_fe/ui/components/buttons/secondary_filled_button.dart';
 import 'package:seasonthon_team_25_fe/ui/components/chip/coin_balance_chip.dart';
 
 class FinancialProductSignUpPage extends ConsumerStatefulWidget {
@@ -22,48 +27,39 @@ class FinancialProductSignUpPage extends ConsumerStatefulWidget {
       _FinancialProductSignUpPageState();
 }
 
-// class FinancialProductSignUpPage extends ConsumerStatefulWidget {
-//   final int productId;
-//   final int? termMonths;
-//   final int? maxLimit;
-//   final String? productName;
-
-//   const FinancialProductSignUpPage({
-//     super.key,
-//     required this.productId,
-//     this.termMonths,
-//     this.maxLimit,
-//     this.productName,
-//   });
-
-//   @override
-//   ConsumerState<FinancialProductSignUpPage> createState() =>
-//       _FinancialProductSignUpPageState();
-// }
 
 class _FinancialProductSignUpPageState
     extends ConsumerState<FinancialProductSignUpPage> {
-  //final String reward = "1,234원";
-  //int? balance;
-  //final String productName = "청년 희망 적금";
-  //final int count = 5;
-  //final String max = "100,000";
-
-  final _formKey = GlobalKey<FormState>();
-  final _textController = TextEditingController();
+  int _currentStep = 0;
+  String? _selectedPeriod;
+  int? _selectedPeriodMonths;
+  final _amountController = TextEditingController();
+  bool _isPeriodDropdownOpen = false;
+  bool _isLoading = false;
+  SavingsSubscriptionEntity? _subscriptionResult;
 
   @override
   void initState() {
     super.initState();
-    Future.microtask(() {
-      ref.read(coinProvider.notifier).loadBalance();
-    });
+    final productId = int.tryParse(widget.productId);
+    if (productId != null) {
+      Future.microtask(() {
+        ref.read(coinProvider.notifier).loadBalance();
+        ref.read(savingsProductDetailControllerProvider.notifier)
+            .loadProductDetail(productId);
+      });
+    }
   }
 
   @override
   void dispose() {
-    _textController.dispose();
+    _amountController.dispose();
     super.dispose();
+  }
+
+  String _formatCurrency(int amount) {
+    final formatter = NumberFormat('#,###');
+    return "${formatter.format(amount)}원";
   }
 
   @override
@@ -71,6 +67,8 @@ class _FinancialProductSignUpPageState
     final balance = ref.watch(
       coinProvider.select((state) => state.asData?.value ?? 0),
     );
+    final detailState = ref.watch(savingsProductDetailControllerProvider);
+    final productDetail = detailState.productDetail;
 
     return Scaffold(
       backgroundColor: AppColors.wt,
@@ -79,200 +77,303 @@ class _FinancialProductSignUpPageState
         showLeftBtn: true,
         showRightBtn: true,
         onTapLeftBtn: () {
-          context.pop();
+          if (_currentStep > 0) {
+            setState(() {
+              _currentStep--;
+            });
+          } else {
+            context.pop();
+          }
         },
         onTapRightBtn: () {
           context.go("/bank");
         },
       ),
-      body: Container(
-        alignment: Alignment.center,
-        padding: const EdgeInsets.fromLTRB(20, 23, 20, 35),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              Align(
-                alignment: Alignment.topLeft,
-                child: CoinBalanceChip(
-                  balance: balance,
-                  backgroundColor: AppColors.sk_25,
-                  textColor: AppColors.primarySky,
-                ),
-              ),
-              const SizedBox(height: 24),
-              Container(
-                padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: AppColors.wt,
-                  borderRadius: BorderRadius.circular(AppRadius.bottomSheet),
-                  boxShadow: AppShadows.dsDefault,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "적금 이름",
-                      style: AppTypography.h3.copyWith(
-                        color: AppColors.primarySky,
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () {},
-                      child: Row(
-                        children: [
-                          Text(
-                            "기간 선택",
-                            style: AppTypography.h3.copyWith(
-                              color: AppColors.primarySky,
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsetsGeometry.symmetric(
-                              horizontal: 11,
-                              vertical: 9.5,
-                            ),
-                            child: SvgPicture.asset(
-                              Assets.images.bank.primaryToggleBtn.path,
-                              height: 5,
-                              width: 10,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 36),
-              const Divider(color: AppColors.gr200, thickness: 1),
-              const SizedBox(height: 24),
-              Align(
-                alignment: Alignment.topLeft,
-                child: Text("회당 얼마를 입금할까요?", style: AppTypography.h2),
-              ),
-              const SizedBox(height: 4),
-              Align(
-                alignment: Alignment.topLeft,
-                child: Text(
-                  "해당 상품의 1회 최대 납입 금액은 N,NNNN,NNN원이에요",
-                  style: AppTypography.m400.copyWith(color: AppColors.gr600),
-                ),
-              ),
-              const SizedBox(height: 16),
-              Align(
-                alignment: Alignment.topLeft,
-                child: Text(
-                  "1회당",
-                  style: AppTypography.m600.copyWith(
-                    color: AppColors.secondaryBl,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 4),
-              Container(
-                width: double.infinity,
-                constraints: BoxConstraints(minHeight: 48),
-                child: TextFormField(
-                  controller: _textController,
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: AppColors.sk_25,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(
-                        AppRadius.bottomSheet,
-                      ),
-                      borderSide: BorderSide.none,
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(
-                        AppRadius.bottomSheet,
-                      ),
-                      borderSide: BorderSide.none,
-                    ),
-                    contentPadding: EdgeInsets.symmetric(
-                      horizontal: 5,
-                      vertical: 5,
-                    ),
-                    errorStyle: AppTypography.m500.copyWith(
-                      color: AppColors.secondaryRd,
-                    ),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return '금액을 입력해 주세요';
-                    }
-                    return null;
-                  },
-                ),
-              ),
-              const SizedBox(height: 24),
-              const Divider(color: AppColors.gr200, thickness: 1),
-              const SizedBox(height: 50),
-              const Spacer(),
-              PrimaryFilledButton(
-                label: "가입하기",
-                onPressed: () {
-                  context.go("/bank/complete");
-                },
-                customWidth: double.infinity,
-              ),
+      body: IndexedStack(
+        index: _currentStep,
+        children: [
+          _buildStep1(balance.toDouble(), productDetail),
+          _buildStep2(balance.toDouble(), productDetail),
+          _buildStep3(),
+        ],
+      ),
+    );
+  }
 
-              // 가입하기 버튼
-              // PrimaryActionButton(
-              //   isLoading: false,
-              //   label: "가입하기",
-              //   onPressed: () async {
-              //     if (!_formKey.currentState!.validate()) return;
-
-              //     final amount = int.tryParse(_textController.text) ?? 0;
-              //     if (amount <= 0) {
-              //       ScaffoldMessenger.of(context).showSnackBar(
-              //         const SnackBar(content: Text('1회 납입 금액을 올바르게 입력해 주세요')),
-              //       );
-              //       return;
-              //     }
-              //     if (widget.termMonths == null) {
-              //       ScaffoldMessenger.of(context).showSnackBar(
-              //         const SnackBar(content: Text('기간 선택 정보가 없습니다')),
-              //       );
-              //       return;
-              //     }
-
-              //     try {
-              //       final repo = ref.read(productRegisterRepositoryProvider);
-              //       // TODO: reserveType은 실제 UI 선택값과 매핑하세요. 임시로 정액식 "S"
-              //       final result = await repo.registerSaving(
-              //         productSnapshotId: widget.productId,
-              //         termMonths: widget.termMonths!, // 상세 옵션과 동일해야 함
-              //         reserveType: "", // 또는 "F"/"FREE"/"FIXED"
-              //         autoDebitAmount: amount,
-              //       );
-
-              //       if (!mounted) return;
-
-              //       context.go(
-              //         "/bank/sign-up-complete",
-              //         extra: SignUpCompleteArgs(
-              //           maturityDate: result.maturityDate,
-              //           autoDebitAmount: amount,
-              //           termMonths: widget.termMonths!,
-              //         ),
-              //       );
-              //     } catch (e) {
-              //       debugPrint("가입 실패: $e");
-              //       if (mounted) {
-              //         ScaffoldMessenger.of(
-              //           context,
-              //         ).showSnackBar(SnackBar(content: Text("가입에 실패했습니다: $e")));
-              //       }
-              //     }
-              //   },
-              // ),
-            ],
+  Widget _buildStep1(double balance, productDetail) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 23, 20, 35),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CoinBalanceChip(
+            balance: balance,
+            backgroundColor: AppColors.sk_25,
+            textColor: AppColors.primarySky,
           ),
-        ),
+          const SizedBox(height: 24),
+          
+          // 적금 이름과 기간 선택 카드
+          Container(
+            padding: const EdgeInsets.all(20),
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: AppColors.wt,
+              borderRadius: BorderRadius.circular(AppRadius.bottomSheet),
+              boxShadow: AppShadows.dsDefault,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  productDetail?.productName ?? "적금 이름",
+                  style: AppTypography.h3.copyWith(
+                    color: AppColors.primarySky,
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _isPeriodDropdownOpen = !_isPeriodDropdownOpen;
+                    });
+                  },
+                  child: Row(
+                    children: [
+                      Text(
+                        "기간 선택",
+                        style: AppTypography.h3.copyWith(
+                          color: AppColors.primarySky,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Transform.rotate(
+                        angle: _isPeriodDropdownOpen ? 3.14159 : 0,
+                        child: SvgPicture.asset(
+                          Assets.images.bank.primaryToggleBtn.path,
+                          height: 5,
+                          width: 10,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          
+          // 기간 선택 드롭다운
+          if (_isPeriodDropdownOpen && productDetail != null)
+            Container(
+              margin: const EdgeInsets.only(top: 8),
+              padding: const EdgeInsets.all(16),
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: AppColors.wt,
+                borderRadius: BorderRadius.circular(AppRadius.button),
+                boxShadow: AppShadows.dsDefault,
+              ),
+              child: Column(
+                children: productDetail.saveTrm.map<Widget>((period) {
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _selectedPeriod = "$period개월";
+                        _selectedPeriodMonths = period;
+                        _isPeriodDropdownOpen = false;
+                      });
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      width: double.infinity,
+                      child: Text(
+                        "$period개월",
+                        style: AppTypography.m600.copyWith(
+                          color: AppColors.gr800,
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+
+          const SizedBox(height: 36),
+          const Divider(color: AppColors.gr200, thickness: 1),
+          const SizedBox(height: 24),
+          
+          Text("회당 얼마를 입금할까요?", style: AppTypography.h2),
+          const SizedBox(height: 4),
+          Text(
+            productDetail?.maxLimit != null 
+                ? "해당 상품의 1회 최대 납입 금액은 ${_formatCurrency(productDetail.maxLimit)}이에요"
+                : "해당 상품의 1회 납입 금액 제한이 없어요",
+            style: AppTypography.m400.copyWith(color: AppColors.gr600),
+          ),
+          const SizedBox(height: 16),
+          
+          Text(
+            "1회당",
+            style: AppTypography.m600.copyWith(
+              color: AppColors.secondaryBl,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Container(
+            width: double.infinity,
+            constraints: const BoxConstraints(minHeight: 48),
+            child: TextFormField(
+              controller: _amountController,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: AppColors.sk_25,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(AppRadius.bottomSheet),
+                  borderSide: BorderSide.none,
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(AppRadius.bottomSheet),
+                  borderSide: BorderSide.none,
+                ),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 16,
+                ),
+                hintText: "금액을 입력하세요",
+                suffixText: "원",
+              ),
+            ),
+          ),
+          
+          const Spacer(),
+          PrimaryFilledButton(
+            label: _isLoading ? "가입 중..." : "가입하기",
+            onPressed: () {
+              if (_canProceedToNext() && !_isLoading) {
+                _subscribeSavings();
+              }
+            },
+            customWidth: double.infinity,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStep2(double balance, productDetail) {
+    // 이 단계는 드롭다운이 열린 상태를 보여주는 용도였으므로 
+    // 실제로는 step1에서 드롭다운 상태로 처리
+    return _buildStep1(balance, productDetail);
+  }
+
+  Widget _buildStep3() {
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        children: [
+          const Spacer(),
+          Assets.images.characters.faffLove.image(
+            width: 200,
+            height: 200,
+          ),
+          const SizedBox(height: 24),
+          Text(
+            "짝짝짝, 가입이 완료되었어요!",
+            style: AppTypography.h2.copyWith(
+              color: AppColors.gr800,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            _subscriptionResult != null 
+                ? "${_formatCurrency(int.parse(_amountController.text))}씩 $_selectedPeriodMonths회 차곡으로 넘어가며,\n마지막 예정일은 ${_subscriptionResult!.maturityDate}이에요"
+                : "가입 정보를 불러오는 중이에요",
+            style: AppTypography.m400.copyWith(
+              color: AppColors.gr600,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const Spacer(),
+          PrimaryFilledButton(
+            label: "알겠어요",
+            onPressed: () {
+              context.go("/bank");
+            },
+            customWidth: double.infinity,
+          ),
+          const SizedBox(height: 16),
+          SecondaryFilledButton(
+            label: "가입 내역 보러가기",
+            onPressed: () {
+              context.go("/bank");
+            },
+            customWidth: double.infinity,
+          ),
+        ],
+      ),
+    );
+  }
+
+  bool _canProceedToNext() {
+    return _selectedPeriod != null && _amountController.text.isNotEmpty;
+  }
+
+  Future<void> _subscribeSavings() async {
+    if (!_canProceedToNext()) return;
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final subscribeUseCase = ref.read(subscribeSavingsUseCaseProvider);
+      final request = SavingsSubscriptionRequestEntity(
+        productSnapshotId: widget.productId,
+        termMonths: _selectedPeriodMonths.toString(),
+        autoDebitAmount: _amountController.text,
+        reserveType: "", // API 명세에 따라 빈 문자열
+      );
+
+      final result = await subscribeUseCase(request);
+      
+      setState(() {
+        _subscriptionResult = result;
+        _currentStep = 2; // 가입 완료 화면으로 이동
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      
+      // 오류 처리
+      _showErrorDialog(e.toString());
+    }
+  }
+
+  void _showErrorDialog(String error) {
+    String message = "가입에 실패했습니다.";
+    
+    if (error.contains("SAV009")) {
+      message = "이미 가입한 적금에 또 가입할 수 없습니다.";
+    } else if (error.contains("SAV011")) {
+      message = "요청 금액이 최고 한도를 초과합니다.";
+    } else if (error.contains("VALIDATION001")) {
+      message = "입력값 검증에 실패했습니다.";
+    }
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("가입 실패"),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text("확인"),
+          ),
+        ],
       ),
     );
   }

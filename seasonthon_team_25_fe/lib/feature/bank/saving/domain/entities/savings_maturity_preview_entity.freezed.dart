@@ -310,7 +310,7 @@ $SavingsMaturityInfoEntityCopyWith<$Res> get preferentialRate {
 /// @nodoc
 mixin _$SavingsMaturityInfoEntity {
 
- int get principal; int get interest; int get tax; double get totalAmount; double get interestRate;
+ int get principal; int get interest; int get tax; int get totalAmount; double get interestRate;
 /// Create a copy of SavingsMaturityInfoEntity
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -341,7 +341,7 @@ abstract mixin class $SavingsMaturityInfoEntityCopyWith<$Res>  {
   factory $SavingsMaturityInfoEntityCopyWith(SavingsMaturityInfoEntity value, $Res Function(SavingsMaturityInfoEntity) _then) = _$SavingsMaturityInfoEntityCopyWithImpl;
 @useResult
 $Res call({
- int principal, int interest, int tax, double totalAmount, double interestRate
+ int principal, int interest, int tax, int totalAmount, double interestRate
 });
 
 
@@ -364,7 +364,7 @@ principal: null == principal ? _self.principal : principal // ignore: cast_nulla
 as int,interest: null == interest ? _self.interest : interest // ignore: cast_nullable_to_non_nullable
 as int,tax: null == tax ? _self.tax : tax // ignore: cast_nullable_to_non_nullable
 as int,totalAmount: null == totalAmount ? _self.totalAmount : totalAmount // ignore: cast_nullable_to_non_nullable
-as double,interestRate: null == interestRate ? _self.interestRate : interestRate // ignore: cast_nullable_to_non_nullable
+as int,interestRate: null == interestRate ? _self.interestRate : interestRate // ignore: cast_nullable_to_non_nullable
 as double,
   ));
 }
@@ -450,7 +450,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int principal,  int interest,  int tax,  double totalAmount,  double interestRate)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int principal,  int interest,  int tax,  int totalAmount,  double interestRate)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _SavingsMaturityInfoEntity() when $default != null:
 return $default(_that.principal,_that.interest,_that.tax,_that.totalAmount,_that.interestRate);case _:
@@ -471,7 +471,7 @@ return $default(_that.principal,_that.interest,_that.tax,_that.totalAmount,_that
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int principal,  int interest,  int tax,  double totalAmount,  double interestRate)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int principal,  int interest,  int tax,  int totalAmount,  double interestRate)  $default,) {final _that = this;
 switch (_that) {
 case _SavingsMaturityInfoEntity():
 return $default(_that.principal,_that.interest,_that.tax,_that.totalAmount,_that.interestRate);case _:
@@ -491,7 +491,7 @@ return $default(_that.principal,_that.interest,_that.tax,_that.totalAmount,_that
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int principal,  int interest,  int tax,  double totalAmount,  double interestRate)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int principal,  int interest,  int tax,  int totalAmount,  double interestRate)?  $default,) {final _that = this;
 switch (_that) {
 case _SavingsMaturityInfoEntity() when $default != null:
 return $default(_that.principal,_that.interest,_that.tax,_that.totalAmount,_that.interestRate);case _:
@@ -512,7 +512,7 @@ class _SavingsMaturityInfoEntity implements SavingsMaturityInfoEntity {
 @override final  int principal;
 @override final  int interest;
 @override final  int tax;
-@override final  double totalAmount;
+@override final  int totalAmount;
 @override final  double interestRate;
 
 /// Create a copy of SavingsMaturityInfoEntity
@@ -545,7 +545,7 @@ abstract mixin class _$SavingsMaturityInfoEntityCopyWith<$Res> implements $Savin
   factory _$SavingsMaturityInfoEntityCopyWith(_SavingsMaturityInfoEntity value, $Res Function(_SavingsMaturityInfoEntity) _then) = __$SavingsMaturityInfoEntityCopyWithImpl;
 @override @useResult
 $Res call({
- int principal, int interest, int tax, double totalAmount, double interestRate
+ int principal, int interest, int tax, int totalAmount, double interestRate
 });
 
 
@@ -568,7 +568,7 @@ principal: null == principal ? _self.principal : principal // ignore: cast_nulla
 as int,interest: null == interest ? _self.interest : interest // ignore: cast_nullable_to_non_nullable
 as int,tax: null == tax ? _self.tax : tax // ignore: cast_nullable_to_non_nullable
 as int,totalAmount: null == totalAmount ? _self.totalAmount : totalAmount // ignore: cast_nullable_to_non_nullable
-as double,interestRate: null == interestRate ? _self.interestRate : interestRate // ignore: cast_nullable_to_non_nullable
+as int,interestRate: null == interestRate ? _self.interestRate : interestRate // ignore: cast_nullable_to_non_nullable
 as double,
   ));
 }

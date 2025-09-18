@@ -1187,7 +1187,7 @@ $SavingsMaturityInfoModelCopyWith<$Res> get preferentialRate {
 /// @nodoc
 mixin _$SavingsMaturityInfoModel {
 
- int get principal; int get interest; int get tax; double get totalAmount; double get interestRate;
+ int get principal; int get interest; int get tax; int get totalAmount; double get interestRate;
 /// Create a copy of SavingsMaturityInfoModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -1220,7 +1220,7 @@ abstract mixin class $SavingsMaturityInfoModelCopyWith<$Res>  {
   factory $SavingsMaturityInfoModelCopyWith(SavingsMaturityInfoModel value, $Res Function(SavingsMaturityInfoModel) _then) = _$SavingsMaturityInfoModelCopyWithImpl;
 @useResult
 $Res call({
- int principal, int interest, int tax, double totalAmount, double interestRate
+ int principal, int interest, int tax, int totalAmount, double interestRate
 });
 
 
@@ -1243,7 +1243,7 @@ principal: null == principal ? _self.principal : principal // ignore: cast_nulla
 as int,interest: null == interest ? _self.interest : interest // ignore: cast_nullable_to_non_nullable
 as int,tax: null == tax ? _self.tax : tax // ignore: cast_nullable_to_non_nullable
 as int,totalAmount: null == totalAmount ? _self.totalAmount : totalAmount // ignore: cast_nullable_to_non_nullable
-as double,interestRate: null == interestRate ? _self.interestRate : interestRate // ignore: cast_nullable_to_non_nullable
+as int,interestRate: null == interestRate ? _self.interestRate : interestRate // ignore: cast_nullable_to_non_nullable
 as double,
   ));
 }
@@ -1329,7 +1329,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int principal,  int interest,  int tax,  double totalAmount,  double interestRate)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int principal,  int interest,  int tax,  int totalAmount,  double interestRate)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _SavingsMaturityInfoModel() when $default != null:
 return $default(_that.principal,_that.interest,_that.tax,_that.totalAmount,_that.interestRate);case _:
@@ -1350,7 +1350,7 @@ return $default(_that.principal,_that.interest,_that.tax,_that.totalAmount,_that
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int principal,  int interest,  int tax,  double totalAmount,  double interestRate)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int principal,  int interest,  int tax,  int totalAmount,  double interestRate)  $default,) {final _that = this;
 switch (_that) {
 case _SavingsMaturityInfoModel():
 return $default(_that.principal,_that.interest,_that.tax,_that.totalAmount,_that.interestRate);case _:
@@ -1370,7 +1370,7 @@ return $default(_that.principal,_that.interest,_that.tax,_that.totalAmount,_that
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int principal,  int interest,  int tax,  double totalAmount,  double interestRate)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int principal,  int interest,  int tax,  int totalAmount,  double interestRate)?  $default,) {final _that = this;
 switch (_that) {
 case _SavingsMaturityInfoModel() when $default != null:
 return $default(_that.principal,_that.interest,_that.tax,_that.totalAmount,_that.interestRate);case _:
@@ -1391,7 +1391,7 @@ class _SavingsMaturityInfoModel implements SavingsMaturityInfoModel {
 @override final  int principal;
 @override final  int interest;
 @override final  int tax;
-@override final  double totalAmount;
+@override final  int totalAmount;
 @override final  double interestRate;
 
 /// Create a copy of SavingsMaturityInfoModel
@@ -1427,7 +1427,7 @@ abstract mixin class _$SavingsMaturityInfoModelCopyWith<$Res> implements $Saving
   factory _$SavingsMaturityInfoModelCopyWith(_SavingsMaturityInfoModel value, $Res Function(_SavingsMaturityInfoModel) _then) = __$SavingsMaturityInfoModelCopyWithImpl;
 @override @useResult
 $Res call({
- int principal, int interest, int tax, double totalAmount, double interestRate
+ int principal, int interest, int tax, int totalAmount, double interestRate
 });
 
 
@@ -1450,8 +1450,552 @@ principal: null == principal ? _self.principal : principal // ignore: cast_nulla
 as int,interest: null == interest ? _self.interest : interest // ignore: cast_nullable_to_non_nullable
 as int,tax: null == tax ? _self.tax : tax // ignore: cast_nullable_to_non_nullable
 as int,totalAmount: null == totalAmount ? _self.totalAmount : totalAmount // ignore: cast_nullable_to_non_nullable
-as double,interestRate: null == interestRate ? _self.interestRate : interestRate // ignore: cast_nullable_to_non_nullable
+as int,interestRate: null == interestRate ? _self.interestRate : interestRate // ignore: cast_nullable_to_non_nullable
 as double,
+  ));
+}
+
+
+}
+
+
+/// @nodoc
+mixin _$SavingsSubscriptionRequest {
+
+ String get productSnapshotId; String get termMonths; String get autoDebitAmount; String get reserveType;
+/// Create a copy of SavingsSubscriptionRequest
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$SavingsSubscriptionRequestCopyWith<SavingsSubscriptionRequest> get copyWith => _$SavingsSubscriptionRequestCopyWithImpl<SavingsSubscriptionRequest>(this as SavingsSubscriptionRequest, _$identity);
+
+  /// Serializes this SavingsSubscriptionRequest to a JSON map.
+  Map<String, dynamic> toJson();
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SavingsSubscriptionRequest&&(identical(other.productSnapshotId, productSnapshotId) || other.productSnapshotId == productSnapshotId)&&(identical(other.termMonths, termMonths) || other.termMonths == termMonths)&&(identical(other.autoDebitAmount, autoDebitAmount) || other.autoDebitAmount == autoDebitAmount)&&(identical(other.reserveType, reserveType) || other.reserveType == reserveType));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,productSnapshotId,termMonths,autoDebitAmount,reserveType);
+
+@override
+String toString() {
+  return 'SavingsSubscriptionRequest(productSnapshotId: $productSnapshotId, termMonths: $termMonths, autoDebitAmount: $autoDebitAmount, reserveType: $reserveType)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $SavingsSubscriptionRequestCopyWith<$Res>  {
+  factory $SavingsSubscriptionRequestCopyWith(SavingsSubscriptionRequest value, $Res Function(SavingsSubscriptionRequest) _then) = _$SavingsSubscriptionRequestCopyWithImpl;
+@useResult
+$Res call({
+ String productSnapshotId, String termMonths, String autoDebitAmount, String reserveType
+});
+
+
+
+
+}
+/// @nodoc
+class _$SavingsSubscriptionRequestCopyWithImpl<$Res>
+    implements $SavingsSubscriptionRequestCopyWith<$Res> {
+  _$SavingsSubscriptionRequestCopyWithImpl(this._self, this._then);
+
+  final SavingsSubscriptionRequest _self;
+  final $Res Function(SavingsSubscriptionRequest) _then;
+
+/// Create a copy of SavingsSubscriptionRequest
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? productSnapshotId = null,Object? termMonths = null,Object? autoDebitAmount = null,Object? reserveType = null,}) {
+  return _then(_self.copyWith(
+productSnapshotId: null == productSnapshotId ? _self.productSnapshotId : productSnapshotId // ignore: cast_nullable_to_non_nullable
+as String,termMonths: null == termMonths ? _self.termMonths : termMonths // ignore: cast_nullable_to_non_nullable
+as String,autoDebitAmount: null == autoDebitAmount ? _self.autoDebitAmount : autoDebitAmount // ignore: cast_nullable_to_non_nullable
+as String,reserveType: null == reserveType ? _self.reserveType : reserveType // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [SavingsSubscriptionRequest].
+extension SavingsSubscriptionRequestPatterns on SavingsSubscriptionRequest {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _SavingsSubscriptionRequest value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _SavingsSubscriptionRequest() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _SavingsSubscriptionRequest value)  $default,){
+final _that = this;
+switch (_that) {
+case _SavingsSubscriptionRequest():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _SavingsSubscriptionRequest value)?  $default,){
+final _that = this;
+switch (_that) {
+case _SavingsSubscriptionRequest() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String productSnapshotId,  String termMonths,  String autoDebitAmount,  String reserveType)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _SavingsSubscriptionRequest() when $default != null:
+return $default(_that.productSnapshotId,_that.termMonths,_that.autoDebitAmount,_that.reserveType);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String productSnapshotId,  String termMonths,  String autoDebitAmount,  String reserveType)  $default,) {final _that = this;
+switch (_that) {
+case _SavingsSubscriptionRequest():
+return $default(_that.productSnapshotId,_that.termMonths,_that.autoDebitAmount,_that.reserveType);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String productSnapshotId,  String termMonths,  String autoDebitAmount,  String reserveType)?  $default,) {final _that = this;
+switch (_that) {
+case _SavingsSubscriptionRequest() when $default != null:
+return $default(_that.productSnapshotId,_that.termMonths,_that.autoDebitAmount,_that.reserveType);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+@JsonSerializable()
+
+class _SavingsSubscriptionRequest implements SavingsSubscriptionRequest {
+  const _SavingsSubscriptionRequest({required this.productSnapshotId, required this.termMonths, required this.autoDebitAmount, required this.reserveType});
+  factory _SavingsSubscriptionRequest.fromJson(Map<String, dynamic> json) => _$SavingsSubscriptionRequestFromJson(json);
+
+@override final  String productSnapshotId;
+@override final  String termMonths;
+@override final  String autoDebitAmount;
+@override final  String reserveType;
+
+/// Create a copy of SavingsSubscriptionRequest
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$SavingsSubscriptionRequestCopyWith<_SavingsSubscriptionRequest> get copyWith => __$SavingsSubscriptionRequestCopyWithImpl<_SavingsSubscriptionRequest>(this, _$identity);
+
+@override
+Map<String, dynamic> toJson() {
+  return _$SavingsSubscriptionRequestToJson(this, );
+}
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SavingsSubscriptionRequest&&(identical(other.productSnapshotId, productSnapshotId) || other.productSnapshotId == productSnapshotId)&&(identical(other.termMonths, termMonths) || other.termMonths == termMonths)&&(identical(other.autoDebitAmount, autoDebitAmount) || other.autoDebitAmount == autoDebitAmount)&&(identical(other.reserveType, reserveType) || other.reserveType == reserveType));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,productSnapshotId,termMonths,autoDebitAmount,reserveType);
+
+@override
+String toString() {
+  return 'SavingsSubscriptionRequest(productSnapshotId: $productSnapshotId, termMonths: $termMonths, autoDebitAmount: $autoDebitAmount, reserveType: $reserveType)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$SavingsSubscriptionRequestCopyWith<$Res> implements $SavingsSubscriptionRequestCopyWith<$Res> {
+  factory _$SavingsSubscriptionRequestCopyWith(_SavingsSubscriptionRequest value, $Res Function(_SavingsSubscriptionRequest) _then) = __$SavingsSubscriptionRequestCopyWithImpl;
+@override @useResult
+$Res call({
+ String productSnapshotId, String termMonths, String autoDebitAmount, String reserveType
+});
+
+
+
+
+}
+/// @nodoc
+class __$SavingsSubscriptionRequestCopyWithImpl<$Res>
+    implements _$SavingsSubscriptionRequestCopyWith<$Res> {
+  __$SavingsSubscriptionRequestCopyWithImpl(this._self, this._then);
+
+  final _SavingsSubscriptionRequest _self;
+  final $Res Function(_SavingsSubscriptionRequest) _then;
+
+/// Create a copy of SavingsSubscriptionRequest
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? productSnapshotId = null,Object? termMonths = null,Object? autoDebitAmount = null,Object? reserveType = null,}) {
+  return _then(_SavingsSubscriptionRequest(
+productSnapshotId: null == productSnapshotId ? _self.productSnapshotId : productSnapshotId // ignore: cast_nullable_to_non_nullable
+as String,termMonths: null == termMonths ? _self.termMonths : termMonths // ignore: cast_nullable_to_non_nullable
+as String,autoDebitAmount: null == autoDebitAmount ? _self.autoDebitAmount : autoDebitAmount // ignore: cast_nullable_to_non_nullable
+as String,reserveType: null == reserveType ? _self.reserveType : reserveType // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
+
+/// @nodoc
+mixin _$SavingsSubscriptionResponse {
+
+ int get subscriptionId; String get startDate; String get maturityDate; String get message;
+/// Create a copy of SavingsSubscriptionResponse
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$SavingsSubscriptionResponseCopyWith<SavingsSubscriptionResponse> get copyWith => _$SavingsSubscriptionResponseCopyWithImpl<SavingsSubscriptionResponse>(this as SavingsSubscriptionResponse, _$identity);
+
+  /// Serializes this SavingsSubscriptionResponse to a JSON map.
+  Map<String, dynamic> toJson();
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SavingsSubscriptionResponse&&(identical(other.subscriptionId, subscriptionId) || other.subscriptionId == subscriptionId)&&(identical(other.startDate, startDate) || other.startDate == startDate)&&(identical(other.maturityDate, maturityDate) || other.maturityDate == maturityDate)&&(identical(other.message, message) || other.message == message));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,subscriptionId,startDate,maturityDate,message);
+
+@override
+String toString() {
+  return 'SavingsSubscriptionResponse(subscriptionId: $subscriptionId, startDate: $startDate, maturityDate: $maturityDate, message: $message)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $SavingsSubscriptionResponseCopyWith<$Res>  {
+  factory $SavingsSubscriptionResponseCopyWith(SavingsSubscriptionResponse value, $Res Function(SavingsSubscriptionResponse) _then) = _$SavingsSubscriptionResponseCopyWithImpl;
+@useResult
+$Res call({
+ int subscriptionId, String startDate, String maturityDate, String message
+});
+
+
+
+
+}
+/// @nodoc
+class _$SavingsSubscriptionResponseCopyWithImpl<$Res>
+    implements $SavingsSubscriptionResponseCopyWith<$Res> {
+  _$SavingsSubscriptionResponseCopyWithImpl(this._self, this._then);
+
+  final SavingsSubscriptionResponse _self;
+  final $Res Function(SavingsSubscriptionResponse) _then;
+
+/// Create a copy of SavingsSubscriptionResponse
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? subscriptionId = null,Object? startDate = null,Object? maturityDate = null,Object? message = null,}) {
+  return _then(_self.copyWith(
+subscriptionId: null == subscriptionId ? _self.subscriptionId : subscriptionId // ignore: cast_nullable_to_non_nullable
+as int,startDate: null == startDate ? _self.startDate : startDate // ignore: cast_nullable_to_non_nullable
+as String,maturityDate: null == maturityDate ? _self.maturityDate : maturityDate // ignore: cast_nullable_to_non_nullable
+as String,message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [SavingsSubscriptionResponse].
+extension SavingsSubscriptionResponsePatterns on SavingsSubscriptionResponse {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _SavingsSubscriptionResponse value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _SavingsSubscriptionResponse() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _SavingsSubscriptionResponse value)  $default,){
+final _that = this;
+switch (_that) {
+case _SavingsSubscriptionResponse():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _SavingsSubscriptionResponse value)?  $default,){
+final _that = this;
+switch (_that) {
+case _SavingsSubscriptionResponse() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int subscriptionId,  String startDate,  String maturityDate,  String message)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _SavingsSubscriptionResponse() when $default != null:
+return $default(_that.subscriptionId,_that.startDate,_that.maturityDate,_that.message);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int subscriptionId,  String startDate,  String maturityDate,  String message)  $default,) {final _that = this;
+switch (_that) {
+case _SavingsSubscriptionResponse():
+return $default(_that.subscriptionId,_that.startDate,_that.maturityDate,_that.message);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int subscriptionId,  String startDate,  String maturityDate,  String message)?  $default,) {final _that = this;
+switch (_that) {
+case _SavingsSubscriptionResponse() when $default != null:
+return $default(_that.subscriptionId,_that.startDate,_that.maturityDate,_that.message);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+@JsonSerializable()
+
+class _SavingsSubscriptionResponse implements SavingsSubscriptionResponse {
+  const _SavingsSubscriptionResponse({required this.subscriptionId, required this.startDate, required this.maturityDate, required this.message});
+  factory _SavingsSubscriptionResponse.fromJson(Map<String, dynamic> json) => _$SavingsSubscriptionResponseFromJson(json);
+
+@override final  int subscriptionId;
+@override final  String startDate;
+@override final  String maturityDate;
+@override final  String message;
+
+/// Create a copy of SavingsSubscriptionResponse
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$SavingsSubscriptionResponseCopyWith<_SavingsSubscriptionResponse> get copyWith => __$SavingsSubscriptionResponseCopyWithImpl<_SavingsSubscriptionResponse>(this, _$identity);
+
+@override
+Map<String, dynamic> toJson() {
+  return _$SavingsSubscriptionResponseToJson(this, );
+}
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SavingsSubscriptionResponse&&(identical(other.subscriptionId, subscriptionId) || other.subscriptionId == subscriptionId)&&(identical(other.startDate, startDate) || other.startDate == startDate)&&(identical(other.maturityDate, maturityDate) || other.maturityDate == maturityDate)&&(identical(other.message, message) || other.message == message));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,subscriptionId,startDate,maturityDate,message);
+
+@override
+String toString() {
+  return 'SavingsSubscriptionResponse(subscriptionId: $subscriptionId, startDate: $startDate, maturityDate: $maturityDate, message: $message)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$SavingsSubscriptionResponseCopyWith<$Res> implements $SavingsSubscriptionResponseCopyWith<$Res> {
+  factory _$SavingsSubscriptionResponseCopyWith(_SavingsSubscriptionResponse value, $Res Function(_SavingsSubscriptionResponse) _then) = __$SavingsSubscriptionResponseCopyWithImpl;
+@override @useResult
+$Res call({
+ int subscriptionId, String startDate, String maturityDate, String message
+});
+
+
+
+
+}
+/// @nodoc
+class __$SavingsSubscriptionResponseCopyWithImpl<$Res>
+    implements _$SavingsSubscriptionResponseCopyWith<$Res> {
+  __$SavingsSubscriptionResponseCopyWithImpl(this._self, this._then);
+
+  final _SavingsSubscriptionResponse _self;
+  final $Res Function(_SavingsSubscriptionResponse) _then;
+
+/// Create a copy of SavingsSubscriptionResponse
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? subscriptionId = null,Object? startDate = null,Object? maturityDate = null,Object? message = null,}) {
+  return _then(_SavingsSubscriptionResponse(
+subscriptionId: null == subscriptionId ? _self.subscriptionId : subscriptionId // ignore: cast_nullable_to_non_nullable
+as int,startDate: null == startDate ? _self.startDate : startDate // ignore: cast_nullable_to_non_nullable
+as String,maturityDate: null == maturityDate ? _self.maturityDate : maturityDate // ignore: cast_nullable_to_non_nullable
+as String,message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
+as String,
   ));
 }
 

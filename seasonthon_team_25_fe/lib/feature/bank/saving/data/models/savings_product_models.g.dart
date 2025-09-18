@@ -109,7 +109,7 @@ _SavingsMaturityInfoModel _$SavingsMaturityInfoModelFromJson(
   principal: (json['principal'] as num).toInt(),
   interest: (json['interest'] as num).toInt(),
   tax: (json['tax'] as num).toInt(),
-  totalAmount: (json['totalAmount'] as num).toDouble(),
+  totalAmount: (json['totalAmount'] as num).toInt(),
   interestRate: (json['interestRate'] as num).toDouble(),
 );
 
@@ -121,4 +121,40 @@ Map<String, dynamic> _$SavingsMaturityInfoModelToJson(
   'tax': instance.tax,
   'totalAmount': instance.totalAmount,
   'interestRate': instance.interestRate,
+};
+
+_SavingsSubscriptionRequest _$SavingsSubscriptionRequestFromJson(
+  Map<String, dynamic> json,
+) => _SavingsSubscriptionRequest(
+  productSnapshotId: json['productSnapshotId'] as String,
+  termMonths: json['termMonths'] as String,
+  autoDebitAmount: json['autoDebitAmount'] as String,
+  reserveType: json['reserveType'] as String,
+);
+
+Map<String, dynamic> _$SavingsSubscriptionRequestToJson(
+  _SavingsSubscriptionRequest instance,
+) => <String, dynamic>{
+  'productSnapshotId': instance.productSnapshotId,
+  'termMonths': instance.termMonths,
+  'autoDebitAmount': instance.autoDebitAmount,
+  'reserveType': instance.reserveType,
+};
+
+_SavingsSubscriptionResponse _$SavingsSubscriptionResponseFromJson(
+  Map<String, dynamic> json,
+) => _SavingsSubscriptionResponse(
+  subscriptionId: (json['subscriptionId'] as num).toInt(),
+  startDate: json['startDate'] as String,
+  maturityDate: json['maturityDate'] as String,
+  message: json['message'] as String,
+);
+
+Map<String, dynamic> _$SavingsSubscriptionResponseToJson(
+  _SavingsSubscriptionResponse instance,
+) => <String, dynamic>{
+  'subscriptionId': instance.subscriptionId,
+  'startDate': instance.startDate,
+  'maturityDate': instance.maturityDate,
+  'message': instance.message,
 };

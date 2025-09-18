@@ -16,7 +16,7 @@ abstract class SavingsMaturityInfoEntity with _$SavingsMaturityInfoEntity {
     required int principal,
     required int interest,
     required int tax,
-    required double totalAmount,
+    required int totalAmount,
     required double interestRate,
   }) = _SavingsMaturityInfoEntity;
 }

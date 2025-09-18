@@ -311,7 +311,7 @@ class _FinancialProductDetailPageState
                           Align(
                             alignment: Alignment.topLeft,
                             child: Text(
-                              _formatNumber(maturityPreview.ourService.totalAmount.round()),
+                              _formatNumber(maturityPreview.ourService.totalAmount),
                               style: AppTypography.h2.copyWith(
                                 color: AppColors.primarySky,
                               ),
@@ -367,7 +367,7 @@ class _FinancialProductDetailPageState
                           Align(
                             alignment: Alignment.topLeft,
                             child: Text(
-                              _formatNumber(maturityPreview.preferentialRate.totalAmount.round()),
+                              _formatNumber(maturityPreview.preferentialRate.totalAmount),
                               style: AppTypography.h2.copyWith(
                                 color: AppColors.primarySky,
                               ),

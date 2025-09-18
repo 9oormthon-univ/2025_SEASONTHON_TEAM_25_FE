@@ -3,6 +3,7 @@ import 'package:seasonthon_team_25_fe/feature/bank/saving/domain/entities/saving
 import 'package:seasonthon_team_25_fe/feature/bank/saving/domain/entities/savings_product_list_entity.dart';
 import 'package:seasonthon_team_25_fe/feature/bank/saving/domain/entities/savings_product_detail_entity.dart';
 import 'package:seasonthon_team_25_fe/feature/bank/saving/domain/entities/savings_maturity_preview_entity.dart';
+import 'package:seasonthon_team_25_fe/feature/bank/saving/domain/entities/savings_subscription_entity.dart';
 
 part 'savings_product_models.freezed.dart';
 part 'savings_product_models.g.dart';
@@ -106,7 +107,7 @@ abstract class SavingsMaturityInfoModel with _$SavingsMaturityInfoModel {
     required int principal,
     required int interest,
     required int tax,
-    required double totalAmount,
+    required int totalAmount,
     required double interestRate,
   }) = _SavingsMaturityInfoModel;
 
@@ -128,5 +129,49 @@ extension SavingsMaturityInfoModelX on SavingsMaturityInfoModel {
         tax: tax,
         totalAmount: totalAmount,
         interestRate: interestRate,
+      );
+}
+
+@freezed
+abstract class SavingsSubscriptionRequest with _$SavingsSubscriptionRequest {
+  const factory SavingsSubscriptionRequest({
+    required String productSnapshotId,
+    required String termMonths,
+    required String autoDebitAmount,
+    required String reserveType,
+  }) = _SavingsSubscriptionRequest;
+
+  factory SavingsSubscriptionRequest.fromJson(Map<String, dynamic> json) =>
+      _$SavingsSubscriptionRequestFromJson(json);
+}
+
+@freezed
+abstract class SavingsSubscriptionResponse with _$SavingsSubscriptionResponse {
+  const factory SavingsSubscriptionResponse({
+    required int subscriptionId,
+    required String startDate,
+    required String maturityDate,
+    required String message,
+  }) = _SavingsSubscriptionResponse;
+
+  factory SavingsSubscriptionResponse.fromJson(Map<String, dynamic> json) =>
+      _$SavingsSubscriptionResponseFromJson(json);
+}
+
+extension SavingsSubscriptionRequestX on SavingsSubscriptionRequestEntity {
+  SavingsSubscriptionRequest toModel() => SavingsSubscriptionRequest(
+        productSnapshotId: productSnapshotId,
+        termMonths: termMonths,
+        autoDebitAmount: autoDebitAmount,
+        reserveType: reserveType,
+      );
+}
+
+extension SavingsSubscriptionResponseX on SavingsSubscriptionResponse {
+  SavingsSubscriptionEntity toEntity() => SavingsSubscriptionEntity(
+        subscriptionId: subscriptionId,
+        startDate: startDate,
+        maturityDate: maturityDate,
+        message: message,
       );
 }

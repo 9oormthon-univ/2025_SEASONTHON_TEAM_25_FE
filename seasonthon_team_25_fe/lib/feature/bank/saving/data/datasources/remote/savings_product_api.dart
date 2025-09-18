@@ -42,4 +42,14 @@ class SavingsProductApi {
     );
     return SavingsMaturityPreviewResponse.fromJson(res.data);
   }
+
+  Future<SavingsSubscriptionResponse> subscribeSavings(
+    SavingsSubscriptionRequest request,
+  ) async {
+    final res = await _dio.post(
+      '/api/savings/subscriptions',
+      data: request.toJson(),
+    );
+    return SavingsSubscriptionResponse.fromJson(res.data);
+  }
 }
