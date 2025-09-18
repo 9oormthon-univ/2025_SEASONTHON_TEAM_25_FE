@@ -97,7 +97,7 @@ class _BankPageState extends ConsumerState<BankPage> {
                   style: AppTypography.h2.copyWith(color: AppColors.wt),
                 ),
                 CoinBalanceChip(
-                  balance: data.balance,
+                  balance: data.balance.toInt(),
                   backgroundColor: AppColors.wt_50,
                   textColor: AppColors.primarySky,
                 ),

@@ -110,7 +110,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                     Align(
                       alignment: AlignmentGeometry.topLeft,
                       child: CoinBalanceChip(
-                        balance: data.balance,
+                        balance: data.balance.toInt(),
                         backgroundColor: AppColors.wt_50,
                         textColor: AppColors.primarySky,
                       ),

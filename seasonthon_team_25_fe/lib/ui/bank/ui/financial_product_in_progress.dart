@@ -144,7 +144,7 @@ class _FinancialProductInProgressPageState
                     Align(
                       alignment: Alignment.topLeft,
                       child: CoinBalanceChip(
-                        balance: balance,
+                        balance: balance.toInt(),
                         backgroundColor: AppColors.sk_25,
                         textColor: AppColors.primarySky,
                       ),

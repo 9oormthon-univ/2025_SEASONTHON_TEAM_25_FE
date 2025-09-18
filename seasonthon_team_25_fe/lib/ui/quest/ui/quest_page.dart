@@ -5,6 +5,7 @@ import 'package:seasonthon_team_25_fe/core/theme/colors.dart';
 import 'package:seasonthon_team_25_fe/core/theme/typography.dart';
 import 'package:seasonthon_team_25_fe/feature/home/presentation/provider/coin_controller.dart';
 import 'package:seasonthon_team_25_fe/feature/quest/presentation/provider/quest_controller.dart';
+import 'package:seasonthon_team_25_fe/feature/wallet/presentation/provider/wallet_controller.dart';
 import 'package:seasonthon_team_25_fe/ui/components/app_bar/custom_app_bar.dart';
 import 'package:seasonthon_team_25_fe/ui/components/chip/coin_balance_chip.dart';
 import 'package:seasonthon_team_25_fe/ui/quest/widgets/quest_card.dart';
@@ -23,14 +24,14 @@ class _QuestPageState extends ConsumerState<QuestPage> {
     // 페이지 로드 시 퀘스트 목록과 잔액 조회
     Future.microtask(() {
       ref.read(questControllerProvider.notifier).loadCurrentQuests();
-      ref.read(coinProvider.notifier).loadBalance();
+      ref.read(walletControllerProvider.notifier).fetchBalance();
     });
   }
 
   @override
   Widget build(BuildContext context) {
     final questState = ref.watch(questControllerProvider);
-    final coinState = ref.watch(coinProvider);
+    final balanceState = ref.watch(walletControllerProvider);
     final isLoading = questState.isLoading;
     final error = questState.error;
     final quests = questState.quests;
@@ -50,7 +51,7 @@ class _QuestPageState extends ConsumerState<QuestPage> {
             padding: const EdgeInsets.all(20),
             child: Align(
               alignment: Alignment.centerLeft,
-              child: coinState.when(
+              child: balanceState.when(
                 loading: () => CoinBalanceChip(
                   balance: 0,
                   backgroundColor: AppColors.sk_25,
@@ -61,19 +62,17 @@ class _QuestPageState extends ConsumerState<QuestPage> {
                   backgroundColor: AppColors.sk_25,
                   textColor: AppColors.primarySky,
                 ),
-                data: (balance) => CoinBalanceChip(
-                  balance: balance,
+                data: (data) => CoinBalanceChip(
+                  balance: data.balance,
                   backgroundColor: AppColors.sk_25,
                   textColor: AppColors.primarySky,
                 ),
               ),
             ),
           ),
-          
+          const SizedBox(height: 24),
           // 퀘스트 목록
-          Expanded(
-            child: _buildQuestList(isLoading, error, quests),
-          ),
+          Expanded(child: _buildQuestList(isLoading, error, quests)),
         ],
       ),
     );
@@ -107,18 +106,18 @@ class _QuestPageState extends ConsumerState<QuestPage> {
               final response = await ref
                   .read(questControllerProvider.notifier)
                   .claimQuestReward(quest.userQuestId);
-              
+
               if (response != null && mounted) {
                 // 보상 수령 결과에 따른 메시지 표시
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text(response.message),
-                    backgroundColor: response.completed 
-                        ? AppColors.primarySky 
+                    backgroundColor: response.completed
+                        ? AppColors.primarySky
                         : AppColors.secondaryRd,
                   ),
                 );
-                
+
                 // 성공한 경우 잔액 새로고침
                 if (response.completed) {
                   ref.read(coinProvider.notifier).loadBalance();
@@ -128,10 +127,7 @@ class _QuestPageState extends ConsumerState<QuestPage> {
                 final error = ref.read(questControllerProvider).error;
                 if (error != null) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(error),
-                      backgroundColor: Colors.red,
-                    ),
+                    SnackBar(content: Text(error), backgroundColor: Colors.red),
                   );
                 }
               }
@@ -172,7 +168,9 @@ class _QuestPageState extends ConsumerState<QuestPage> {
               padding: const EdgeInsets.symmetric(horizontal: 40),
               child: ElevatedButton(
                 onPressed: () {
-                  ref.read(questControllerProvider.notifier).loadCurrentQuests();
+                  ref
+                      .read(questControllerProvider.notifier)
+                      .loadCurrentQuests();
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primarySky,
@@ -182,10 +180,7 @@ class _QuestPageState extends ConsumerState<QuestPage> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                child: Text(
-                  '다시 시도',
-                  style: AppTypography.h3,
-                ),
+                child: Text('다시 시도', style: AppTypography.h3),
               ),
             ),
           ],
@@ -224,7 +219,9 @@ class _QuestPageState extends ConsumerState<QuestPage> {
               padding: const EdgeInsets.symmetric(horizontal: 40),
               child: ElevatedButton(
                 onPressed: () {
-                  ref.read(questControllerProvider.notifier).loadCurrentQuests();
+                  ref
+                      .read(questControllerProvider.notifier)
+                      .loadCurrentQuests();
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primarySky,
@@ -234,10 +231,7 @@ class _QuestPageState extends ConsumerState<QuestPage> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                child: Text(
-                  '새로고침',
-                  style: AppTypography.h3,
-                ),
+                child: Text('새로고침', style: AppTypography.h3),
               ),
             ),
           ],

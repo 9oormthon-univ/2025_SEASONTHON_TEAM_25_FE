@@ -12,26 +12,25 @@ class QuestCard extends ConsumerWidget {
   final QuestItem quest;
   final VoidCallback? onClaimReward;
 
-  const QuestCard({
-    super.key,
-    required this.quest,
-    this.onClaimReward,
-  });
+  const QuestCard({super.key, required this.quest, this.onClaimReward});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final questState = ref.watch(questControllerProvider);
-    final isClaimingReward = questState.isClaimingReward || 
-                           questState.claimingQuestIds.contains(quest.userQuestId);
-    
+    final isClaimingReward =
+        questState.isClaimingReward ||
+        questState.claimingQuestIds.contains(quest.userQuestId);
+
     // 진행도 계산
-    final progress = quest.requirementCount > 0 
+    final progress = quest.requirementCount > 0
         ? (quest.progressCount / quest.requirementCount).clamp(0.0, 1.0)
         : 0.0;
-    
-    // 완료 여부 (연속 기반 퀘스트는 currentStreak 사용)
-    final isCompleted = quest.completed || 
-                       (quest.currentStreak >= quest.requirementCount && quest.requirementCount > 0);
+
+    // 완료 여부
+    final isCompleted =
+        quest.completed ||
+        (quest.currentStreak >= quest.requirementCount &&
+            quest.requirementCount > 0);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -45,18 +44,15 @@ class QuestCard extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 퀘스트 제목과 코인 아이콘
+            // 퀘스트 제목 + 코인 아이콘
             Row(
               children: [
                 Expanded(
                   child: Text(
                     quest.title,
-                    style: AppTypography.h3.copyWith(
-                      color: AppColors.bk,
-                    ),
+                    style: AppTypography.h3.copyWith(color: AppColors.bk),
                   ),
                 ),
-                // 코인 아이콘
                 Container(
                   width: 40,
                   height: 40,
@@ -72,31 +68,28 @@ class QuestCard extends ConsumerWidget {
                 ),
               ],
             ),
-            
+
             const SizedBox(height: 8),
-            
+
             // 퀘스트 설명
             Text(
               quest.description,
-              style: AppTypography.m500.copyWith(
-                color: AppColors.primarySky,
-              ),
+              style: AppTypography.m500.copyWith(color: AppColors.primarySky),
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // 진행도 바
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // 진행도 숫자 + 완료 텍스트
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
                       '${quest.progressCount}/${quest.requirementCount}',
-                      style: AppTypography.m600.copyWith(
-                        color: AppColors.bk,
-                      ),
+                      style: AppTypography.m600.copyWith(color: AppColors.bk),
                     ),
                     if (isCompleted && !quest.claimed)
                       Text(
@@ -107,33 +100,43 @@ class QuestCard extends ConsumerWidget {
                       ),
                   ],
                 ),
-                
                 const SizedBox(height: 8),
-                
-                // 진행도 바
+
+                // 테두리 있는 진행도 바
                 Container(
-                  height: 8,
+                  height: 12,
                   decoration: BoxDecoration(
-                    color: AppColors.gr200,
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: FractionallySizedBox(
-                    alignment: Alignment.centerLeft,
-                    widthFactor: progress,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: isCompleted ? AppColors.primarySky : AppColors.primarySky,
-                        borderRadius: BorderRadius.circular(4),
-                      ),
+                    border: Border.all(
+                      color: isCompleted
+                          ? AppColors.primarySky
+                          : AppColors.gr200,
+                      width: 2,
                     ),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Stack(
+                    children: [
+                      FractionallySizedBox(
+                        alignment: Alignment.centerLeft,
+                        widthFactor: progress,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: isCompleted
+                                ? AppColors.primarySky
+                                : AppColors.primarySky.withOpacity(0.6),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
             ),
-            
+
             const SizedBox(height: 16),
-            
-            // 보상 받기 버튼
+
+            // 보상 버튼
             Align(
               alignment: Alignment.centerRight,
               child: _buildRewardButton(isCompleted, isClaimingReward),
@@ -146,7 +149,7 @@ class QuestCard extends ConsumerWidget {
 
   Widget _buildRewardButton(bool isCompleted, bool isClaimingReward) {
     if (quest.claimed) {
-      // 이미 수령한 경우
+      // 이미 수령
       return Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
@@ -155,15 +158,13 @@ class QuestCard extends ConsumerWidget {
         ),
         child: Text(
           '수령 완료',
-          style: AppTypography.m500.copyWith(
-            color: AppColors.gr600,
-          ),
+          style: AppTypography.m500.copyWith(color: AppColors.gr600),
         ),
       );
     }
 
     if (!isCompleted) {
-      // 아직 완료되지 않은 경우
+      // 진행 중
       return Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
@@ -172,14 +173,12 @@ class QuestCard extends ConsumerWidget {
         ),
         child: Text(
           '진행 중',
-          style: AppTypography.m500.copyWith(
-            color: AppColors.gr600,
-          ),
+          style: AppTypography.m500.copyWith(color: AppColors.gr600),
         ),
       );
     }
 
-    // 완료되었고 수령 가능한 경우
+    // 완료 → 수령 가능
     return GestureDetector(
       onTap: isClaimingReward ? null : onClaimReward,
       child: Container(
@@ -204,9 +203,7 @@ class QuestCard extends ConsumerWidget {
             ],
             Text(
               isClaimingReward ? '수령 중...' : '보상 받기',
-              style: AppTypography.m500.copyWith(
-                color: AppColors.wt,
-              ),
+              style: AppTypography.m500.copyWith(color: AppColors.wt),
             ),
           ],
         ),
