@@ -11,22 +11,26 @@ final attendanceControllerProvider = StateNotifierProvider<AttendanceController,
 class AttendanceState {
   final bool isLoading;
   final AttendanceCheckEntity? lastCheckResult;
+  final AttendanceCalendarEntity? calendarData;
   final String? errorMessage;
 
   const AttendanceState({
     this.isLoading = false,
     this.lastCheckResult,
+    this.calendarData,
     this.errorMessage,
   });
 
   AttendanceState copyWith({
     bool? isLoading,
     AttendanceCheckEntity? lastCheckResult,
+    AttendanceCalendarEntity? calendarData,
     String? errorMessage,
   }) {
     return AttendanceState(
       isLoading: isLoading ?? this.isLoading,
       lastCheckResult: lastCheckResult ?? this.lastCheckResult,
+      calendarData: calendarData ?? this.calendarData,
       errorMessage: errorMessage ?? this.errorMessage,
     );
   }
@@ -45,6 +49,23 @@ class AttendanceController extends StateNotifier<AttendanceState> {
       state = state.copyWith(
         isLoading: false,
         lastCheckResult: result,
+      );
+    } catch (e) {
+      state = state.copyWith(
+        isLoading: false,
+        errorMessage: e.toString(),
+      );
+    }
+  }
+
+  Future<void> loadCalendar({required int year, required int month}) async {
+    state = state.copyWith(isLoading: true, errorMessage: null);
+    
+    try {
+      final calendar = await _repository.getAttendanceCalendar(year: year, month: month);
+      state = state.copyWith(
+        isLoading: false,
+        calendarData: calendar,
       );
     } catch (e) {
       state = state.copyWith(

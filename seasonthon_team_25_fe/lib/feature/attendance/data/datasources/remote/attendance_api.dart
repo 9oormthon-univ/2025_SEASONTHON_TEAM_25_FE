@@ -10,4 +10,10 @@ abstract class AttendanceApi {
 
   @POST('/api/attendances')
   Future<AttendanceCheckResponse> checkAttendance();
+
+  @GET('/api/attendances/calendar')
+  Future<AttendanceCalendarResponse> getAttendanceCalendar({
+    @Query('year') required int year,
+    @Query('month') required int month,
+  });
 }

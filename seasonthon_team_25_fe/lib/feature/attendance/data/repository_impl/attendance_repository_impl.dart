@@ -16,12 +16,32 @@ class AttendanceRepositoryImpl implements AttendanceRepository {
     return _mapCheckResponseToEntity(response);
   }
 
+  @override
+  Future<AttendanceCalendarEntity> getAttendanceCalendar({
+    required int year,
+    required int month,
+  }) async {
+    final response = await _api.getAttendanceCalendar(year: year, month: month);
+    return _mapCalendarResponseToEntity(response);
+  }
+
   AttendanceCheckEntity _mapCheckResponseToEntity(AttendanceCheckResponse response) {
     return AttendanceCheckEntity(
       success: response.success,
       message: response.message,
       achievementType: response.achievementType,
       achievementCreated: response.achievementCreated,
+    );
+  }
+
+  AttendanceCalendarEntity _mapCalendarResponseToEntity(AttendanceCalendarResponse response) {
+    return AttendanceCalendarEntity(
+      year: response.year,
+      month: response.month,
+      totalDays: response.totalDays,
+      attendanceMap: response.attendanceMap,
+      attendanceCount: response.attendanceCount,
+      startDayOfWeek: response.startDayOfWeek,
     );
   }
 }

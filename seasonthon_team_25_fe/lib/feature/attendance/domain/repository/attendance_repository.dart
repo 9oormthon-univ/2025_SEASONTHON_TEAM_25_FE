@@ -2,4 +2,8 @@ import 'package:seasonthon_team_25_fe/feature/attendance/domain/entities/attenda
 
 abstract class AttendanceRepository {
   Future<AttendanceCheckEntity> checkAttendance();
+  Future<AttendanceCalendarEntity> getAttendanceCalendar({
+    required int year,
+    required int month,
+  });
 }
