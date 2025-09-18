@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lottie/lottie.dart';
 import 'package:seasonthon_team_25_fe/core/theme/button_size.dart';
 
 import 'package:seasonthon_team_25_fe/core/theme/colors.dart';
@@ -8,10 +9,10 @@ import 'package:seasonthon_team_25_fe/core/theme/typography.dart';
 import 'package:seasonthon_team_25_fe/feature/news/domain/entities/new_detail_entity.dart';
 import 'package:seasonthon_team_25_fe/feature/news/presentation/provider/news_detail.controller.dart';
 import 'package:seasonthon_team_25_fe/feature/scrap/presentation/provider/scrap_controller.dart';
+import 'package:seasonthon_team_25_fe/gen/assets.gen.dart';
 import 'package:seasonthon_team_25_fe/ui/components/app_bar/custom_app_bar.dart';
 import 'package:seasonthon_team_25_fe/ui/components/buttons/primary_filled_button.dart';
 import 'package:seasonthon_team_25_fe/ui/components/chip/sk_filled_chip.dart';
-import 'package:seasonthon_team_25_fe/ui/components/chip/sk_outlined_chip.dart';
 import 'package:seasonthon_team_25_fe/ui/components/img/html_image.dart';
 import 'package:seasonthon_team_25_fe/utils/date_time_x.dart';
 
@@ -37,11 +38,11 @@ class _NewsDetailState extends ConsumerState<NewsDetail> {
   Future<void> _handleScrapToggle() async {
     final scrapController = ref.read(scrapControllerProvider.notifier);
     final response = await scrapController.toggleNewsScrap(widget.newsId);
-    
+
     if (response != null && mounted) {
       // 스크랩 토스트 표시
       setState(() => _showScrapToast = true);
-      
+
       // 업적 생성 시 추가 메시지 표시
       if (response.achievementCreated && response.achievementType != null) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -51,7 +52,7 @@ class _NewsDetailState extends ConsumerState<NewsDetail> {
           ),
         );
       }
-      
+
       // 토스트 자동 숨김
       Future.delayed(const Duration(seconds: 2), () {
         if (mounted) {
@@ -63,10 +64,7 @@ class _NewsDetailState extends ConsumerState<NewsDetail> {
       final error = ref.read(scrapControllerProvider).error;
       if (error != null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(error),
-            backgroundColor: Colors.red,
-          ),
+          SnackBar(content: Text(error), backgroundColor: Colors.red),
         );
       }
     }
@@ -84,8 +82,8 @@ class _NewsDetailState extends ConsumerState<NewsDetail> {
         title: '뉴스',
         showLeftBtn: true,
         showRightBtn: true,
-        onTapLeftBtn: () => context.go("/news"),
-        onTapRightBtn: () => context.pop(),
+        onTapLeftBtn: () => context.push("/news"),
+        onTapRightBtn: () => context.push("/news"),
       ),
       body: state.detail.when(
         loading: () => const Center(child: CircularProgressIndicator()),
@@ -128,7 +126,9 @@ class _NewsDetailState extends ConsumerState<NewsDetail> {
                       if (news.originalImgUrl.trim().isNotEmpty)
                         Container(
                           width: double.infinity,
-                          height: MediaQuery.of(context).size.width > 600 ? 280 : 220,
+                          height: MediaQuery.of(context).size.width > 600
+                              ? 280
+                              : 220,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(12),
                             color: AppColors.gr100,
@@ -138,7 +138,9 @@ class _NewsDetailState extends ConsumerState<NewsDetail> {
                             child: HtmlImage(
                               url: news.originalImgUrl,
                               width: double.infinity,
-                              height: MediaQuery.of(context).size.width > 600 ? 280 : 220,
+                              height: MediaQuery.of(context).size.width > 600
+                                  ? 280
+                                  : 220,
                               fit: BoxFit.cover,
                               borderRadius: BorderRadius.circular(12),
                             ),
@@ -192,8 +194,16 @@ class _NewsDetailState extends ConsumerState<NewsDetail> {
                   right: 140.5,
                   bottom: 159,
                   child: Center(
-                    child: SkOutlinedChip(
-                      label: isScraped ? '스크랩 완료!' : '스크랩 해제!',
+                    child: SizedBox(
+                      width: 200,
+                      height: 200,
+                      child: Lottie.asset(
+                        Assets.lottie.scrap,
+                        repeat: true, // 반복 재생
+                        animate: true, // 자동 재생
+                        fit: BoxFit.contain,
+                        frameRate: FrameRate.max,
+                      ),
                     ),
                   ),
                 ),
@@ -206,11 +216,11 @@ class _NewsDetailState extends ConsumerState<NewsDetail> {
                   widthType: ButtonWidth.small,
                   isLoading: scrapState.isLoading,
                   label: isScraped ? '스크랩 해제' : '스크랩',
-                  onPressed: scrapState.isLoading 
-                    ? () {} // 로딩 중일 때는 빈 함수
-                    : () {
-                        _handleScrapToggle();
-                      },
+                  onPressed: scrapState.isLoading
+                      ? () {} // 로딩 중일 때는 빈 함수
+                      : () {
+                          _handleScrapToggle();
+                        },
                 ),
               ),
             ],

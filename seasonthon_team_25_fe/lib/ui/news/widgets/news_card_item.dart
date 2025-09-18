@@ -4,7 +4,6 @@ import 'package:seasonthon_team_25_fe/core/theme/colors.dart';
 import 'package:seasonthon_team_25_fe/core/theme/radius.dart';
 import 'package:seasonthon_team_25_fe/core/theme/shadows.dart';
 import 'package:seasonthon_team_25_fe/core/theme/typography.dart';
-import 'package:seasonthon_team_25_fe/feature/scrap/presentation/provider/scrap_controller.dart';
 import 'package:seasonthon_team_25_fe/ui/components/chip/sk_filled_chip.dart';
 import 'package:seasonthon_team_25_fe/ui/components/img/html_image.dart';
 
@@ -30,8 +29,8 @@ class NewsCardItem extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final radius = BorderRadius.circular(AppRadius.chips);
     final hasThumb = originalImgUrl.trim().isNotEmpty;
-    final scrapState = ref.watch(scrapControllerProvider);
-    final isScraped = scrapState.scrapStatus[newsId] ?? false;
+    //final scrapState = ref.watch(scrapControllerProvider);
+    //final isScraped = scrapState.scrapStatus[newsId] ?? false;
     //final hasMinister = ministerCode.trim().isNotEmpty;
 
     return Container(
@@ -131,33 +130,6 @@ class NewsCardItem extends ConsumerWidget {
                   //     overflow: TextOverflow.ellipsis,
                   //   ),
                 ],
-              ),
-            ),
-          ),
-
-          // 스크랩 버튼
-          Positioned(
-            top: 12,
-            right: 12,
-            child: GestureDetector(
-              onTap: scrapState.isLoading
-                  ? null
-                  : () async {
-                      await ref
-                          .read(scrapControllerProvider.notifier)
-                          .toggleNewsScrap(newsId);
-                    },
-              child: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: isScraped ? AppColors.primarySky : AppColors.gr400,
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  isScraped ? Icons.bookmark : Icons.bookmark_border,
-                  color: isScraped ? AppColors.wt : AppColors.gr600,
-                  size: 16,
-                ),
               ),
             ),
           ),
