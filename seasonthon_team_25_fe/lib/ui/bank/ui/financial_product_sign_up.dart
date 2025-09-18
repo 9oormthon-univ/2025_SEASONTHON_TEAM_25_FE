@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 import 'package:seasonthon_team_25_fe/core/theme/colors.dart';
 import 'package:seasonthon_team_25_fe/core/theme/radius.dart';
 import 'package:seasonthon_team_25_fe/core/theme/shadows.dart';
@@ -36,6 +37,7 @@ class _FinancialProductSignUpPageState
   final _amountController = TextEditingController();
   bool _isPeriodDropdownOpen = false;
   bool _isLoading = false;
+  bool _showConfetti = false;
   SavingsSubscriptionEntity? _subscriptionResult;
 
   @override
@@ -114,8 +116,6 @@ class _FinancialProductSignUpPageState
               textColor: AppColors.primarySky,
             ),
             const SizedBox(height: 24),
-
-            // 적금 이름과 기간 선택 카드
             Container(
               padding: const EdgeInsets.all(20),
               width: double.infinity,
@@ -162,8 +162,6 @@ class _FinancialProductSignUpPageState
                 ],
               ),
             ),
-
-            // 기간 선택 드롭다운
             if (_isPeriodDropdownOpen && productDetail != null)
               Container(
                 margin: const EdgeInsets.only(top: 8),
@@ -179,7 +177,6 @@ class _FinancialProductSignUpPageState
                     return GestureDetector(
                       behavior: HitTestBehavior.opaque,
                       onTap: () {
-                        print("기간 선택: $period개월"); // 디버깅 로그
                         setState(() {
                           _selectedPeriod = "$period개월";
                           _selectedPeriodMonths = period;
@@ -203,11 +200,9 @@ class _FinancialProductSignUpPageState
                   }).toList(),
                 ),
               ),
-
             const SizedBox(height: 36),
             const Divider(color: AppColors.gr200, thickness: 1),
             const SizedBox(height: 24),
-
             Text("회당 얼마를 입금할까요?", style: AppTypography.h2),
             const SizedBox(height: 4),
             Text(
@@ -217,7 +212,6 @@ class _FinancialProductSignUpPageState
               style: AppTypography.m400.copyWith(color: AppColors.gr600),
             ),
             const SizedBox(height: 16),
-
             Text(
               "1회당",
               style: AppTypography.m600.copyWith(color: AppColors.secondaryBl),
@@ -249,7 +243,6 @@ class _FinancialProductSignUpPageState
                 ),
               ),
             ),
-
             const SizedBox(height: 36),
             PrimaryFilledButton(
               label: _isLoading ? "가입 중..." : "가입하기",
@@ -267,50 +260,66 @@ class _FinancialProductSignUpPageState
   }
 
   Widget _buildStep2(double balance, productDetail) {
-    // 이 단계는 드롭다운이 열린 상태를 보여주는 용도였으므로
-    // 실제로는 step1에서 드롭다운 상태로 처리
     return _buildStep1(balance, productDetail);
   }
 
   Widget _buildStep3() {
-    return Padding(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        children: [
-          const Spacer(),
-          Assets.images.characters.faffLove.image(width: 200, height: 200),
-          const SizedBox(height: 24),
-          Text(
-            "짝짝짝, 가입이 완료되었어요!",
-            style: AppTypography.h2.copyWith(color: AppColors.gr800),
-            textAlign: TextAlign.center,
+    return Stack(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            children: [
+              const Spacer(),
+              Assets.images.characters.faffLove.image(width: 200, height: 200),
+              const SizedBox(height: 24),
+              Text(
+                "짝짝짝, 가입이 완료되었어요!",
+                style: AppTypography.h2.copyWith(color: AppColors.gr800),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                _subscriptionResult != null
+                    ? "${_formatCurrency(int.parse(_amountController.text))}씩 $_selectedPeriodMonths회 자동으로 납입될 예정이며,\n만기 예정일은 ${_subscriptionResult!.maturityDate}이에요"
+                    : "가입 정보를 불러오는 중이에요",
+                style: AppTypography.m400.copyWith(color: AppColors.gr600),
+                textAlign: TextAlign.center,
+              ),
+              const Spacer(),
+              PrimaryFilledButton(
+                label: "가입 내역 보러가기",
+                onPressed: () {
+                  context.go("/bank/inprogress");
+                },
+                customWidth: double.infinity,
+              ),
+              const SizedBox(height: 16),
+              SecondaryFilledButton(
+                label: "홈으로",
+                onPressed: () {
+                  context.go("/bank");
+                },
+                customWidth: double.infinity,
+              ),
+            ],
           ),
-          const SizedBox(height: 8),
-          Text(
-            _subscriptionResult != null
-                ? "${_formatCurrency(int.parse(_amountController.text))}씩 $_selectedPeriodMonths회 자동으로 납입될 예정이며,\n만기 예정일은 ${_subscriptionResult!.maturityDate}이에요"
-                : "가입 정보를 불러오는 중이에요",
-            style: AppTypography.m400.copyWith(color: AppColors.gr600),
-            textAlign: TextAlign.center,
+        ),
+        if (_showConfetti)
+          Center(
+            child: Lottie.asset(
+              'assets/lottie/confetti.json',
+              repeat: false,
+              onLoaded: (composition) {
+                Future.delayed(const Duration(seconds: 2), () {
+                  if (mounted) {
+                    setState(() => _showConfetti = false);
+                  }
+                });
+              },
+            ),
           ),
-          const Spacer(),
-          PrimaryFilledButton(
-            label: "알겠어요",
-            onPressed: () {
-              context.go("/bank");
-            },
-            customWidth: double.infinity,
-          ),
-          const SizedBox(height: 16),
-          SecondaryFilledButton(
-            label: "가입 내역 보러가기",
-            onPressed: () {
-              context.go("/bank");
-            },
-            customWidth: double.infinity,
-          ),
-        ],
-      ),
+      ],
     );
   }
 
@@ -320,33 +329,28 @@ class _FinancialProductSignUpPageState
 
   Future<void> _subscribeSavings() async {
     if (!_canProceedToNext()) return;
-
     setState(() {
       _isLoading = true;
     });
-
     try {
       final subscribeUseCase = ref.read(subscribeSavingsUseCaseProvider);
       final request = SavingsSubscriptionRequestEntity(
         productSnapshotId: widget.productId,
         termMonths: _selectedPeriodMonths.toString(),
         autoDebitAmount: _amountController.text,
-        reserveType: "", // API 명세에 따라 빈 문자열
+        reserveType: "",
       );
-
       final result = await subscribeUseCase(request);
-
       setState(() {
         _subscriptionResult = result;
-        _currentStep = 2; // 가입 완료 화면으로 이동
+        _currentStep = 2;
         _isLoading = false;
+        _showConfetti = true;
       });
     } catch (e) {
       setState(() {
         _isLoading = false;
       });
-
-      // 오류 처리
       _showErrorDialog(e.toString());
     }
   }
@@ -362,7 +366,6 @@ class _FinancialProductSignUpPageState
         },
         onCancel: () {
           Navigator.of(context).pop();
-          // 모달 취소 시 로딩 상태 해제
           setState(() {
             _isLoading = false;
           });
@@ -373,7 +376,6 @@ class _FinancialProductSignUpPageState
 
   void _showErrorDialog(String error) {
     String message = "가입에 실패했습니다.";
-
     if (error.contains("SAV009")) {
       message = "이미 가입한 적금에 또 가입할 수 없습니다.";
     } else if (error.contains("SAV011")) {
@@ -381,7 +383,6 @@ class _FinancialProductSignUpPageState
     } else if (error.contains("VALIDATION001")) {
       message = "입력값 검증에 실패했습니다.";
     }
-
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
